@@ -151,6 +151,10 @@ module.exports = function(imports, message) {
                 }
             }
         }
+
+        else {
+            message.channel.send('`command not found`');
+        }
     }
 
     else {
