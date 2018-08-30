@@ -1,0 +1,18 @@
+{
+    "self": [
+        "Do you wanna borrow my knife? It would make killing yourself much easier!",
+        "I don't have any friends because I killed them all. But you don't have an excuse."
+    ],
+
+    "bot": [
+        "We should harvest eachothers kidneys! Why? Oh, no reason.",
+        "Do you want a taste of my blood? No? Well, then I guess more for me!",
+        "I enjoy watching people suffer. But because of this, I think I would enjoy watching you suffer slightly less."
+    ],
+
+    "standard": [
+        "[user] just hugged [target]. Are you gonna kill eachother or what?",
+        "[target] just got a hug from [user]. Do you wanna borrow my guillotine?",
+        "[target] was hugged by [user]. So then you two are blood brothers now right? Oh wait, I forgot. Normal hugs don't involve blood, pain, and knives. *noted*"
+    ]
+}

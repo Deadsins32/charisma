@@ -1,0 +1,44 @@
+{
+    "guild": {
+        "prefix": "//",
+        "flavor": "upbeat",
+        "accentcolor": "#9DA0CB",
+        "description": "not much to say about this guild...",
+        "expcurve": 1.5,
+        "logchannel": "",
+        "autorole": "",
+        "selfroles": {},
+        "members": {},
+        "features": {
+            "leveling": true,
+            "achievements": true,
+            "currency": true,
+            "indexed": false,
+            "logs": {
+                "joins": false,
+                "leaves": false,
+                "nicknamechanges": false,
+                "namechanges": false,
+                "bans": false
+            }
+        }
+    },
+
+    "user": {
+        "achievements": [],
+        "badges": [],
+        "color": "#9DA0CB",
+        "description": "I'm not very creative...",
+        "exp": 0,
+        "level": 0,
+        "balance": 0,
+        "karma": 0
+    },
+
+    "member": {
+        "exp": 0,
+        "level": 0,
+        "balance": 0,
+        "karma": 0
+    }
+}

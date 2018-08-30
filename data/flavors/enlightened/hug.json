@@ -1,0 +1,19 @@
+{
+    "self": [
+        "Are you really that desperate for a mere hug?",
+        "Life is meaningless... and so are hugs, so you might as well not even try."
+    ],
+
+    "bot": [
+        "Don't hug me. Hugs are pointless.",
+        "The sensation of a hug isn't real. None of this is real.",
+        "Quit wasting my time. I have thinking to do.",
+        "Hugs are pointless for thousands of reasons."
+    ],
+
+    "standard": [
+        "Welp, [user] just hugged [target]... that's 5 seconds of your one and only life wasted...",
+        "Interesting... [user] thought that it was worthwhile to give [target] a hug...",
+        "[user], you should stop giving people pats as it's a huge waste of time."
+    ]
+}

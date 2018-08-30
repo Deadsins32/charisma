@@ -1,0 +1,24 @@
+{
+    "self": [
+        "What a {insults}, patting himself like a looser xD",
+        "Fucking weirdo...",
+        "Looser",
+        "You're a {insults}",
+        "{insults}",
+        "I hope nobody ever gives you a pat fucking {insults}"
+    ],
+
+    "bot": [
+        "Don't you dare mess up my fucking hair!",
+        "Fuck off!",
+        "Don't touch me!",
+        "Get your hands off of me!"
+    ],
+
+    "standard": [
+        "You might've given [target] lice!",
+        "[user] just pat [target] lmao. I kinda feel bad for [target]. Actually, no I don't lol.",
+        "Why tf would you pat [target]? I don't think anyone deserves to be touched by your hands.",
+        "Ewww, [target] got a pat from [user]! Fucking disgusting!"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "self": [
+        "You want to borrow my {dangerous}? You may need it afterwards.",
+        "Pain always adds to a nice self kiss. You should try it sometime.",
+        "You know what's better than kisses? PAIN!",
+        "Self humiliation is the best kind of agony."
+    ],
+
+    "bot": [
+        "Fancy. But it would be even better if you were covered in your own blood...",
+        "Kisses amplify my undying bloodlust. You better watch yourself :smirk:",
+        "Do you have red lipstick on? I love the color red. I bet you can't figure out why :wink:",
+        "You wanna form a suicide pact? No? TOO BAD!"
+    ],
+
+    "standard": [
+        "[user] just kissed [target]. Are you gonna stab eachother now?",
+        "[target] just got a kiss from [user]. I could totally go for a blood bath right about now...",
+        "[target] was kissed by [user]. Do either of you like the color red by chance?"
+    ]
+}

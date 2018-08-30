@@ -1,0 +1,20 @@
+{
+    "self": [
+        "Self pats would be so much better with a knife. Trust me.",
+        "Pats are overrated. Knives however, aren't. You wanna check out my knife collection?",
+        "Welp. I could always give you a nice bloody pat if you wanted"
+    ],
+
+    "bot": [
+        "So then you're interested in manslaughter too then?",
+        "I love pats. Especially when there's pain and suffering involved!",
+        "This would be so much better if I had my knife with me...",
+        "Cool... you wanna get high off of pain together?"
+    ],
+
+    "standard": [
+        "[user] just gave [target] a pat. You two wanna go get high off of pain together?",
+        "[target] just got a hug from [user]. Cool... anyone want a spare kidney?",
+        "[target] was pat by [user]. Do pats involve murder? I can't remember..."
+    ]
+}
