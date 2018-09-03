@@ -1,6 +1,8 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
-    var embed = new imports.Discord.RichEmbed();
-    embed.setColor(eval('0x' + imports.settings.guilds[imports.guild.id].accentcolor.split('#')[1]));
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
     var id;
 
     if (arguments[0] != undefined) {
@@ -180,5 +182,5 @@ module.exports = function(imports, arguments) {
         embed.addField('roles[' + (roles.length - 1) + ']', rolesString);
     }
 
-    imports.channel.send({embed});
+    imports.channel.send(embed);
 }

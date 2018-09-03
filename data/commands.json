@@ -70,7 +70,7 @@
         "tags": ["management", "admin"],
         "params": [
             { "type": "string", "required": true },
-            { "type": "any", "required": true }
+            { "type": "string", "required": true }
         ]
     },
 
@@ -221,6 +221,19 @@
         "name": "get",
         "permissions": ["all"],
         "description": "gets a value from whatever you specify",
+        "hidden": false,
+        "nsfw": false,
+        "tags": ["management", "utility"],
+        "params": [
+            { "type": "string", "required": true },
+            { "type": "any", "required": false }
+        ]
+    },
+
+    {
+        "name": "raw",
+        "permissions": ["all"],
+        "description": "gets the raw value of whatever variable you specify",
         "hidden": false,
         "nsfw": false,
         "tags": ["management", "utility"],

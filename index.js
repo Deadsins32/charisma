@@ -3,8 +3,6 @@ var path = require('path');
 var Discord = require('discord.js');
 var client = new Discord.Client();
 
-var snekfetch = require('snekfetch');
-
 var Guild = require('./core/Guild.js');
 var User = require('./core/User.js');
 var Command = require('./core/Command.js');
@@ -25,19 +23,14 @@ var settings = {
 
 var exports = {
     client: client,
-    settings: settings,
-    Guild: Guild,
-    User: User,
+
     Command: Command,
     Flavors: Flavors,
     Seed: Seed,
+
+    settings: settings,
     config: config,
     aliases: aliases,
-    fs: require('fs'),
-    snekfetch: require('snekfetch'),
-    Discord: require('discord.js'),
-    treeify: require('treeify'),
-    anime: require('node-kitsu')
 }
 
 client.on('message', function(message) {

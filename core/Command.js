@@ -280,7 +280,7 @@ module.exports = {
             return output;
         },
 
-        check: function(object, command) {
+        check: function(object, arguments) {
             var output = true;
             var requirements = 0;
 
@@ -292,26 +292,26 @@ module.exports = {
 
             var error = false;
 
-            if (command.arguments.length == 0 && object.params[0].required == true) {
+            if (arguments.length == 0 && object.params[0].required == true) {
                 error = true;
             }
 
-            if (command.arguments.length > object.params.length) {
+            if (arguments.length > object.params.length) {
                 error = true;
             }
 
-            if (requirements > command.arguments.length) {
+            if (requirements > arguments.length) {
                 error = true;
             }
 
-            if (command.arguments.length <= object.params.length) {
-                for (a in command.arguments) {
-                    if (module.exports.methods[object.params[a].type](command.arguments[a]).pass == false) {
+            if (arguments.length <= object.params.length) {
+                for (a in arguments) {
+                    if (module.exports.methods[object.params[a].type](arguments[a]).pass == false) {
                         error = true;
                     }
 
-                    if (a == command.arguments.length - 1) {
-                        if ((command.arguments.length >= requirements) == false) {
+                    if (a == arguments.length - 1) {
+                        if ((arguments.length >= requirements) == false) {
                             error = true;
                         }
                     }

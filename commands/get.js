@@ -1,3 +1,5 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
     var keys = {
         bot: {
@@ -52,7 +54,7 @@ module.exports = function(imports, arguments) {
             },
 
             avatar: function(arguments) {
-                var embed = new imports.Discord.RichEmbed();
+                var embed = new Discord.RichEmbed();
                 embed.setColor(eval('0x' + imports.settings.guilds[imports.guild.id].accentcolor.split('#')[1]));
                 embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
                 var id;

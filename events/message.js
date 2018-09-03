@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = function(imports, message) {
     if (message.author.bot) {
         return;
@@ -6,22 +8,20 @@ module.exports = function(imports, message) {
     if (imports.settings.guilds[message.guild.id] == undefined) {
         imports.settings.guilds[message.guild.id] = imports.settings.defaults.guild;
         var json = JSON.stringify(imports.settings.guilds, null, 4);
-        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+        fs.writeFileSync('./data/settings/guilds.json', json);
     }
 
     if (imports.settings.guilds[message.guild.id].members[message.author.id] == undefined && imports.client.user.id != message.author.id) {
         imports.settings.guilds[message.guild.id].members[message.author.id] = imports.settings.defaults.member;
         var json = JSON.stringify(imports.settings.guilds, null, 4);
-        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+        fs.writeFileSync('./data/settings/guilds.json', json);
     }
 
     if (imports.settings.users[message.author.id] == undefined && imports.client.user.id != message.author.id) {
         imports.settings.users[message.author.id] = imports.settings.defaults.user;
         var json = JSON.stringify(imports.settings.users, null, 4);
-        imports.fs.writeFileSync('./data/settings/users.json', json);
+        fs.writeFileSync('./data/settings/users.json', json);
     }
-
-    //if (imports.settings)
 
     var localsettings = {
         guild: imports.settings.guilds[message.guild.id],
@@ -31,55 +31,69 @@ module.exports = function(imports, message) {
 
     if (message.content.startsWith(localsettings.guild.prefix)) {
         var exports = {
+            Command: imports.Command,
+            Flavors: imports.Flavors,
+            Seed: imports.Seed,
+
             client: imports.client,
             guild: message.guild,
             channel: message.channel,
             user: message.member,
             message: message,
+
             settings: imports.settings,
             localsettings: localsettings,
-            snekfetch: imports.snekfetch,
-            fs: imports.fs,
-            Discord: imports.Discord,
-            Command: imports.Command,
-            Flavors: imports.Flavors,
-            Seed: imports.Seed,
             config: imports.config,
             aliases: imports.aliases,
-            treeify: imports.treeify,
-            anime: imports.anime
         }
 
         var command = {
-            name: message.content.split(localsettings.guild.prefix)[1].split(' ')[0],
+            object: imports.Command.get.command(message.content.split(localsettings.guild.prefix)[1].split(' ')[0]),
+            full: message.content.slice(localsettings.guild.prefix.length),
+            name: message.content.slice(localsettings.guild.prefix.length).split(' ')[0],
             arguments: new Array()
         }
 
-        var longArguments = (message.content.match(/("([^"]|"")*")/g));
+        var longArguments1 = command.full.match(/("([^"]|"")*")/g);
+        command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
-        if (message.content != (localsettings.guild.prefix + command.name)) {
-            var content = message.content.replace(/("([^"]|"")*")/g, '[s]');
-            command.arguments = content.split(localsettings.guild.prefix + command.name)[1].split(' ').slice(1);
-        }
-
-        var s = 0;
-        for (a in command.arguments) {
-            if (command.arguments[a] == '[s]') {
-                command.arguments[a] = longArguments[s].slice(1, -1);
-                s++;
+        if (command.object != null) {
+            if (command.full.split(' ').length - 1 > command.object.params.length) {
+                if (command.object.params[command.object.params.length - 1].type == 'string') {
+                    var text = command.full.split(' ').splice(command.object.params.length);
+                    text = '"' + text.join(' ') + '"';
+                    var args = command.full.split(' ').splice(0, command.object.params.length);
+                    args[args.length] = text;
+                    command.full = args.join(' ');
+                }
             }
-        }
 
-        // determines if the command is using an alias
+            var longArguments2 = command.full.match(/("([^"]|"")*")/g);
+            command.full = command.full.replace(/("([^"]|"")*")/g, '[ss]');
 
-        if (imports.aliases[command.name] != undefined) {
-            command.name = imports.aliases[command.name];
-        }
+            command.arguments = command.full.slice(localsettings.guild.prefix.length + command.name + 1).split(' ');
 
-        var object = imports.Command.get.command(command.name);
+            var s = 0;
+            var ss = 0;
+            for (a in command.arguments) {
+                if (command.arguments[a] == '[s]') {
+                    command.arguments[a] = longArguments1[s].slice(1, -1);
+                    s++;
+                }
 
-        if (object != null) {
-            var status = imports.Command.get.status(exports, object, imports.settings.blacklist);
+                else if (command.arguments[a] == '[ss]') {
+                    command.arguments[a] = longArguments2[ss].slice(1, -1);
+                    ss++;
+                }
+            }
+
+            command.arguments.splice(0, 1);
+
+            if (imports.aliases[command.name] != undefined) {
+                command.name = imports.aliases[command.name];
+            }
+            
+            var status = imports.Command.get.status(exports, command.object, imports.settings.blacklist);
 
             if (status.blacklisted) {
                 if (message.author.id != imports.config.master) {
@@ -87,8 +101,12 @@ module.exports = function(imports, message) {
                 }
 
                 else {
-                    if (imports.Command.syntax.check(object, command)) {
+                    if (imports.Command.syntax.check(command.object, command.arguments)) {
                         imports.Command.commands[command.name](exports, command.arguments);
+                    }
+
+                    else {
+                        message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
                     }
                 }
             }
@@ -97,18 +115,12 @@ module.exports = function(imports, message) {
                 if (status.usable) {
                     if (status.nsfw) {
                         if (message.channel.nsfw) {
-                            if (imports.Command.syntax.check(object, command)) {
+                            if (imports.Command.syntax.check(command.object, command.arguments)) {
                                 imports.Command.commands[command.name](exports, command.arguments);
                             }
 
                             else {
-                                if (status.visible) {
-                                    message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
-                                }
-
-                                else {
-                                    message.channel.send('`command not found`');
-                                }
+                                message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
                             }
                         }
 
@@ -124,10 +136,10 @@ module.exports = function(imports, message) {
                     }
 
                     else {
-                        if (imports.Command.syntax.check(object, command)) {
+                        if (imports.Command.syntax.check(command.object, command.arguments)) {
                             imports.Command.commands[command.name](exports, command.arguments);
                         }
-                        
+
                         else {
                             if (status.visible) {
                                 message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');

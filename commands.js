@@ -29,6 +29,7 @@ module.exports = {
     // START GENERAL //
     help: require('./commands/help.js'),
     get: require('./commands/get.js'),
+    raw: require('./commands/raw.js'),
     tree: require('./commands/tree.js'),
     profile: require('./commands/profile.js'),
     // END GENERAL //

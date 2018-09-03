@@ -1,11 +1,11 @@
 var fs = require('fs');
+var root = fs.readdirSync(__dirname + '/../data/flavors/');
+
 module.exports = {
     get: function(flavor) {
-        var fs = require('fs');
-        var flavorRoot = fs.readdirSync(__dirname + '/../data/flavors/');
         var output = null;
-        for (r in flavorRoot) {
-            if (flavorRoot[r] == flavor) {
+        for (r in root) {
+            if (root[r] == flavor) {
                 output = new Object();
                 var files = fs.readdirSync(__dirname + '/../data/flavors/' + flavor + '/');
                 for (f in files) {
@@ -17,6 +17,11 @@ module.exports = {
         }
 
         return output;
+    },
+
+    getFlavors: function() {
+        var flavors = require('./../data/flavors/enabled.json');
+        return flavors;
     },
 
     check: function(flavor) {

@@ -1,3 +1,5 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
     var gifs = [
         "https://media.giphy.com/media/moWba8OhAmhZ6/giphy.gif",
@@ -17,14 +19,14 @@ module.exports = function(imports, arguments) {
     ]
 
     var username = imports.guild.members.find('id', imports.Command.methods.mention(arguments[0]).value).user.username;
-    if (imports.user.id == "393915173406244885" || imports.user.id == imports.config.master) {
+    if (imports.user.id == '393915173406244885' || imports.user.id == imports.config.master) {
         var url = gifs[Math.floor(Math.random() * gifs.length)];
-        var embed = new imports.Discord.RichEmbed();
+        var embed = new Discord.RichEmbed();
         embed.setAuthor('Charisma', imports.client.user.avatarURL);
         embed.setDescription(imports.user.user.username + ' stabbed ' + username);
-        embed.setColor(eval('0x' + imports.localsettings.guild.accentcolor.split('#')[1]));
+        embed.setColor(imports.localsettings.guild.accentcolor);
         embed.setImage(url);
-        imports.channel.send({embed});
+        imports.channel.send(embed);
     }
 
     else {

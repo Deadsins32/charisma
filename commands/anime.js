@@ -1,10 +1,13 @@
+var Discord = require('discord.js');
+var anime = require('node-kitsu');
+
 module.exports = function(imports, arguments) {
-    var embed = new imports.Discord.RichEmbed();
-    embed.setColor(eval('0x' + imports.settings.guilds[imports.guild.id].accentcolor.split('#')[1]));
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
     
     if (arguments[0] == 'get') {
         if (arguments[1] != undefined) {
-            imports.anime.searchAnime(arguments[1], 0).then(results => {
+            anime.searchAnime(arguments[1], 0).then(results => {
                 if (results[0] != undefined) {
                     embed.setTitle(results[0].attributes.canonicalTitle);
                     embed.setImage(results[0].attributes.coverImage.original);

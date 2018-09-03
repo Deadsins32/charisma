@@ -1,8 +1,10 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
-    var helpEmbed = new imports.Discord.RichEmbed();
+    var helpEmbed = new Discord.RichEmbed();
     var pageNumber = 1;
     helpEmbed.setAuthor('Command List');
-    helpEmbed.setColor(eval('0x' + imports.settings.guilds[imports.guild.id].accentcolor.split('#')[1]));
+    helpEmbed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
 
     var tag = false;
     var next = true;
@@ -28,6 +30,7 @@ module.exports = function(imports, arguments) {
                 }
 
                 if (tag) {
+                    console.log(tag);
                     if (!isNaN(arguments[1])) {
                         pageNumber = parseInt(arguments[1]);
                     }
@@ -42,9 +45,9 @@ module.exports = function(imports, arguments) {
                     }
 
                     if (index != null) {
-                        var commandEmbed = new imports.Discord.RichEmbed();
+                        var commandEmbed = new Discord.RichEmbed();
                         commandEmbed.setFooter(arguments[0]);
-                        commandEmbed.setColor(0xFF2121);
+                        commandEmbed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
 
                         var status = imports.Command.get.status(imports, imports.Command.objects[index], imports.settings.blacklist);
                         if (status.blacklisted && !status.master) {

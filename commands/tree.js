@@ -1,6 +1,8 @@
+var treeify = require('treeify');
+
 module.exports = function(imports, arguments) {
     if (arguments[0] == 'features') {
-        imports.channel.send('```' + imports.treeify.asTree(imports.settings.guilds[imports.guild.id].features, true) + '```');
+        imports.channel.send('```' + treeify.asTree(imports.settings.guilds[imports.guild.id].features, true) + '```');
     }
 
     else {

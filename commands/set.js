@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = function(imports, arguments) {
     var keys = {
         bot: {
@@ -19,7 +21,7 @@ module.exports = function(imports, arguments) {
                     if (imports.settings.guilds[imports.guild.id].accentcolor != arguments[1]) {
                         imports.settings.guilds[imports.guild.id].accentcolor = arguments[1];
                         var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                        fs.writeFileSync('./data/settings/guilds.json', json);
                         imports.channel.send('`accentcolor has been set to "' + arguments[1] + '"`');
                     }
 
@@ -37,7 +39,7 @@ module.exports = function(imports, arguments) {
                 if (imports.user.id == imports.guild.ownerID) {
                     imports.settings.guilds[imports.guild.id].description = arguments[1];
                     varjson = JSON.stringify(imports.settings.guilds, null, 4);
-                    imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                    fs.writeFileSync('./data/settings/guilds.json', json);
                     imports.channel.send('`description has been set to "' + arguments[1] + '"`');
                 }
 
@@ -52,7 +54,7 @@ module.exports = function(imports, arguments) {
                         var curve = parseFloat(arguments[1]);
                         imports.settings.guilds[imports.guild.id].expcurve = curve;
                         var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                        fs.writeFileSync('./data/settings/guilds.json', json);
                         imports.channel.send('`expcurve has been set to ' + arguments[1] + '`');
                     }
 
@@ -72,7 +74,7 @@ module.exports = function(imports, arguments) {
                         var channel = imports.Command.methods.channel(arguments[1]).value;
                         imports.settings.guilds[imports.guild.id].logchannel = channel;
                         var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                        fs.writeFileSync('./data/settings/guilds.json', json);
                         imports.channel.send('`logchannel has been set to "' + channel + '"`');
                     }
 
@@ -91,7 +93,7 @@ module.exports = function(imports, arguments) {
                     if (imports.guild.roles[arguments[1]] != undefined) {
                         imports.settings.guilds[imports.guild.id].autorole = arguments[1];
                         var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                        fs.writeFileSync('./data/settings/guilds.json', json);
                         imports.channel.send('`autorole has been set to "' + arguments[1] + '"`');
                     }
 
@@ -110,7 +112,7 @@ module.exports = function(imports, arguments) {
                     if (imports.settings.guilds[imports.guild.id].accentcolor != arguments[1]) {
                         imports.settings.guilds[imports.guild.id].flavor = arguments[1];
                         var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        imports.fs.writeFileSync('./data/settings/guilds.json', json);
+                        fs.writeFileSync('./data/settings/guilds.json', json);
                         imports.channel.send('`flavor has been set to "' + arguments[1] + '"`');
                     }
 
@@ -131,7 +133,7 @@ module.exports = function(imports, arguments) {
                     if (imports.settings.users[imports.user.id].color != arguments[1]) {
                         imports.settings.users[imports.user.id].color = arguments[1];
                         var json = JSON.stringify(imports.settings.users, null, 4);
-                        imports.fs.writeFileSync('./data/settings/users.json', json);
+                        fs.writeFileSync('./data/settings/users.json', json);
                         imports.channel.send('`profile color has been set to "' + arguments[1] + '"`');
                     }
 
@@ -148,7 +150,7 @@ module.exports = function(imports, arguments) {
             description: function(arguments) {
                 imports.settings.users[imports.user.id].description = arguments[1];
                 var json = JSON.stringify(imports.settings.users, null, 4);
-                imports.fs.writeFileSync('./data/settings/users.json', json);
+                fs.writeFileSync('./data/settings/users.json', json);
                 imports.channel.send('`profile description has been set to "' + arguments[1] + '"`');
             }
         }
