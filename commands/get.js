@@ -1,93 +1,157 @@
+Object.byString = function(o, s) {
+    s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    s = s.replace(/^\./, '');           // strip a leading dot
+    var a = s.split('.');
+    for (var i = 0, n = a.length; i < n; ++i) {
+        var k = a[i];
+        if (k in o) {
+            o = o[k];
+        } else {
+            return;
+        }
+    }
+    return o;
+}
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
-    var keys = {
-        bot: {
+    var embed = new Discord.RichEmbed();
+    embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
+    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
 
+    function Member(member) {
+        this.username = member.user.username;
+        this.nickname = member.nickname;
+        this.id = member.user.id;
+        this.discriminator = '#' + member.user.discriminator,
+        this.status = member.user.presence.status;
+        this.joinedAt = member.joinedAt.toString();
+        this.avatar = member.user.avatarURL;
+    }
+
+    function Role(role) {
+        this.name = role.name;
+        this.id = role.id;
+        this.color = role.hexColor;
+        this.mentionable = role.mentionable;
+        this.createdAt = role.createdAt.toString();
+    }
+
+    function Channel(channel) {
+        this.name = channel.name;
+        this.id = channel.id;
+        if (channel.parent) {
+            this.category = channel.parent.name;
+        }
+        this.type = channel.type;
+        this.createdAt = channel.createdAt.toString();
+    }
+
+    var objects = {
+        charisma: {
+            username: imports.client.user.username,
+            id: imports.client.user.id,
+            discriminator: '#' + imports.client.user.discriminator,
+            avatar: imports.client.user.avatarURL,
+            status: null,
+            createdAt: imports.client.user.createdAt.toString(),
+            flavors: imports.Flavors.getFlavors()
         },
 
         guild: {
-            id: function(arguments) {
-                imports.channel.send('`' + imports.guild.id + '`');
-            },
-
-            accentcolor: function(arguments) {
-                imports.channel.send('`' + imports.settings.guilds[imports.guild.id].accentcolor + '`');
-            },
-
-            flavor: function(arguments) {
-                imports.channel.send('`' + imports.settings.guilds[imports.guild.id].flavor + '`');
-            },
-
-            expcurve: function(arguments) {
-                imports.channel.send('`' + imports.settings.guilds[imports.guild.id].expcurve + '`');
+            name: imports.guild.name,
+            id: imports.guild.id,
+            owner: new Member(imports.guild.owner),
+            defaultRole: new Role(imports.guild.defaultRole),
+            settings: {
+                prefix: imports.settings.guilds[imports.guild.id].prefix,
+                flavor: imports.settings.guilds[imports.guild.id].flavor,
+                accentcolor: imports.settings.guilds[imports.guild.id].accentcolor,
+                description: imports.settings.guilds[imports.guild.id].description,
+                expcurve: imports.settings.guilds[imports.guild.id].expcurve,
+                logchannel: imports.settings.guilds[imports.guild.id].logchannel,
+                autorole: imports.settings.guilds[imports.guild.id].autorole,
+                selfroles: imports.settings.guilds[imports.guild.id].selfroles
             }
         },
 
-        channel: {
-            id: function(arguments) {
-                if (arguments[2] != undefined) {
+        user: new Member(imports.user),
+        channel: new Channel(imports.channel),
+    }
 
-                }
+    if (imports.client.user.presence.game) {
+        objects.charisma.status = imports.client.user.presence.game.name;
+    }
 
-                else {
-                    imports.channel.send('`' + imports.channel.id + '`');
-                }
-            }
-        },
+    if (arguments[1]) {
+        if (imports.Command.methods.mention(arguments[1]).pass) {
+            objects.user = new Member(imports.guild.members.find('id', imports.Command.methods.mention(arguments[1]).value));
+        }
 
-        user: {
-            id: function(arguments) {
-                if (arguments[2] != undefined) {
-                    if (imports.Command.methods.mention(arguments[2]).pass) {
-                        imports.channel.send('`' + imports.Command.methods.mention(arguments[2]).value + '`');
-                    }
-
-                    else {
-                        imports.channel.send('`invalid mention`');
-                    }
-                }
-
-                else {
-                    imports.channel.send('`' + imports.user.id + '`');
-                }
-            },
-
-            avatar: function(arguments) {
-                var embed = new Discord.RichEmbed();
-                embed.setColor(eval('0x' + imports.settings.guilds[imports.guild.id].accentcolor.split('#')[1]));
-                embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
-                var id;
-                var run = true;
-                if (arguments[1] == undefined) {
-                    id = imports.user.id;
-                }
-
-                else {
-                    if (imports.Command.methods.mention(arguments[1]).pass) {
-                        id = imports.Command.methods.mention(arguments[1]).value;
-                    }
-
-                    else {
-                        imports.channel.send('`invalid mention`');
-                        run = false;
-                    }
-                }
-
-                if (run) {
-                    var member = imports.guild.members.find('id', id);
-                    embed.setImage(member.user.avatarURL);
-                    imports.channel.send(embed);
-                }
-            }
+        else if (imports.Command.methods.channel(arguments[1]).pass) {
+            objects.channel = new Channel(imports.guild.channels.find('id', imports.Command.methods.channel(arguments[1]).value));
         }
     }
 
-    if (eval('keys.' + arguments[0]) != undefined) {
-        eval('keys.' + arguments[0])(arguments);
+    var object = Object.byString(objects, arguments[0]);
+
+    if (object != undefined) {
+        if (object.color) {
+            embed.setColor(object.color);
+        }
+
+        for (o in object) {
+            if (isNaN(o)) {
+                if (object[o] instanceof Object) {
+                    if (object[o] instanceof Array) {
+                        embed.addField(o, object[o].length + ' items', true);
+                    }
+
+                    else {
+                        embed.addField(o, Object.size(object[o]) + ' items', true);
+                    }
+                }
+
+                else {
+                    if (object[o]) {
+                        embed.addField(o, object[o], true);
+                    }
+                }
+            }
+        }
+
+        if (object instanceof Object) {
+            if (object instanceof Array) {
+                if (object.length == 0) {
+                    embed.setDescription('there\'s no subvalues in `' + arguments[0] + '`');
+                }
+
+                else {
+                    embed.addField(arguments[0], object.join('\n'));
+                }
+            }
+
+            else {
+                if (Object.size(object) == 0) {
+                    embed.setDescription('there\'s no subvalues in `' + arguments[0] + '`');
+                }
+            }
+        }
+        
+        imports.channel.send(embed);
     }
 
     else {
-        imports.channel.send('`"' + arguments[0] + '" does not exist`');
+        embed.setDescription('`' + arguments[0] + '` does not exist');
+        imports.channel.send(embed);
     }
 }
