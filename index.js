@@ -10,6 +10,7 @@ var Flavors = require('./core/Flavors.js');
 var Seed = require('./core/Seed.js');
 
 var aliases = require('./commands/aliases.json');
+var shorthands = require('./data/shorthands.json');
 
 var config = require('./config.json');
 var events = require('./events.js');
@@ -31,6 +32,7 @@ var exports = {
     settings: settings,
     config: config,
     aliases: aliases,
+    shorthands: shorthands
 }
 
 client.on('message', function(message) {

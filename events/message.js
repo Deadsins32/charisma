@@ -45,12 +45,23 @@ module.exports = function(imports, message) {
             localsettings: localsettings,
             config: imports.config,
             aliases: imports.aliases,
+            shorthands: imports.shorthands
+        }
+
+        var content;
+
+        if (imports.shorthands[message.content.slice(localsettings.guild.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(localsettings.guild.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(localsettings.guild.prefix.length).split(' ')[0]]);
+        }
+
+        else {
+            content = message.content;
         }
 
         var command = {
-            object: imports.Command.get.command(message.content.split(localsettings.guild.prefix)[1].split(' ')[0]),
-            full: message.content.slice(localsettings.guild.prefix.length),
-            name: message.content.slice(localsettings.guild.prefix.length).split(' ')[0],
+            object: imports.Command.get.command(content.split(localsettings.guild.prefix)[1].split(' ')[0]),
+            full: content.slice(localsettings.guild.prefix.length),
+            name: content.slice(localsettings.guild.prefix.length).split(' ')[0],
             arguments: new Array()
         }
 
