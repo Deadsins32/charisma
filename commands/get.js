@@ -25,13 +25,13 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
     embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
 
     function Member(member) {
         this.username = member.user.username;
         this.nickname = member.nickname;
         this.id = member.user.id;
+        this.color = member.displayHexColor,
         this.discriminator = '#' + member.user.discriminator,
         this.status = member.user.presence.status;
         this.joinedAt = member.joinedAt.toString();
@@ -100,6 +100,26 @@ module.exports = function(imports, arguments) {
         else if (imports.Command.methods.channel(arguments[1]).pass) {
             objects.channel = new Channel(imports.guild.channels.find('id', imports.Command.methods.channel(arguments[1]).value));
         }
+
+        else {
+            if (arguments[0] == 'role') {
+                if (imports.guild.roles.find('name', arguments[1])) {
+                    objects.role = new Role(imports.guild.roles.find('name', arguments[1]));
+                }
+
+                else if (imports.guild.roles.find('id', arguments[1])) {
+                    objects.role = new Role(imports.guilds.roles.find('id', arguments[1]));
+                }
+            }
+        }
+    }
+
+    if (arguments[0] == 'user') {
+        embed.setThumbnail(objects.user.avatar);
+    }
+
+    if (arguments[0] == 'user.avatar') {
+        embed.setImage(objects.user.avatar);
     }
 
     var object = Object.byString(objects, arguments[0]);
@@ -147,10 +167,12 @@ module.exports = function(imports, arguments) {
             }
         }
         
+        embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
         imports.channel.send(embed);
     }
 
     else {
+        embed.setThumbnail('');
         embed.setDescription('`' + arguments[0] + '` does not exist');
         imports.channel.send(embed);
     }

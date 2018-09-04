@@ -25,7 +25,7 @@
 
     {
         "name": "enable",
-        "permissions": ["owner"],
+        "permissions": ["ADMINISTRATOR"],
         "description": "enables a specific feature on the server",
         "hidden": false,
         "nsfw": false,
@@ -37,7 +37,7 @@
 
     {
         "name": "disable",
-        "permissions": ["owner"],
+        "permissions": ["ADMINISTRATOR"],
         "description": "disables a specific feature on the server",
         "hidden": false,
         "nsfw": false,
@@ -134,8 +134,7 @@
         "nsfw": false,
         "tags": ["fun"],
         "params": [
-            { "type": "string", "required": true },
-            { "type": "string", "required": false }    
+            { "type": "string", "required": true }
         ]
     },
 
@@ -226,7 +225,7 @@
         "tags": ["management", "utility"],
         "params": [
             { "type": "string", "required": true },
-            { "type": "any", "required": false }
+            { "type": "string", "required": false }
         ]
     },
 

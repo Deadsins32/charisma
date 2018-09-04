@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 module.exports = function(imports, arguments) {
     arguments[0] = imports.Command.methods.mention(arguments[0]).value;
     var member = imports.guild.members.find('id', arguments[0]);

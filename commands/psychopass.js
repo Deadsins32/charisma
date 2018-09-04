@@ -1,3 +1,5 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
     var discriminator;
     var identifier;
@@ -5,6 +7,10 @@ module.exports = function(imports, arguments) {
     var identifier3;
     var isSelf = false;
     var message;
+
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+
     if (arguments[0] == undefined) {
         discriminator = imports.user.user.discriminator;
         identifier = 'Your';
@@ -58,5 +64,6 @@ module.exports = function(imports, arguments) {
         }
     }
 
-    imports.channel.send(message);
+    embed.setDescription(message);
+    imports.channel.send(embed);
 }
