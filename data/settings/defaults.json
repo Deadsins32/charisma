@@ -9,6 +9,16 @@
         "autorole": "",
         "selfroles": {},
         "members": {},
+        "colors": {
+            "accent": "#9DA0CB",
+            "logs": {
+                "joins": "#42F49B",
+                "leaves": "#F44141",
+                "nicknamechanges": "#41EEF4",
+                "namechanges": "#418EF4"
+            }
+        },
+
         "features": {
             "leveling": true,
             "achievements": true,

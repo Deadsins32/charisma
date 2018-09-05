@@ -28,7 +28,7 @@ module.exports = function(imports, arguments) {
 
     else {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+        embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
         embed.setDescription('`' + arguments[0] + '` does not exist');
     }
 }

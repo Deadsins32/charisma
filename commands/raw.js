@@ -143,12 +143,12 @@ module.exports = function(imports, arguments) {
             settings: {
                 prefix: imports.settings.guilds[imports.guild.id].prefix,
                 flavor: imports.settings.guilds[imports.guild.id].flavor,
-                accentcolor: imports.settings.guilds[imports.guild.id].accentcolor,
                 description: imports.settings.guilds[imports.guild.id].description,
                 expcurve: imports.settings.guilds[imports.guild.id].expcurve,
                 logchannel: imports.settings.guilds[imports.guild.id].logchannel,
                 autorole: imports.settings.guilds[imports.guild.id].autorole,
-                selfroles: imports.settings.guilds[imports.guild.id].selfroles
+                selfroles: imports.settings.guilds[imports.guild.id].selfroles,
+                colors: imports.settings.guilds[imports.guild.id].colors
             }
         },
 

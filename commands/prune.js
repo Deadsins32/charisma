@@ -14,7 +14,7 @@ module.exports = function(imports, arguments) {
         var embed = new Discord.RichEmbed();
         embed.setAuthor('Charisma', imports.client.user.avatarURL);
         embed.setDescription(imports.user.displayName + ' prune ' + arguments[0] + ' messages');
-        embed.setColor(imports.localsettings.guild.accentcolor);
+        embed.setColor(imports.localsettings.guild.colors.accent);
         imports.channel.send(embed);
     }
 };

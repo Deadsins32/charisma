@@ -25,7 +25,8 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
 
     function Member(member) {
         this.username = member.user.username;
@@ -75,12 +76,12 @@ module.exports = function(imports, arguments) {
             settings: {
                 prefix: imports.settings.guilds[imports.guild.id].prefix,
                 flavor: imports.settings.guilds[imports.guild.id].flavor,
-                accentcolor: imports.settings.guilds[imports.guild.id].accentcolor,
                 description: imports.settings.guilds[imports.guild.id].description,
                 expcurve: imports.settings.guilds[imports.guild.id].expcurve,
                 logchannel: imports.settings.guilds[imports.guild.id].logchannel,
                 autorole: imports.settings.guilds[imports.guild.id].autorole,
-                selfroles: imports.settings.guilds[imports.guild.id].selfroles
+                selfroles: imports.settings.guilds[imports.guild.id].selfroles,
+                colors: imports.settings.guilds[imports.guild.id].colors
             }
         },
 
@@ -166,8 +167,13 @@ module.exports = function(imports, arguments) {
                 }
             }
         }
-        
-        embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
+
+        else if (imports.Command.methods.color(object).pass) {
+            embed.setColor(object);
+            embed.setDescription(object);
+            embed.setFooter('');
+        }
+
         imports.channel.send(embed);
     }
 

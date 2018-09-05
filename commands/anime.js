@@ -3,7 +3,7 @@ var anime = require('node-kitsu');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
 
     anime.searchAnime(arguments[0], 0).then(results => {
         if (results[0]) {

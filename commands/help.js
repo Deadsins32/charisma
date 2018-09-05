@@ -3,7 +3,7 @@ var Discord = require('discord.js');
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
 
-    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
 
     function parse(command) {
         var status = imports.Command.get.status(imports, command, imports.settings.blacklist);

@@ -47,4 +47,20 @@ client.on('guildDelete', function(guild) {
     events.guildDelete(exports, guild);
 });
 
+client.on('guildMemberAdd', function(member) {
+    events.guildMemberAdd(exports, member);
+});
+
+client.on('guildMemberRemove', function(member) {
+    events.guildMemberRemove(exports, member);
+});
+
+client.on('guildMemberUpdate', function(oldMember, newMember) {
+    events.guildMemberUpdate(exports, oldMember, newMember);
+});
+
+client.on('userUpdate', function(oldUser, newUser) {
+    events.userUpdate(exports, oldUser, newUser);
+});
+
 client.login(config.token);

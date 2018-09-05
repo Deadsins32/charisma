@@ -7,7 +7,7 @@ module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
     embed.setAuthor('Charisma', imports.client.user.avatarURL);
     embed.setDescription(imports.Flavors.variables(imports.Flavors.pick(imports.localsettings.guild.flavor, 'pat', 'standard'), [{ name: 'user', value: imports.user.displayName }, { name: 'target', value: username }]));
-    embed.setColor(imports.localsettings.guild.accentcolor);
+    embed.setColor(imports.localsettings.guild.colors.accent);
 
     if (imports.user.id == arguments[0]) {
         imports.message.channel.send(imports.Flavors.variables(imports.Flavors.pick(imports.localsettings.guild.flavor, 'pat', 'self'), [{ name: 'user', value: imports.user.displayName }]));

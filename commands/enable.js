@@ -37,12 +37,12 @@ var fs = require('fs');
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
 
-    embed.setColor(imports.settings.guilds[imports.guild.id].accentcolor);
+    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
 
     if (Object.byString(imports.settings.guilds[imports.guild.id].features, arguments[0]) != undefined) {
         if (Object.byString(imports.settings.guilds[imports.guild.id].features, arguments[0]) == false) {
             set(imports.settings.guilds[imports.guild.id].features, arguments[0], true);
-            var json = JSON.stringify(imports.settings.guilds[imports.guild.id], null, 4);
+            var json = JSON.stringify(imports.settings.guilds, null, 4);
             fs.writeFileSync('./data/settings/guilds.json', json);
             embed.setDescription('`' + arguments[0] + '` has been enabled');
         }
