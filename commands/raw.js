@@ -161,7 +161,7 @@ module.exports = function(imports, arguments) {
     }
 
     if (imports.client.user.presence.game) {
-        object.charisma.status = imports.client.user.presence.game.name;
+        objects.charisma.status = imports.client.user.presence.game.name;
     }
 
     if (arguments[1]) {

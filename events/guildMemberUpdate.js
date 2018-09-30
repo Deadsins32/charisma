@@ -13,15 +13,15 @@ module.exports = function(imports, oldMember, newMember) {
                         embed.setFooter('nickname change', newMember.user.avatarURL);
                         
                         if (oldMember.nickname == null && newMember.nickname != null) {
-                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '** has set their nickname to **' + newMember.nickname + '**');
+                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been set to **' + newMember.nickname + '**');
                         }
 
                         else if (oldMember.nickname != null && newMember.nickname == null) {
-                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '** has removed their nickname');
+                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been removed');
                         }
 
                         else {
-                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '** has changed their nickname to **' + newMember.nickname + '**');
+                            embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been changed to **' + newMember.nickname + '**');
                         }
 
                         channel.send(embed);

@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var chalk = require('chalk');
 var Discord = require('discord.js');
 var client = new Discord.Client();
 
@@ -14,6 +15,24 @@ var shorthands = require('./data/shorthands.json');
 
 var config = require('./config.json');
 var events = require('./events.js');
+
+var CONSOLE = console;
+
+console.ready = function(str) {
+    CONSOLE.log(chalk.greenBright('[+]'), str);
+}
+
+console.warn = function(str) {
+    CONSOLE.log(chalk.yellowBright('[-]'), str);
+}
+
+console.error = function(str) {
+    CONSOLE.log(chalk.redBright('[!]'), str);
+}
+
+console.info = function(str) {
+    CONSOLE.log(chalk.cyanBright('[?]'), str);
+}
 
 var settings = {
     blacklist: require('./data/settings/blacklist.json'),
@@ -34,6 +53,22 @@ var exports = {
     aliases: aliases,
     shorthands: shorthands
 }
+
+process.stdin.resume();
+
+function exitHandler() {
+    CONSOLE.log('exiting!');
+    process.exit();
+}
+
+process.on('SIGINT', exitHandler.bind());
+
+client.on('ready', function() {
+    console.ready('client ready!');
+    console.warn('client ready!');
+    console.error('client ready!');
+    console.info('client ready!');
+});
 
 client.on('message', function(message) {
     events.message(exports, message);
