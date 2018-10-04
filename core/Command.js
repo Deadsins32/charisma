@@ -1,11 +1,8 @@
-var fs = require('fs');
-
-var colors = require('./../data/colors.json');
 var config = require('./../config.json');
 
 module.exports = {
     objects: require('./../data/commands.json'),
-    commands: require('./../commands.js'),
+    commands: {},
     methods: {
         any: function(input) {
             return true;

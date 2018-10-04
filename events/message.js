@@ -1,4 +1,5 @@
 var fs = require('fs');
+var Discord = require('discord.js');
 
 module.exports = function(imports, message) {
     if (message.author.bot) {
@@ -68,6 +69,14 @@ module.exports = function(imports, message) {
         var longArguments1 = command.full.match(/("([^"]|"")*")/g);
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
+        if (imports.aliases[command.name] != undefined) {
+            var actual = imports.aliases[command.name];
+
+            command.object = imports.Command.get.command(actual);
+            command.full = command.full.replace(command.name, actual);
+            command.name = actual;
+        }
+
         if (command.object != null) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
                 if (command.object.params[command.object.params.length - 1].type == 'string') {
@@ -99,10 +108,6 @@ module.exports = function(imports, message) {
             }
 
             command.arguments.splice(0, 1);
-
-            if (imports.aliases[command.name] != undefined) {
-                command.name = imports.aliases[command.name];
-            }
             
             var status = imports.Command.get.status(exports, command.object, imports.settings.blacklist);
 
@@ -117,7 +122,11 @@ module.exports = function(imports, message) {
                     }
 
                     else {
-                        message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
+                        var embed = new Discord.RichEmbed();
+                        embed.setColor(localsettings.guild.colors.accent);
+                        embed.setTitle('invalid syntax');
+                        embed.addField('usage', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                        message.channel.send(embed);
                     }
                 }
             }
@@ -131,7 +140,11 @@ module.exports = function(imports, message) {
                             }
 
                             else {
-                                message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
+                                var embed = new Discord.RichEmbed();
+                                embed.setColor(localsettings.guild.colors.accent);
+                                embed.setTitle('invalid syntax');
+                                embed.addField('usage', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                                message.channel.send(embed);
                             }
                         }
 
@@ -153,7 +166,11 @@ module.exports = function(imports, message) {
 
                         else {
                             if (status.visible) {
-                                message.channel.send('```invalid syntax\nusage: ' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '```');
+                                var embed = new Discord.RichEmbed();
+                                embed.setColor(localsettings.guild.colors.accent);
+                                embed.setTitle('invalid syntax');
+                                embed.addField('usage:', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                                message.channel.send(embed);
                             }
 
                             else {

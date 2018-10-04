@@ -1,11 +1,9 @@
 var fs = require('fs');
-var path = require('path');
+
 var chalk = require('chalk');
 var Discord = require('discord.js');
 var client = new Discord.Client();
 
-var Guild = require('./core/Guild.js');
-var User = require('./core/User.js');
 var Command = require('./core/Command.js');
 var Flavors = require('./core/Flavors.js');
 var Seed = require('./core/Seed.js');
@@ -51,7 +49,9 @@ var exports = {
     settings: settings,
     config: config,
     aliases: aliases,
-    shorthands: shorthands
+    shorthands: shorthands,
+
+    console, console
 }
 
 process.stdin.resume();
@@ -63,39 +63,32 @@ function exitHandler() {
 
 process.on('SIGINT', exitHandler.bind());
 
-client.on('ready', function() {
-    console.ready('client ready!');
-    console.warn('client ready!');
-    console.error('client ready!');
-    console.info('client ready!');
+fs.readdir('./commands', function(error, files) {
+    var commandTotal = 0;
+    if (error) {
+        console.error(error.stack);
+    }
+
+    else {
+        for (f in files) {
+            if (files[f].endsWith('.js')) {
+                var file = require('./commands/' + files[f]);
+                var name = files[f].split('.js')[0];
+                exports.Command.commands[name] = file;
+                commandTotal++;
+            }
+        }
+    }
+
+    console.ready(commandTotal + ' commands have been loaded');
 });
 
-client.on('message', function(message) {
-    events.message(exports, message);
-});
-
-client.on('guildCreate', function(guild) {
-    events.guildCreate(exports, guild);
-});
-
-client.on('guildDelete', function(guild) {
-    events.guildDelete(exports, guild);
-});
-
-client.on('guildMemberAdd', function(member) {
-    events.guildMemberAdd(exports, member);
-});
-
-client.on('guildMemberRemove', function(member) {
-    events.guildMemberRemove(exports, member);
-});
-
-client.on('guildMemberUpdate', function(oldMember, newMember) {
-    events.guildMemberUpdate(exports, oldMember, newMember);
-});
-
-client.on('userUpdate', function(oldUser, newUser) {
-    events.userUpdate(exports, oldUser, newUser);
-});
+client.on('ready', function() { console.ready('ready') });
+client.on('message', function(message) { try { events.message(exports, message) } catch(error) { console.error(error.stack) }});
+client.on('guildMemberAdd', function(member) { try { events.guildMemberAdd(exports, member) } catch(error) { console.error(error.stack) }});
+client.on('guildMemberRemove', function(member) { try { events.guildMemberRemove(exports, member) } catch(error) { console.error(error.stack) }});
+client.on('guildMemberUpdate', function(oldMember, newMember) { try { events.guildMemberUpdate(exports, oldMember, newMember) } catch(error) { console.error(error.stack) }});
+client.on('userUpdate', function(oldUser, newUser) { try { events.userUpdate(exports, oldUser, newUser) } catch(error) { console.error(error.stack) }});
+client.on('error', function(error) { console.error(error.stack) });
 
 client.login(config.token);
