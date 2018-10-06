@@ -6,15 +6,15 @@ module.exports = function(imports, arguments) {
     var username = imports.guild.members.find('id', arguments[0]).displayName;
     var embed = new Discord.RichEmbed();
     embed.setAuthor('Charisma', imports.client.user.avatarURL);
-    embed.setDescription(imports.Flavors.variables(imports.Flavors.pick(imports.localsettings.guild.flavor, 'kiss', 'standard'), [{ name: 'user', value: imports.user.displayName }, { name: 'target', value: username }]));
-    embed.setColor(imports.localsettings.guild.colors.accent);
+    embed.setDescription(imports.Flavors.variables(imports.Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, 'kiss', 'standard'), [{ name: 'user', value: imports.user.displayName }, { name: 'target', value: username }]));
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     if (imports.user.id == arguments[0]) {
-        imports.message.channel.send(imports.Flavors.variables(imports.Flavors.pick(imports.localsettings.guild.flavor, 'kiss', 'self'), [{ name: 'user', value: imports.user.displayName }]));
+        imports.message.channel.send(imports.Flavors.variables(imports.Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, 'kiss', 'self'), [{ name: 'user', value: imports.user.displayName }]));
     }
 
     else if (imports.client.user.id == arguments[0]) {
-        imports.message.channel.send(imports.Flavors.variables(imports.Flavors.pick(imports.localsettings.guild.flavor, 'kiss', 'bot'), [{ name: 'user', value: imports.user.displayName }]));
+        imports.message.channel.send(imports.Flavors.variables(imports.Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, 'kiss', 'bot'), [{ name: 'user', value: imports.user.displayName }]));
     }
 
     else {

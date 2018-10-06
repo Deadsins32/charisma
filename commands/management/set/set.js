@@ -4,7 +4,7 @@ var Discord = require('discord.js');
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
     embed.setAuthor(imports.client.user.username, imports.client.user.avatarURL);
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     var keys = {
         bot: {
@@ -28,12 +28,10 @@ module.exports = function(imports, arguments) {
                 colors: {
                     accent: function(arguments) {
                         if (imports.Command.methods.color(arguments[1]).pass) {
-                            if (imports.settings.guilds[imports.guild.id].colors.accent != arguments[1]) {
-                                imports.settings.guilds[imports.guild.id].colors.accent = arguments[1];
-                                var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                fs.writeFileSync('./data/settings/guilds.json', json);
+                            if (imports.data.guilds[imports.guild.id].colors.accent != arguments[1]) {
+                                imports.data.guilds[imports.guild.id].colors.accent = arguments[1];
                             
-                                embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+                                embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
                                 embed.setDescription('accent has been set to `' + arguments[1] + '`');
                                 imports.channel.send(embed);
                             }
@@ -53,12 +51,10 @@ module.exports = function(imports, arguments) {
                     logs: {
                         joins: function(arguments) {
                             if (imports.Command.methods.color(arguments[1]).pass) {
-                                if (imports.settings.guilds[imports.guild.id].colors.logs.joins != arguments[1]) {
-                                    imports.settings.guilds[imports.guild.id].colors.logs.joins = arguments[1];
-                                    var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                    fs.writeFileSync('./data/settings/guilds.json', json);
+                                if (imports.data.guilds[imports.guild.id].colors.logs.joins != arguments[1]) {
+                                    imports.data.guilds[imports.guild.id].colors.logs.joins = arguments[1];
                             
-                                    embed.setColor(imports.settings.guilds[imports.guild.id].colors.logs.joins);
+                                    embed.setColor(imports.data.guilds[imports.guild.id].colors.logs.joins);
                                     embed.setDescription('joins has been set to `' + arguments[1] + '`');
                                     imports.channel.send(embed);
                                 }
@@ -77,12 +73,10 @@ module.exports = function(imports, arguments) {
 
                         leaves: function(arguments) {
                             if (imports.Command.methods.color(arguments[1]).pass) {
-                                if (imports.settings.guilds[imports.guild.id].colors.logs.leaves != arguments[1]) {
-                                    imports.settings.guilds[imports.guild.id].colors.logs.leaves = arguments[1];
-                                    var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                    fs.writeFileSync('./data/settings/guilds.json', json);
+                                if (imports.data.guilds[imports.guild.id].colors.logs.leaves != arguments[1]) {
+                                    imports.data.guilds[imports.guild.id].colors.logs.leaves = arguments[1];
                             
-                                    embed.setColor(imports.settings.guilds[imports.guild.id].colors.logs.leaves);
+                                    embed.setColor(imports.data.guilds[imports.guild.id].colors.logs.leaves);
                                     embed.setDescription('leaves has been set to `' + arguments[1] + '`');
                                     imports.channel.send(embed);
                                 }
@@ -101,12 +95,10 @@ module.exports = function(imports, arguments) {
 
                         nicknamechanges: function(arguments) {
                             if (imports.Command.methods.color(arguments[1]).pass) {
-                                if (imports.settings.guilds[imports.guild.id].colors.logs.nicknamechanges != arguments[1]) {
-                                    imports.settings.guilds[imports.guild.id].colors.logs.nicknamechanges = arguments[1];
-                                    var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                    fs.writeFileSync('./data/settings/guilds.json', json);
+                                if (imports.data.guilds[imports.guild.id].colors.logs.nicknamechanges != arguments[1]) {
+                                    imports.data.guilds[imports.guild.id].colors.logs.nicknamechanges = arguments[1];
                             
-                                    embed.setColor(imports.settings.guilds[imports.guild.id].colors.logs.nicknamechanges);
+                                    embed.setColor(imports.data.guilds[imports.guild.id].colors.logs.nicknamechanges);
                                     embed.setDescription('nicknamechanges has been set to `' + arguments[1] + '`');
                                     imports.channel.send(embed);
                                 }
@@ -125,12 +117,10 @@ module.exports = function(imports, arguments) {
 
                         usernamechanges: function(arguments) {
                             if (imports.Command.methods.color(arguments[1]).pass) {
-                                if (imports.settings.guilds[imports.guild.id].colors.logs.usernamechanges != arguments[1]) {
-                                    imports.settings.guilds[imports.guild.id].colors.logs.usernamechanges = arguments[1];
-                                    var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                    fs.writeFileSync('./data/settings/guilds.json', json);
+                                if (imports.data.guilds[imports.guild.id].colors.logs.usernamechanges != arguments[1]) {
+                                    imports.data.guilds[imports.guild.id].colors.logs.usernamechanges = arguments[1];
                             
-                                    embed.setColor(imports.settings.guilds[imports.guild.id].colors.logs.usernamechanges);
+                                    embed.setColor(imports.data.guilds[imports.guild.id].colors.logs.usernamechanges);
                                     embed.setDescription('usernamechanges has been set to `' + arguments[1] + '`');
                                     imports.channel.send(embed);
                                 }
@@ -151,9 +141,7 @@ module.exports = function(imports, arguments) {
 
                 description: function(arguments) {
                     if (imports.user.permissions.serialize().ADMINISTRATOR) {
-                        imports.settings.guilds[imports.guild.id].description = arguments[1];
-                        var json = JSON.stringify(imports.settings.guilds, null, 4);
-                        fs.writeFileSync('./data/settings/guilds.json', json);
+                        imports.data.guilds[imports.guild.id].config.description = arguments[1];
                         
                         embed.setDescription('description has been set to "' + arguments[1] + '"');
                         imports.channel.send(embed);
@@ -169,9 +157,7 @@ module.exports = function(imports, arguments) {
                     if (imports.user.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.number(arguments[1]).pass) {
                             var curve = parseFloat(arguments[1]);
-                            imports.settings.guilds[imports.guild.id].expcurve = curve;
-                            var json = JSON.stringify(imports.settings.guilds, null, 4);
-                            fs.writeFileSync('./data/settings/guilds.json', json);
+                            imports.data.guilds[imports.guild.id].config.expcurve = curve;
                             
                             embed.setDescription('expcurve has been set to `' + arguments[1] + '`');
                             imports.channel.send(embed);
@@ -193,9 +179,7 @@ module.exports = function(imports, arguments) {
                     if (imports.user.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.channel(arguments[1]).pass) {
                             var channel = imports.Command.methods.channel(arguments[1]).value;
-                            imports.settings.guilds[imports.guild.id].logchannel = channel;
-                            var json = JSON.stringify(imports.settings.guilds, null, 4);
-                            fs.writeFileSync('./data/settings/guilds.json', json);
+                            imports.data.guilds[imports.guild.id].config.logchannel = channel;
                             
                             embed.setDescription('logchannel has been set to ' + arguments[1]);
                             imports.channel.send(embed);
@@ -217,9 +201,7 @@ module.exports = function(imports, arguments) {
                     if (imports.user.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.role(arguments[1]).pass) {
                             var role = imports.Command.methods.role(arguments[1]).value;
-                            imports.settings.guilds[imports.guild.id].autorole = role;
-                            var json = JSON.stringify(imports.settings.guilds, null, 4);
-                            fs.writeFileSync('./data/settings/guilds.json', json);
+                            imports.data.guilds[imports.guild.id].config.autorole = role;
                             
                             embed.setDescription('autorole has been set to `@' + imports.guild.roles.find('id', role).name + '`');
                             imports.channel.send(embed);
@@ -227,9 +209,7 @@ module.exports = function(imports, arguments) {
 
                         else if (imports.guild.roles.find('name', arguments[1])) {
                             var role = imports.guild.roles.find('name', arguments[1]);
-                            imports.settings.guilds[imports.guild.id].autorole = role.id;
-                            var json = JSON.stringify(imports.settings.guilds, null, 4);
-                            fs.writeFileSync('./data/settings/guilds.json', json);
+                            imports.data.guilds[imports.guild.id].config.autorole = role.id;
 
                             embed.setDescription('autorole has been set to `@' + role.name + '`');
                             imports.channel.send(embed);
@@ -237,9 +217,7 @@ module.exports = function(imports, arguments) {
 
                         else if (imports.guild.roles.find('id', arguments[1])) {
                             var role = imports.guild.roles.find('id', arguments[1]);
-                            imports.settings.guilds[imports.guild.id].autorole = role.id;
-                            var json = JSON.stringify(imports.settings.guilds, null, 4);
-                            fs.writeFileSync('./data/settings/guilds.json', json);
+                            imports.data.guilds[imports.guild.id].config.autorole = role.id;
 
                             embed.setDescription('autorole has been set to `@' + role.name + '`');
                             imports.channel.send(embed);
@@ -260,10 +238,8 @@ module.exports = function(imports, arguments) {
                 flavor: function(arguments) {
                     if (imports.user.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Flavors.get(arguments[1]) != null) {
-                            if (imports.settings.guilds[imports.guild.id].colors.accent != arguments[1]) {
-                                imports.settings.guilds[imports.guild.id].flavor = arguments[1];
-                                var json = JSON.stringify(imports.settings.guilds, null, 4);
-                                fs.writeFileSync('./data/settings/guilds.json', json);
+                            if (imports.data.guilds[imports.guild.id].colors.accent != arguments[1]) {
+                                imports.data.guilds[imports.guild.id].config.flavor = arguments[1];
 
                                 embed.setDescription('flavor has been set to "' + arguments[1] + '"');
                                 imports.channel.send(embed);
@@ -291,10 +267,8 @@ module.exports = function(imports, arguments) {
         profile: {
             color: function(arguments) {
                 if (imports.Command.methods.color(arguments[1]).pass) {
-                    if (imports.settings.users[imports.user.id].color != arguments[1]) {
-                        imports.settings.users[imports.user.id].color = arguments[1];
-                        var json = JSON.stringify(imports.settings.users, null, 4);
-                        fs.writeFileSync('./data/settings/users.json', json);
+                    if (imports.data.users[imports.user.id].color != arguments[1]) {
+                        imports.data.users[imports.user.id].color = arguments[1];
 
                         embed.setColor(arguments[1]);
                         embed.setDescription('profile color has been set to `' + arguments[1] + '`');
@@ -315,9 +289,7 @@ module.exports = function(imports, arguments) {
             },
 
             description: function(arguments) {
-                imports.settings.users[imports.user.id].description = arguments[1];
-                var json = JSON.stringify(imports.settings.users, null, 4);
-                fs.writeFileSync('./data/settings/users.json', json);
+                imports.data.users[imports.user.id].description = arguments[1];
 
                 embed.setDescription('profile description has been set to "' + arguments[1] + '"');
                 imports.channel.send(embed);

@@ -3,10 +3,10 @@ var Discord = require('discord.js');
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
 
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     function parse(name, command) {
-        var status = imports.Command.get.status(imports, name, command, imports.settings.blacklist);
+        var status = imports.Command.get.status(imports, name, command, imports.blacklist);
         if (status.usable && status.visible && !status.blacklisted) {
             if (status.nsfw) {
                 if (imports.channel.nsfw) {
@@ -86,7 +86,7 @@ module.exports = function(imports, arguments) {
                     var config = configs[arguments[0]];
 
                     embed.addField('description', config.description, true);
-                    embed.addField('usage', '`' + imports.Command.syntax.get(imports.settings.guilds[imports.guild.id].prefix, arguments[0]) + '`', true);
+                    embed.addField('usage', '`' + imports.Command.syntax.get(imports.data.guilds[imports.guild.id].config.prefix, arguments[0]) + '`', true);
 
                     if (config.tags) {
                         embed.addField('tags', '`' + JSON.stringify(config.tags) + '`', true);
@@ -112,6 +112,11 @@ module.exports = function(imports, arguments) {
         array.push([l, list[l]]);
     }
     
+    if (tag) {
+        if (!isNaN(arguments[1])) {
+            page = parseInt(arguments[1]) - 1;
+        }
+    }
     var maxPage = Math.ceil(array.length / 10) - 1;
     
     if (page > maxPage) {
@@ -121,7 +126,7 @@ module.exports = function(imports, arguments) {
 
     for (i = 0; i < 10; i++) {
         if (array[(page * 10) + i]) {
-            var syntax = imports.Command.syntax.get(imports.settings.guilds[imports.guild.id].prefix, array[(page * 10) + i][0]);
+            var syntax = imports.Command.syntax.get(imports.data.guilds[imports.guild.id].config.prefix, array[(page * 10) + i][0]);
             embed.addField(array[(page * 10) + i][0], '`' + syntax + '`');
         }
     }

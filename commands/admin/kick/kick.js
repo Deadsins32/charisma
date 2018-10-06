@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     var id = imports.Command.methods.mention(arguments[0]).value;
     var reason = 'NO REASON';

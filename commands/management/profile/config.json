@@ -1,0 +1,10 @@
+{
+    "permissions": ["all"],
+    "description": "Displays your profile or the profile of whoever you specify",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["utility", "fun"],
+    "params": [
+        { "type": "mention", "required": false }
+    ]
+}

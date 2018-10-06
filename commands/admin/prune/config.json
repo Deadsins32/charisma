@@ -1,0 +1,10 @@
+{
+    "permissions": ["MANAGE_MESSAGES"],
+    "description": "deletes a specified amount of messages",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["management", "admin"],
+    "params": [
+        { "type": "number", "required": true }
+    ]
+}

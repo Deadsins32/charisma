@@ -1,0 +1,8 @@
+{
+    "permissions": ["any"],
+    "description": "retrieves your crime coefficient!",
+    "hidden": true,
+    "nsfw": false,
+    "tags": ["fun"],
+    "params": [{ "type": "mention", "required": false }]
+}

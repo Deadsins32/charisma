@@ -37,13 +37,11 @@ var fs = require('fs');
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
 
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
-    if (Object.byString(imports.settings.guilds[imports.guild.id].features, arguments[0]) != undefined) {
-        if (Object.byString(imports.settings.guilds[imports.guild.id].features, arguments[0]) == true) {
-            set(imports.settings.guilds[imports.guild.id].features, arguments[0], false);
-            var json = JSON.stringify(imports.settings.guilds, null, 4);
-            fs.writeFileSync('./data/settings/guilds.json', json);
+    if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) != undefined) {
+        if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) == true) {
+            set(imports.data.guilds[imports.guild.id].features, arguments[0], false);
             embed.setDescription('`' + arguments[0] + '` has been disabled');
         }
 

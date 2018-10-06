@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     if (imports.guild.me.permissions.serialize().MANAGE_NICKNAMES) {
         if (arguments[0] == 'remove') {

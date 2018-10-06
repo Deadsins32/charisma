@@ -24,7 +24,7 @@ module.exports = function(imports, arguments) {
         var embed = new Discord.RichEmbed();
         embed.setAuthor('Charisma', imports.client.user.avatarURL);
         embed.setDescription(imports.user.user.username + ' stabbed ' + username);
-        embed.setColor(imports.localsettings.guild.colors.accent);
+        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
         embed.setImage(url);
         imports.channel.send(embed);
     }

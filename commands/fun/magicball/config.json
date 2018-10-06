@@ -1,0 +1,8 @@
+{
+    "permissions": ["any"],
+    "description": "it's a magic ball!",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["fun"],
+    "params": [{ "type": "string", "required": true }]
+}

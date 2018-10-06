@@ -1,0 +1,11 @@
+{
+    "permissions": ["KICK_MEMBERS"],
+    "description": "kicks whoever you specify",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["management", "admin"],
+    "params": [
+        { "type": "mention", "required": true },
+        { "type": "string", "required": false }
+    ]
+}

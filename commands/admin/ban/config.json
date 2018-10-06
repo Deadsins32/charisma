@@ -1,0 +1,12 @@
+{
+    "permissions": ["BAN_MEMBERS"],
+    "description": "bans whoever you specify",
+    "tags": ["management", "admin"],
+    "hidden": false,
+    "nsfw": false,
+    "params": [
+        { "type": "mention", "required": true },
+        { "type": "string", "required": false },
+        { "type": "number", "required": false }
+    ]
+}

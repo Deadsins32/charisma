@@ -1,14 +1,15 @@
 {
     "guild": {
-        "prefix": "//",
-        "flavor": "upbeat",
-        "accentcolor": "#9DA0CB",
-        "description": "not much to say about this guild...",
-        "expcurve": 1.5,
-        "logchannel": "",
-        "autorole": "",
-        "selfroles": {},
-        "members": {},
+        "config": {
+            "prefix": "//",
+            "flavor": "upbeat",
+            "accentcolor": "#9DA0CB",
+            "description": "not much to say about this guild...",
+            "expcurve": 1.5,
+            "logchannel": "",
+            "autorole": ""
+        },
+
         "colors": {
             "accent": "#9DA0CB",
             "logs": {
@@ -31,7 +32,12 @@
                 "namechanges": false,
                 "bans": false
             }
-        }
+        },
+
+        "selfroles": [],
+        "whitelist": {},
+        "blacklist": {},
+        "members": {}
     },
 
     "user": {

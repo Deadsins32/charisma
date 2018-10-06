@@ -19,7 +19,7 @@ Object.byString = function(o, s) {
 module.exports = function(imports, arguments) {
 
     var tree = {
-        features: imports.settings.guilds[imports.guild.id].features
+        features: imports.data.guilds[imports.guild.id].features
     }
 
     if (Object.byString(tree, arguments[0])) {
@@ -28,7 +28,7 @@ module.exports = function(imports, arguments) {
 
     else {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
         embed.setDescription('`' + arguments[0] + '` does not exist');
     }
 }

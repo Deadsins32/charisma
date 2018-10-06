@@ -140,16 +140,9 @@ module.exports = function(imports, arguments) {
             members: members,
             roles: roles,
             channels: channels,
-            settings: {
-                prefix: imports.settings.guilds[imports.guild.id].prefix,
-                flavor: imports.settings.guilds[imports.guild.id].flavor,
-                description: imports.settings.guilds[imports.guild.id].description,
-                expcurve: imports.settings.guilds[imports.guild.id].expcurve,
-                logchannel: imports.settings.guilds[imports.guild.id].logchannel,
-                autorole: imports.settings.guilds[imports.guild.id].autorole,
-                selfroles: imports.settings.guilds[imports.guild.id].selfroles,
-                colors: imports.settings.guilds[imports.guild.id].colors
-            }
+            settings: imports.data.guilds[imports.guild.id].config,
+            colors: imports.data.guilds[imports.guild.id].colors,
+            features: imports.data.guilds[imports.guild.id].features
         },
 
         user: new Member(imports.user),

@@ -6,32 +6,52 @@ module.exports = function(imports, message) {
     if (message.author.bot) {
         return;
     }
+    
+    if (imports.client.user.id != message.author.id) {
+        if (!imports.data.guilds[message.guild.id]) {
+            imports.data.guilds[message.guild.id] = imports.data.defaults.guild;
+        }
 
-    if (imports.settings.guilds[message.guild.id] == undefined) {
-        imports.settings.guilds[message.guild.id] = imports.settings.defaults.guild;
-        var json = JSON.stringify(imports.settings.guilds, null, 4);
-        fs.writeFileSync('./data/settings/guilds.json', json);
+        else {
+            for (g in imports.data.defaults.guilds) {
+                if (!imports.data.guilds[message.guild.id][g]) {
+                    imports.data.guilds[message.guild.id][g] = imports.data.defaults.guilds[g];
+                }
+            }
+        }
+
+        if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
+            imports.data.guilds[message.guild.id].members[message.author.id] = imports.data.defaults.member;
+        }
+
+        else {
+            for (m in imports.data.defaults.member) {
+                if (!imports.data.guilds[message.guild.id].members[message.author.id][m]) {
+                    imports.data.guilds[message.guild.id].members[message.author.id][m] = imports.data.defaults.member[m];
+                }
+            }
+        }
+
+        if (!imports.data.users[message.author.id]) {
+            imports.data.users[message.author.id] = imports.data.defaults.user;
+        }
+
+        else {
+            for (u in imports.data.defaults.user) {
+                if (!imports.data.users[message.author.id][u]) {
+                    imports.data.users[message.author.id][u] = imports.data.defaults.user[u];
+                }
+            }
+        }
     }
 
-    if (imports.settings.guilds[message.guild.id].members[message.author.id] == undefined && imports.client.user.id != message.author.id) {
-        imports.settings.guilds[message.guild.id].members[message.author.id] = imports.settings.defaults.member;
-        var json = JSON.stringify(imports.settings.guilds, null, 4);
-        fs.writeFileSync('./data/settings/guilds.json', json);
+    var local = {
+        guild: imports.data.guilds[message.guild.id],
+        member: imports.data.guilds[message.guild.id].members[message.author.id],
+        user: imports.data.users[message.author.id]
     }
 
-    if (imports.settings.users[message.author.id] == undefined && imports.client.user.id != message.author.id) {
-        imports.settings.users[message.author.id] = imports.settings.defaults.user;
-        var json = JSON.stringify(imports.settings.users, null, 4);
-        fs.writeFileSync('./data/settings/users.json', json);
-    }
-
-    var localsettings = {
-        guild: imports.settings.guilds[message.guild.id],
-        member: imports.settings.guilds[message.guild.id].members[message.author.id],
-        user: imports.settings.users[message.author.id]
-    }
-
-    if (message.content.startsWith(localsettings.guild.prefix)) {
+    if (message.content.startsWith(local.guild.config.prefix)) {
         var exports = {
             Command: imports.Command,
             Flavors: imports.Flavors,
@@ -43,8 +63,11 @@ module.exports = function(imports, message) {
             user: message.member,
             message: message,
 
-            settings: imports.settings,
-            localsettings: localsettings,
+            data: imports.data,
+            blacklist: imports.data.guilds[message.guild.id].blacklist,
+
+            local: local,
+
             config: imports.config,
             aliases: imports.aliases,
             shorthands: imports.shorthands
@@ -52,8 +75,8 @@ module.exports = function(imports, message) {
 
         var content;
 
-        if (imports.shorthands[message.content.slice(localsettings.guild.prefix.length).split(' ')[0]]) {
-            content = message.content.replace(message.content.slice(localsettings.guild.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(localsettings.guild.prefix.length).split(' ')[0]]);
+        if (imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
         }
 
         else {
@@ -61,9 +84,9 @@ module.exports = function(imports, message) {
         }
 
         var command = {
-            object: imports.Command.get.command(content.split(localsettings.guild.prefix)[1].split(' ')[0]),
-            full: content.slice(localsettings.guild.prefix.length),
-            name: content.slice(localsettings.guild.prefix.length).split(' ')[0],
+            object: imports.Command.get.command(content.split(local.guild.config.prefix)[1].split(' ')[0]),
+            full: content.slice(local.guild.config.prefix.length),
+            name: content.slice(local.guild.config.prefix.length).split(' ')[0],
             arguments: new Array()
         }
 
@@ -92,7 +115,7 @@ module.exports = function(imports, message) {
             var longArguments2 = command.full.match(/("([^"]|"")*")/g);
             command.full = command.full.replace(/("([^"]|"")*")/g, '[ss]');
 
-            command.arguments = command.full.slice(localsettings.guild.prefix.length + command.name + 1).split(' ');
+            command.arguments = command.full.slice(local.guild.config.prefix.length + command.name + 1).split(' ');
 
             var s = 0;
             var ss = 0;
@@ -110,7 +133,7 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command.name, command.object, imports.settings.blacklist);
+            var status = imports.Command.get.status(exports, command.name, command.object, local.guild.blacklist);
 
             if (status.blacklisted) {
                 if (message.author.id != imports.config.master) {
@@ -124,9 +147,9 @@ module.exports = function(imports, message) {
 
                     else {
                         var embed = new Discord.RichEmbed();
-                        embed.setColor(localsettings.guild.colors.accent);
+                        embed.setColor(local.guild.colors.accent);
                         embed.setTitle('invalid syntax');
-                        embed.addField('usage', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                        embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                         message.channel.send(embed);
                     }
                 }
@@ -142,9 +165,9 @@ module.exports = function(imports, message) {
 
                             else {
                                 var embed = new Discord.RichEmbed();
-                                embed.setColor(localsettings.guild.colors.accent);
+                                embed.setColor(local.guild.colors.accent);
                                 embed.setTitle('invalid syntax');
-                                embed.addField('usage', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                                embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                                 message.channel.send(embed);
                             }
                         }
@@ -181,17 +204,15 @@ module.exports = function(imports, message) {
                                         console.log(chalk.redBright(' ├─────'), lines[l].slice(4));
                                     }
                                 }
-                                //imports.console.error(error.message);
-                                //imports.console.error(error.syscall);
                             }
                         }
 
                         else {
                             if (status.visible) {
                                 var embed = new Discord.RichEmbed();
-                                embed.setColor(localsettings.guild.colors.accent);
+                                embed.setColor(local.guild.colors.accent);
                                 embed.setTitle('invalid syntax');
-                                embed.addField('usage:', '`' + imports.Command.syntax.get(localsettings.guild.prefix, command.name) + '`');
+                                embed.addField('usage:', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                                 message.channel.send(embed);
                             }
 

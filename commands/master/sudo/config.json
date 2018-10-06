@@ -1,0 +1,11 @@
+{
+    "name": "sudo",
+    "permissions": ["master"],
+    "description": "runs a command as if you were whoever you specify",
+    "hidden": false,
+    "nsfw": false,
+    "params": [
+        { "type": "mention", "required": true },
+        { "type": "string", "required": true }
+    ]
+}

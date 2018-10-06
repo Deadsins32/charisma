@@ -1,0 +1,12 @@
+{
+    "permissions": ["admin"],
+    "description": "used for managing command blacklisting",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["management", "admin"],
+    "params": [
+        { "type": "string", "required": true },
+        { "type": "string", "required": false },
+        { "type": "string", "required": false }
+    ]
+}

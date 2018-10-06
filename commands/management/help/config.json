@@ -1,0 +1,9 @@
+{
+    "permissions": ["all"],
+    "hidden": false,
+    "nsfw": false,
+    "params": [
+        { "type": "string", "required": false },
+        { "type": "string", "required": false }
+    ]
+}

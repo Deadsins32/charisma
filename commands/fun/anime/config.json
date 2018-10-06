@@ -1,0 +1,10 @@
+{
+    "permissions": ["any"],
+    "description": "easily search for anime!",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["fun"],
+    "params": [
+        { "type": "string", "required": true }
+    ]
+}

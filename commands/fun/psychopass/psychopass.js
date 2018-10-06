@@ -9,7 +9,7 @@ module.exports = function(imports, arguments) {
     var message;
 
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     if (arguments[0] == undefined) {
         discriminator = imports.user.user.discriminator;

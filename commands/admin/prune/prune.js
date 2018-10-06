@@ -12,9 +12,9 @@ module.exports = function(imports, arguments) {
             })).catch(console.error);
 
         var embed = new Discord.RichEmbed();
+        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
         embed.setAuthor('Charisma', imports.client.user.avatarURL);
         embed.setDescription(imports.user.displayName + ' prune ' + arguments[0] + ' messages');
-        embed.setColor(imports.localsettings.guild.colors.accent);
         imports.channel.send(embed);
     }
 };

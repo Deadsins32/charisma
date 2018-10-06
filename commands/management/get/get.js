@@ -25,7 +25,7 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.settings.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
     embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
 
     function Member(member) {
@@ -73,20 +73,22 @@ module.exports = function(imports, arguments) {
             id: imports.guild.id,
             owner: new Member(imports.guild.owner),
             defaultRole: new Role(imports.guild.defaultRole),
-            settings: {
-                prefix: imports.settings.guilds[imports.guild.id].prefix,
-                flavor: imports.settings.guilds[imports.guild.id].flavor,
-                description: imports.settings.guilds[imports.guild.id].description,
-                expcurve: imports.settings.guilds[imports.guild.id].expcurve,
-                logchannel: imports.settings.guilds[imports.guild.id].logchannel,
-                autorole: imports.settings.guilds[imports.guild.id].autorole,
-                selfroles: imports.settings.guilds[imports.guild.id].selfroles,
-                colors: imports.settings.guilds[imports.guild.id].colors
-            }
+            config: imports.data.guilds[imports.guild.id].config,
+            colors: imports.data.guilds[imports.guild.id].colors,
+            selfroles: []
         },
 
         user: new Member(imports.user),
         channel: new Channel(imports.channel),
+    }
+
+    var selfroles = imports.data.guilds[imports.guild.id].selfroles;
+
+    for (s in selfroles) {
+        var role = imports.guild.roles.find('id', selfroles[s]);
+        if (role) {
+            objects.guild.selfroles.push(role.name);
+        }
     }
 
     if (imports.client.user.presence.game) {

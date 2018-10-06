@@ -1,0 +1,10 @@
+{
+    "permissions": ["all"],
+    "description": "gives the person of your choosing a nice pat on the head",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["fun"],
+    "params": [
+        { "type": "mention", "required": true }
+    ]
+}
