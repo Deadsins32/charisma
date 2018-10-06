@@ -140,7 +140,7 @@ module.exports = function(imports, arguments) {
                 },
 
                 description: function(arguments) {
-                    if (imports.user.permissions.serialize().ADMINISTRATOR) {
+                    if (imports.member.permissions.serialize().ADMINISTRATOR) {
                         imports.data.guilds[imports.guild.id].config.description = arguments[1];
                         
                         embed.setDescription('description has been set to "' + arguments[1] + '"');
@@ -154,7 +154,7 @@ module.exports = function(imports, arguments) {
                 },
 
                 expcurve: function(arguments) {
-                    if (imports.user.permissions.serialize().ADMINISTRATOR) {
+                    if (imports.member.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.number(arguments[1]).pass) {
                             var curve = parseFloat(arguments[1]);
                             imports.data.guilds[imports.guild.id].config.expcurve = curve;
@@ -176,7 +176,7 @@ module.exports = function(imports, arguments) {
                 },
 
                 logchannel: function(arguments) {
-                    if (imports.user.permissions.serialize().ADMINISTRATOR) {
+                    if (imports.member.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.channel(arguments[1]).pass) {
                             var channel = imports.Command.methods.channel(arguments[1]).value;
                             imports.data.guilds[imports.guild.id].config.logchannel = channel;
@@ -198,7 +198,7 @@ module.exports = function(imports, arguments) {
                 },
 
                 autorole: function(arguments) {
-                    if (imports.user.permissions.serialize().ADMINISTRATOR) {
+                    if (imports.member.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Command.methods.role(arguments[1]).pass) {
                             var role = imports.Command.methods.role(arguments[1]).value;
                             imports.data.guilds[imports.guild.id].config.autorole = role;
@@ -236,7 +236,7 @@ module.exports = function(imports, arguments) {
                 },
 
                 flavor: function(arguments) {
-                    if (imports.user.permissions.serialize().ADMINISTRATOR) {
+                    if (imports.member.permissions.serialize().ADMINISTRATOR) {
                         if (imports.Flavors.get(arguments[1]) != null) {
                             if (imports.data.guilds[imports.guild.id].colors.accent != arguments[1]) {
                                 imports.data.guilds[imports.guild.id].config.flavor = arguments[1];

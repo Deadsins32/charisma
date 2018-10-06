@@ -1,355 +1,169 @@
-module.exports = function(imports, params) {
-    if (imports.settings.blacklist[imports.guild.id] == undefined) {
-        imports.settings.blacklist[imports.guild.id] = new Object();
-        var json = JSON.stringify(imports.settings.blacklist, null, 4);
-        imports.fs.writeFileSync('./data/settings/blacklist.json', json);
-    }
+var Discord = require('discord.js');
 
-    if (params[0] == 'get') {
-        if (params[1] != undefined) {
-            if (imports.Command.methods.mention(params[1]).pass) {
-                var id = imports.Command.methods.mention(params[1]).value;
-
-                if (imports.settings.blacklist[imports.guild.id][id] == undefined) {
-                    imports.settings.blacklist[imports.guild.id][id] = new Array();
-                    var json = JSON.stringify(imports.settings.blacklist, null, 4);
-                    imports.fs.writeFileSync('./data/settings/blacklist.json', json);
+module.exports = function(imports, parameters) {
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+    if (parameters[0] == 'get') {
+        if (parameters[1] != undefined) {
+            if (imports.Command.methods.mention(parameters[1]).pass) {
+                var id = imports.Command.methods.mention(parameters[1]).value;
+                var member = imports.guild.members.find('id', id);
+                if (imports.data.guilds[imports.guild.id].blacklist[id].length == 0) {
+                    embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted');
                 }
 
-                imports.channel.send('```' + JSON.stringify(imports.settings.blacklist[imports.guild.id][id], null, 4) + '```');
+                else {
+                    embed.setDescription('```' + JSON.stringify(imports.data.guilds[imports.guild.id].blacklist[id], null, 4) + '```');
+                }
+            }
+
+            else {
+                embed.setDescription('please mention the user that you want to get the blacklist of');
             }
         }
 
         else {
-            if (imports.settings.blacklist[imports.guild.id][imports.user.id] == undefined) {
-                imports.settings.blacklist[imports.guild.id][imports.user.id] = new Array();
-                var json = JSON.stringify(imports.settings.blacklist, null, 4);
-                imports.fs.writeFileSync('./data/settings/blacklist.json', json);
-            }
-
-            imports.channel.send('```' + JSON.stringify(imports.settings.blacklist[imports.guild.id][imports.user.id], null, 4) + '```');
+            embed.setDescription('please mention the user that you want to get the blacklist of');
         }
     }
 
-    else if (params[0] == 'add') {
-        if (params[1] != undefined) {
-            if (imports.Command.methods.mention(params[1]).pass) {
-                var id = imports.Command.methods.mention(params[1]).value;
-                if (params[2] != undefined) {
-                    var exists = false;
-                    for (o in imports.Command.objects) {
-                        if (params[2] == imports.Command.objects[o].name) {
-                            exists = true;
-                        }
-                    }
-                    
-                    if (exists) {
-                        if (imports.settings.blacklist[imports.guild.id][id] == undefined) {
-                            imports.settings.blacklist[imports.guild.id][id] = new Array();
-                            var json = JSON.stringify(imports.settings.blacklist, null, 4);
-                            imports.fs.writeFileSync('./data/settings/blacklist.json', json);
-                        }
+    else if (parameters[0] == 'add') {
+        if (parameters[1] != undefined) {
+            if (imports.Command.methods.mention(parameters[1]).pass) {
+                var id = imports.Command.methods.mention(parameters[1]).value;
+                var member = imports.guild.members.find('id', id);
+                if (member) {
+                    if (parameters[2] != undefined) {
+                        if (imports.Command.get.command(parameters[2]) != null) {
+                            var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
+                            var exists = false;
+                            for (b = 0; b < blacklist.length; b++) {
+                                if (blacklist[b] == parameters[2]) {
+                                    exists = true;
+                                }
+                            }
 
-                        var blacklisted = false;
-                        for (i in imports.settings.blacklist[imports.guild.id][id]) {
-                            if (imports.settings.blacklist[imports.guild.id][id][i] == params[2]) {
-                                blacklisted = true;
+                            if (exists) {
+                                embed.setDescription(member.displayName + ' is already blacklisted from using ' + parameters[2]);
+                            }
+
+                            else {
+                                imports.data.guilds[imports.guild.id].blacklist[id].push(parameters[2]);
+                                embed.setDescription(member.displayName + ' has been blacklisted from using the ' + parameters[2] + ' command');
                             }
                         }
 
-                        if (blacklisted) {
-                            imports.channel.send('`"' + params[2] + '" is already blacklisted`');
-                        }
-
                         else {
-                            imports.settings.blacklist[imports.guild.id][id].push(params[2]);
-                            var json = JSON.stringify(imports.settings.blacklist, null, 4);
-                            imports.fs.writeFileSync('./data/settings/blacklist.json', json);
-                            imports.channel.send('`command "' + params[2] + '" has been blacklisted for user: ' + imports.guild.members.find('id', id).displayName + '`');
+                            embed.setDescription('that command doesn\'t exist');
                         }
                     }
 
                     else {
-                        imports.channel.send('`command "' + params[2] + '" was not found`');
+                        embed.setDescription('please specify the command that you want to add');
                     }
                 }
 
                 else {
-                    imports.channel.send('`please specify a valid command`');
+                    embed.setDescription('invalid user');
                 }
             }
 
             else {
-                imports.channel.send('`invalid user`');
+                embed.setDescription('please mention a user');
             }
         }
 
         else {
-            imports.channel.send('`please specify a user and a valid command`');
+            embed.setDescription('please mention a user');
         }
     }
 
-    else if (params[0] == 'remove') {
-        if (params[1] != undefined) {
-            if (imports.Command.methods.mention(params[1]).pass) {
-                var id = imports.Command.methods.mention(params[1]).value;
-                if (params[2] != undefined) {
-                    var exists = false;
-                    for (o in imports.Command.objects) {
-                        if (params[2] == imports.Command.objects[o].name) {
-                            exists = true;
-                        }
-                    }
-                    
-                    if (exists) {
-                        if (imports.settings.blacklist[imports.guild.id][id] != undefined) {
-                            var blacklisted = false;
-                            var index;
-                            for (i in imports.settings.blacklist[imports.guild.id][id]) {
-                                if (imports.settings.blacklist[imports.guild.id][id][i] == params[2]) {
-                                    blacklisted = true;
-                                    index = i;
+    else if (parameters[0] == 'remove') {
+        if (parameters[1] != undefined) {
+            if (imports.Command.methods.mention(parameters[1]).pass) {
+                var id = imports.Command.methods.mention(parameters[1]).value
+                var member = imports.guild.members.find('id', id);
+                if (member) {
+                    if (parameters[2] != undefined) {
+                        if (imports.Command.get.command(parameters[2]) != null) {
+                            var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
+                            var exists = false;
+                            for (b = 0; b < blacklist.length; b++) {
+                                if (blacklist[b] == parameters[2]) {
+                                    exists = true;
                                 }
                             }
 
-                            if (blacklisted) {
-                                var list = new Array();
-
-                                for (i in imports.settings.blacklist[imports.guild.id][id]) {
-                                    if (imports.settings.blacklist[imports.guild.id][id][i] != params[2]) {
-                                        list.push(imports.settings.blacklist[imports.guild.id][id][i]);
+                            if (exists) {
+                                var newBlacklist = new Array();
+                                for (b = 0; b < blacklist.length; b++) {
+                                    if (blacklist[b] != parameters[2]) {
+                                        newBlacklist.push(blacklist[b]);
                                     }
                                 }
 
-                                imports.settings.blacklist[imports.guild.id][id] = list;
-                                var json = JSON.stringify(imports.settings.blacklist, null, 4);
-                                imports.fs.writeFileSync('./data/settings/blacklist.json', json);
-                                imports.channel.send('`user: ' + imports.guild.members.find('id', id).displayName + ' is no longer blacklisted from using the "' + params[2] + '" command`');
+                                imports.data.guilds[imports.guild.id].blacklist[id] = newBlacklist;
+                                embed.setDescription(member.displayName + ' has been unblacklisted from using ' + parameters[2]);
                             }
 
                             else {
-                                imports.channel.send('`command "' + params[2] + '" is not blacklisted for user: ' + imports.guild.members.find('id', id).displayName + '`');
+                                embed.setDescription(member.displayName + ' is not blacklisted from using ' + parameters[2]);
                             }
                         }
 
                         else {
-                            imports.channel.send('`command "' + params[2] + '" is not blacklisted for user: ' + imports.guild.members.find('id', id).displayName + '`');
+                            embed.setDescription('that command doesn\'t exist');
                         }
                     }
 
                     else {
-                        imports.channel.send('`command "' + params[2] + '" was not found`');
+                        embed.setDescription('please specify the command you want to remove');
                     }
                 }
 
                 else {
-                    imports.channel.send('`please specify a valid command`');
+                    embed.setDescription('invalid user');
                 }
             }
 
             else {
-                imports.channel.send('`invalid user`');
+                embed.setDescription('please mention a user');
             }
         }
 
         else {
-            imports.channel.send('`please specify a user and a valid command`');
+            embed.setDescription('please mention a user');
         }
     }
 
-    /*if (type == 'get') {
-        if (mention != undefined) {
-            var isBlacklisted = false;
-            var endString = '```';
-            for (i in settings.blacklist) {
-                if (settings.blacklist[i].guild == guildID) {
-                    for (l in settings.blacklist[i].list) {
-                        if (settings.blacklist[i].list[l].user == mention) {
-                            for (c in settings.blacklist[i].list[l].commands) {
-                                isBlacklisted = true;
-                                endString += settings.blacklist[i].list[l].commands[c];
-                                if (settings.blacklist[i].list[l].commands[c++] != undefined) {
-                                    endString += ',\n';
-                                }
-                            }
-                        }
-                    }
+    else if (parameters[0] == 'clear') {
+        if (parameters[1] != undefined) {
+            if (imports.Command.methods.mention(parameters[1]).pass) {
+                var id = imports.Command.methods.mention(parameters[1]).value;
+                var member = imports.guild.members.find('id', id);
+                if (member) {
+                    imports.data.guilds[imports.guild.id].blacklist[id] = [];
+                    embed.setDescription(member.displayName + '\'s blacklist has been cleared');
+                }
+
+                else {
+                    embed.setDescription('invalid user');
                 }
             }
 
-            if (isBlacklisted) {
-                endString += '```';
-            }
-
             else {
-                endString = '```' + message.guild.members.find('id', mention).displayName + ' does not have any blacklisted commands```';
+                embed.setDescription('please specify a user');
             }
-
-            message.channel.send(endString);
         }
 
         else {
-            message.channel.send('```please specify a user```');
+            embed.setDescription('please specify a user');
         }
     }
 
-    else if (type == 'add') {
-        if (mention != undefined) {
-            if (command != undefined) {
-                var error = false;
-                var valid = false;
-                for (cc in Command.commands) {
-                    if (Command.commands[cc].name == command) {
-                        valid = true;
-                    }
-                }
-
-                for (i in settings.blacklist) {
-                    if (settings.blacklist[i].guild == guildID) {
-                        var isUser = false;
-                        for (l in settings.blacklist[i].list) {
-                            if (settings.blacklist[i].list[l].user == mention) {
-                                isUser = true;
-                            }
-                        }
-
-                        if (isUser) {
-                            if (valid) {
-                                for (l in settings.blacklist[i].list) {
-                                    if (settings.blacklist[i].list[l].user == mention) {
-                                        var exists = false;
-                                        for (c in settings.blacklist[i].list[l].commands) {
-                                            for (cc in Command.commands) {
-                                                if (settings.blacklist[i].list[l].commands[c] == command) {
-                                                    exists = true;
-                                                }
-                                            }
-                                        }
-
-                                        if (!exists) {
-                                            settings.blacklist[i].list[l].commands.push(command);
-                                        }
-
-                                        else {
-                                            error = true;
-                                            message.channel.send('```that command is already blacklisted```');
-                                        }
-                                    }
-                                }
-                            }
-
-                            else {
-                                error = true;
-                                message.channel.send('```that command doesn\'t exist```');
-                            }
-                        }
-
-                        else {
-                            if (valid) {
-                                settings.blacklist[i].list.push({user: mention, commands: new Array(command)});
-                            }
-                        
-                            else {
-                                error = true;
-                                message.channel.send('```command not found```');
-                            }
-                        }
-                    }
-                }
-
-                if (!error) {
-                    var json = JSON.stringify(settings.blacklist);
-                    fs.writeFile('./data/settings/blacklist.json', json);
-                    message.channel.send('added "' + command + '" to ' + message.guild.members.find('id', mention).displayName + '\'s blacklist');
-                }
-            }
-
-            else {
-                message.channel.send('```please specify a command```');
-            }
-        }
-
-        else {
-            message.channel.send('```please specify a user```');
-        }
+    else {
+        embed.setDescription('invalid option\n(get | add | remove | clear )');
     }
 
-    else if (type == 'remove') {
-        if (command != undefined) {
-            if (mention != undefined) {
-                var error = false;
-                var valid = false;
-                for (cc in Command.commands) {
-                    if (Command.commands[cc].name == command) {
-                        valid = true;
-                    }
-                }
-
-                for (i in settings.blacklist) {
-                    if (settings.blacklist[i].guild == guildID) {
-                        var isUser = false;
-                        for (l in settings.blacklist[i].list) {
-                            if (settings.blacklist[i].list[l].user == mention) {
-                                isUser = true;
-                            }
-                        }
-
-                        if (isUser) {
-                            if (valid) {
-                                for (l in settings.blacklist[i].list) {
-                                    if (settings.blacklist[i].list[l].user == mention) {
-                                        var exists = false;
-                                        for (c in settings.blacklist[i].list[l].commands) {
-                                            for (cc in Command.commands) {
-                                                if (settings.blacklist[i].list[l].commands[c] == Command.commands[cc].name) {
-                                                    exists = true;
-                                                }
-                                            }
-                                        }
-
-                                        if (exists) {
-                                            for (c in settings.blacklist[i].list[l].commands) {
-                                                if (settings.blacklist[i].list[l].commands[c] == command) {
-                                                    settings.blacklist[i].list[l].commands.splice(c, 1);
-                                                }
-                                            }
-                                        }
-
-                                        else {
-                                            error = true;
-                                            message.channel.send('```that command has not been blacklisted```');
-                                        }
-                                    }
-                                }
-                            }
-
-                            else {
-                                error = true;
-                                message.channel.send('```that command doesn\'t exist```');
-                            }
-                        }
-
-                        else {
-                            error = true;
-                            message.channel.send('```that command has not been blacklisted```');
-                        }
-                    }
-                }
-
-                if (!error) {
-                    var json = JSON.stringify(settings.blacklist);
-                    fs.writeFile('./data/settings/blacklist.json', json);
-                    message.channel.send('removed "' + command + '" from ' + message.guild.members.find('id', mention).displayName + '\'s blacklist');
-                }
-            }
-
-            else {
-                message.channel.send('```please specify a user```');
-            }
-        }
-
-        else {
-            message.channel.send('```please specify a command```');
-        }
-    }*/
+    imports.channel.send(embed);
 }

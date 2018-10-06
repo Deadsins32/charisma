@@ -176,37 +176,33 @@ module.exports = {
 
             var Discord = require('discord.js');
 
-            if (blacklist[exports.guild.id] != undefined) {
-                if (blacklist[exports.guild.id][exports.user.id]) {
-                    for (i in blacklist[exports.guild.id][exports.user.id]) {
-                        if (blacklist[exports.guild.id][exports.user.id][i] == name) {
-                            blacklisted = true;
-                        }
-                    }
+            for (b in blacklist) {
+                if (blacklist[b] == name) {
+                    blacklisted = true;
                 }
             }
 
             for (p in config.permissions) {
                 if (Discord.Permissions.FLAGS[config.permissions[p]] != undefined) {
-                    if (!exports.user.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
+                    if (!exports.member.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
                         usable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'admin') {
-                    if (!exports.user.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+                    if (!exports.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                         usable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'owner') {
-                    if (exports.user.id != exports.guild.ownerID) {
+                    if (exports.member.id != exports.guild.ownerID) {
                         usable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'master') {
-                    if (exports.user.id != config.master) {
+                    if (exports.member.id != config.master) {
                         usable = false;
                     }
 

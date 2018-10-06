@@ -20,12 +20,12 @@ module.exports = {
     },
 
     getFlavors: function() {
-        var flavors = require('./../flavors/enabled.json');
+        var flavors = require('./flavors/enabled.json');
         return flavors;
     },
 
     check: function(flavor) {
-        var enabled = require('./../flavors/enabled.json');
+        var enabled = require('./flavors/enabled.json');
         var passed = false;
         for (e in enabled) {
             if (enabled[e] == flavor) {
@@ -37,7 +37,7 @@ module.exports = {
     },
 
     pick: function(flavor, main, sub) {
-        var accentbank = JSON.parse(fs.readFileSync('./../flavors/accentbank.json', 'utf8'), 'utf8')[flavor];
+        var accentbank = JSON.parse(fs.readFileSync('./flavors/accentbank.json', 'utf8'), 'utf8')[flavor];
 
         var flavorText = module.exports.get(flavor);
         var textArray = flavorText[main][sub];

@@ -22,6 +22,9 @@ module.exports = function(imports, message) {
 
         if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
             imports.data.guilds[message.guild.id].members[message.author.id] = imports.data.defaults.member;
+            if (!imports.data.guilds[message.guild.id].blacklist[message.author.id]) {
+                imports.data.guilds[message.guild.id].blacklist[message.author.id] = new Array();
+            }
         }
 
         else {
@@ -60,7 +63,8 @@ module.exports = function(imports, message) {
             client: imports.client,
             guild: message.guild,
             channel: message.channel,
-            user: message.member,
+            user: message.author,
+            member: message.member,
             message: message,
 
             data: imports.data,
@@ -133,14 +137,17 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command.name, command.object, local.guild.blacklist);
+            var status = imports.Command.get.status(exports, command.name, command.object, local.guild.blacklist[message.author.id]);
 
             if (status.blacklisted) {
-                if (message.author.id != imports.config.master) {
-                    message.channel.send('`you have been blacklisted from using that command`');
-                }
+                //if (message.author.id != imports.config.master) {
+                    var embed = new Discord.RichEmbed();
+                    embed.setColor(exports.local.guild.colors.accent);
+                    embed.setDescription('you have been blacklisted from using that command');
+                    message.channel.send(embed);
+                //}
 
-                else {
+                /*else {
                     if (imports.Command.syntax.check(command.object, command.arguments)) {
                         imports.Command.commands[command.name](exports, command.arguments);
                     }
@@ -152,7 +159,7 @@ module.exports = function(imports, message) {
                         embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                         message.channel.send(embed);
                     }
-                }
+                }*/
             }
 
             else {
