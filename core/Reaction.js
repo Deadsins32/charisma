@@ -4,7 +4,7 @@ var Flavors = require('./Flavors.js');
 
 module.exports = function(imports, name, parameters) {
     var id = imports.Command.methods.mention(parameters[0]).value;
-    var displayName = imports.guild.members.find('id', id).displayName;
+    var displayName = imports.guild.members.get(id).displayName;
 
     var embed = new Discord.RichEmbed();
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);

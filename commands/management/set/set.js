@@ -215,8 +215,8 @@ module.exports = function(imports, arguments) {
                             imports.channel.send(embed);
                         }
 
-                        else if (imports.guild.roles.find('id', arguments[1])) {
-                            var role = imports.guild.roles.find('id', arguments[1]);
+                        else if (imports.guild.roles.get(arguments[1])) {
+                            var role = imports.guild.roles.get(arguments[1]);
                             imports.data.guilds[imports.guild.id].config.autorole = role.id;
 
                             embed.setDescription('autorole has been set to `@' + role.name + '`');

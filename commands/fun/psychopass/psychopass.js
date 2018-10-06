@@ -26,8 +26,8 @@ module.exports = function(imports, arguments) {
         }
 
         else {
-            discriminator = imports.guild.members.find('id', arguments[0]).user.discriminator;
-            identifier = imports.guild.members.find('id', arguments[0]).displayName;
+            discriminator = imports.guild.members.get(arguments[0]).user.discriminator;
+            identifier = imports.guild.members.get(arguments[0]).displayName;
             identifier2 = identifier + ' is';
             identifier3 = identifier + ' poses';
             if (identifier.slice(-1) == 's') {

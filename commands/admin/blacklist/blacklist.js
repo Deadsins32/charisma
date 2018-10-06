@@ -7,7 +7,7 @@ module.exports = function(imports, parameters) {
         if (parameters[1] != undefined) {
             if (imports.Command.methods.mention(parameters[1]).pass) {
                 var id = imports.Command.methods.mention(parameters[1]).value;
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (imports.data.guilds[imports.guild.id].blacklist[id].length == 0) {
                     embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted');
                 }
@@ -31,7 +31,7 @@ module.exports = function(imports, parameters) {
         if (parameters[1] != undefined) {
             if (imports.Command.methods.mention(parameters[1]).pass) {
                 var id = imports.Command.methods.mention(parameters[1]).value;
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (member) {
                     if (parameters[2] != undefined) {
                         if (imports.Command.get.command(parameters[2]) != null) {
@@ -82,7 +82,7 @@ module.exports = function(imports, parameters) {
         if (parameters[1] != undefined) {
             if (imports.Command.methods.mention(parameters[1]).pass) {
                 var id = imports.Command.methods.mention(parameters[1]).value
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (member) {
                     if (parameters[2] != undefined) {
                         if (imports.Command.get.command(parameters[2]) != null) {
@@ -140,7 +140,7 @@ module.exports = function(imports, parameters) {
         if (parameters[1] != undefined) {
             if (imports.Command.methods.mention(parameters[1]).pass) {
                 var id = imports.Command.methods.mention(parameters[1]).value;
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (member) {
                     imports.data.guilds[imports.guild.id].blacklist[id] = [];
                     embed.setDescription(member.displayName + '\'s blacklist has been cleared');

@@ -8,7 +8,7 @@ module.exports = function(imports, arguments) {
         if (arguments[0] == 'remove') {
             if (imports.Command.methods.mention(arguments[1]).pass) {
                 var id = imports.Command.methods.mention(arguments[1]).value;
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (member.nickname != null) {
                     member.setNickname('');
                     embed.setDescription('**' + member.user.username + '#' + member.user.discriminator + '**\'s nickname has been removed');
@@ -30,7 +30,7 @@ module.exports = function(imports, arguments) {
         else {
             if (imports.Command.methods.mention(arguments[0]).pass) {
                 var id = imports.Command.methods.mention(arguments[0]).value;
-                var member = imports.guild.members.find('id', id);
+                var member = imports.guild.members.get(id);
                 if (member.nickname != null) {
                     var before = member.nickname;
                     member.setNickname(arguments[1]);
