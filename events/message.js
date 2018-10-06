@@ -1,5 +1,6 @@
 var fs = require('fs');
 var Discord = require('discord.js');
+var chalk = require('chalk');
 
 module.exports = function(imports, message) {
     if (message.author.bot) {
@@ -109,7 +110,7 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command.object, imports.settings.blacklist);
+            var status = imports.Command.get.status(exports, command.name, command.object, imports.settings.blacklist);
 
             if (status.blacklisted) {
                 if (message.author.id != imports.config.master) {
@@ -161,7 +162,28 @@ module.exports = function(imports, message) {
 
                     else {
                         if (imports.Command.syntax.check(command.object, command.arguments)) {
-                            imports.Command.commands[command.name](exports, command.arguments);
+                            try {
+                                imports.Command.commands[command.name](exports, command.arguments);
+                            }
+
+                            catch(error) {
+                                var lines = error.stack.split('\n');
+                                for (l in lines) {
+                                    if (l == 0) {
+                                        imports.console.error(lines[l]);
+                                    }
+
+                                    else if (l == lines.length - 1) {
+                                        console.log(chalk.redBright(' └─────'), lines[1].slice(4));
+                                    }
+
+                                    else {
+                                        console.log(chalk.redBright(' ├─────'), lines[l].slice(4));
+                                    }
+                                }
+                                //imports.console.error(error.message);
+                                //imports.console.error(error.syscall);
+                            }
                         }
 
                         else {

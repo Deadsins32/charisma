@@ -8,7 +8,7 @@ var Command = require('./core/Command.js');
 var Flavors = require('./core/Flavors.js');
 var Seed = require('./core/Seed.js');
 
-var aliases = require('./commands/aliases.json');
+var aliases = require('./data/aliases.json');
 var shorthands = require('./data/shorthands.json');
 
 var config = require('./config.json');
@@ -48,8 +48,8 @@ var exports = {
 
     settings: settings,
     config: config,
-    aliases: aliases,
     shorthands: shorthands,
+    aliases: aliases,
 
     console, console
 }
@@ -63,25 +63,19 @@ function exitHandler() {
 
 process.on('SIGINT', exitHandler.bind());
 
-fs.readdir('./commands', function(error, files) {
-    var commandTotal = 0;
-    if (error) {
-        console.error(error.stack);
+var total = 0;
+var groups = fs.readdirSync('./commands');
+for (g in groups) {
+    var commands = fs.readdirSync('./commands/' + groups[g]);
+    for (c in commands) {
+        total++;
+        //exports.Command.commands[name] = file;
+        exports.Command.commands[commands[c]] = require('./commands/' + groups[g] + '/' + commands[c] + '/' + commands[c] + '.js');
+        exports.Command.configs[commands[c]] = require('./commands/' + groups[g] + '/' + commands[c] + '/config.json');
     }
+}
 
-    else {
-        for (f in files) {
-            if (files[f].endsWith('.js')) {
-                var file = require('./commands/' + files[f]);
-                var name = files[f].split('.js')[0];
-                exports.Command.commands[name] = file;
-                commandTotal++;
-            }
-        }
-    }
-
-    console.ready(commandTotal + ' commands have been loaded');
-});
+console.ready(total + ' commands have been loaded');
 
 client.on('ready', function() { console.ready('ready') });
 client.on('message', function(message) { try { events.message(exports, message) } catch(error) { console.error(error.stack) }});

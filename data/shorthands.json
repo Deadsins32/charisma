@@ -1,3 +1,4 @@
 {
-    "avatar": "get user.avatar"
+    "avatar": "get user.avatar",
+    "serverinfo": "get guild"
 }

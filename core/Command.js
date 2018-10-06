@@ -1,8 +1,8 @@
 var config = require('./../config.json');
 
 module.exports = {
-    objects: require('./../data/commands.json'),
     commands: {},
+    configs: {},
     methods: {
         any: function(input) {
             return true;
@@ -75,12 +75,6 @@ module.exports = {
         color: function(input) {
             var output = { pass: true };
             var input = input.toLowerCase();
-
-            for (clr in colors) {
-                if (colors[clr].name == input) {
-                    input = colors[clr].value.toLowerCase();
-                }
-            }
 
             if (input.startsWith('#')) {
                 var input = input.split('#')[1].substring(0, input.split('#')[1].length).toLowerCase();
@@ -163,18 +157,17 @@ module.exports = {
 
     get: {
         command: function(command) {
-            var output = null;
-            for (o in module.exports.objects) {
-                if (module.exports.objects[o].name == command) {
-                    output = module.exports.objects[o];
-                }
+            if (module.exports.configs[command]) {
+                return module.exports.configs[command];
             }
 
-            return output;
+            else {
+                return null;
+            }
         },
 
-        status: function(exports, object, blacklist) {
-            var requiredPermissions = object.permissions;
+        status: function(exports, name, config, blacklist) {
+            var requiredPermissions = config.permissions;
             var usable = true;
             var visible = true;
             var nsfw = false;
@@ -186,33 +179,33 @@ module.exports = {
             if (blacklist[exports.guild.id] != undefined) {
                 if (blacklist[exports.guild.id][exports.user.id]) {
                     for (i in blacklist[exports.guild.id][exports.user.id]) {
-                        if (blacklist[exports.guild.id][exports.user.id][i] == object.name) {
+                        if (blacklist[exports.guild.id][exports.user.id][i] == name) {
                             blacklisted = true;
                         }
                     }
                 }
             }
 
-            for (p in object.permissions) {
-                if (Discord.Permissions.FLAGS[object.permissions[p]] != undefined) {
-                    if (!exports.user.hasPermission(Discord.Permissions.FLAGS[object.permissions[p]])) {
+            for (p in config.permissions) {
+                if (Discord.Permissions.FLAGS[config.permissions[p]] != undefined) {
+                    if (!exports.user.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
                         usable = false;
                     }
                 }
 
-                else if (object.permissions[p] == 'admin') {
+                else if (config.permissions[p] == 'admin') {
                     if (!exports.user.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
                         usable = false;
                     }
                 }
 
-                else if (object.permissions[p] == 'owner') {
+                else if (config.permissions[p] == 'owner') {
                     if (exports.user.id != exports.guild.ownerID) {
                         usable = false;
                     }
                 }
 
-                else if (object.permissions[p] == 'master') {
+                else if (config.permissions[p] == 'master') {
                     if (exports.user.id != config.master) {
                         usable = false;
                     }
@@ -223,13 +216,13 @@ module.exports = {
                 }
             }
 
-            if (object.hidden) {
+            if (config.hidden) {
                 if (!master) {
                     visible = false;
                 }
             }
 
-            if (object.nsfw) {
+            if (config.nsfw) {
                 nsfw = true;
             }
 
@@ -252,48 +245,45 @@ module.exports = {
     syntax: {
         get: function(prefix, command) {
             var syntax = '';
-            var retrieved = false;
-            var output = true;
-            for (o in module.exports.objects) {
-                if (module.exports.objects[o].name == command) {
-                    retrieved = true;
-                    syntax += prefix + command;
-                    for (p in module.exports.objects[o].params) {
-                        if (module.exports.objects[o].params[p].required) {
-                            syntax += ' <' + module.exports.objects[o].params[p].type + '>';
-                        }
+            if (module.exports.configs[command]) {
+                syntax += prefix + command;
+                for (p in module.exports.configs[command].params) {
+                    if (module.exports.configs[command].params[p].required) {
+                        syntax += ' <' + module.exports.configs[command].params[p].type + '>';
+                    }
 
-                        else {
-                            syntax += ' [' + module.exports.objects[o].params[p].type + ']';
-                        }
+                    else {
+                        syntax += ' [' + module.exports.configs[command].params[p].type + ']';
                     }
                 }
             }
 
-            if (retrieved) {
-                output = syntax;
+            if (syntax != '') {
+                return syntax;
             }
 
-            return output;
+            else {
+                return null;
+            }
         },
 
-        check: function(object, arguments) {
+        check: function(config, arguments) {
             var output = true;
             var requirements = 0;
 
-            for (p in object.params) {
-                if (object.params[p].required) {
+            for (p in config.params) {
+                if (config.params[p].required) {
                     requirements++;
                 }
             }
 
             var error = false;
 
-            if (arguments.length == 0 && object.params[0].required == true) {
+            if (arguments.length == 0 && config.params[0].required == true) {
                 error = true;
             }
 
-            if (arguments.length > object.params.length) {
+            if (arguments.length > config.params.length) {
                 error = true;
             }
 
@@ -301,9 +291,9 @@ module.exports = {
                 error = true;
             }
 
-            if (arguments.length <= object.params.length) {
+            if (arguments.length <= config.params.length) {
                 for (a in arguments) {
-                    if (module.exports.methods[object.params[a].type](arguments[a]).pass == false) {
+                    if (module.exports.methods[config.params[a].type](arguments[a]).pass == false) {
                         error = true;
                     }
 
