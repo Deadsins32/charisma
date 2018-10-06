@@ -1,7 +1,7 @@
 config/config.json
 
-data/guilds
-data/users
+data/guilds/*
+data/users/*
 
 logs
 *.log
