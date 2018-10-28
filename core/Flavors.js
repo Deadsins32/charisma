@@ -1,17 +1,22 @@
 var fs = require('fs');
-var root = fs.readdirSync('./flavors/');
+var enabled = require('./../flavors/enabled.json');
+var accentbank = require('./../flavors/accentbank.json');
 
 module.exports = {
     get: function(flavor) {
         var output = null;
+        var root = fs.readdirSync('./flavors/');
+
         for (r in root) {
-            if (root[r] == flavor) {
-                output = new Object();
-                var files = fs.readdirSync('./flavors/' + flavor + '/');
-                for (f in files) {
-                    var current = fs.readFileSync('./flavors/' + flavor + '/' + files[f], 'utf8');
-                    var jsonObj = JSON.parse(current, 'utf8');
-                    output[files[f].split('.json')[0]] = jsonObj;
+            if (!root[r].endsWith('.json')) {
+                if (root[r] == flavor) {
+                    output = new Object();
+                    var files = fs.readdirSync('./flavors/' + flavor + '/');
+                    for (f in files) {
+                        var current = fs.readFileSync('./flavors/' + flavor + '/' + files[f], 'utf8');
+                        var json = JSON.parse(current, 'utf8');
+                        output[files[f].split('.json')[0]] = json;
+                    }
                 }
             }
         }
@@ -20,12 +25,10 @@ module.exports = {
     },
 
     getFlavors: function() {
-        var flavors = require('./flavors/enabled.json');
-        return flavors;
+        return enabled;
     },
 
     check: function(flavor) {
-        var enabled = require('./flavors/enabled.json');
         var passed = false;
         for (e in enabled) {
             if (enabled[e] == flavor) {
@@ -37,7 +40,7 @@ module.exports = {
     },
 
     pick: function(flavor, main, sub) {
-        var accentbank = JSON.parse(fs.readFileSync('./flavors/accentbank.json', 'utf8'), 'utf8')[flavor];
+        var accents = accentbank[flavor];
 
         var flavorText = module.exports.get(flavor);
         var textArray = flavorText[main][sub];
@@ -61,7 +64,7 @@ module.exports = {
                     }
                 }
 
-                var randAccent = accentbank[accent][Math.floor(Math.random() * accentbank[accent].length)];
+                var randAccent = accents[accent][Math.floor(Math.random() * accents[accent].length)];
                 rand = rand.replace('{' + accent + '}', randAccent);
             }
         }

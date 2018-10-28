@@ -103,7 +103,41 @@ console.ready(userTotal + ' users have been loaded');
 
 function save() {
     console.ready('saving guild and user information...');
+    /*client.user.setStatus('dnd').then(async function() {
+        var guilds = data.guilds;
+        var users = data.users;
 
+        for (g in guilds) {
+            var gerror = await access('./data/guilds/' + g);
+            console.log(gerror);
+            if (gerror) {
+                await mkdir('./data/guilds/' + g);
+            }
+
+            for (p in guilds[g]) {
+                if (p != 'members') {
+                    await writefile('./data/guilds/' + g + '/' + p + '.json', JSON.stringify(guilds[g][p], null, 4));
+                }
+            
+                var merror = await access('./data/guilds/' + g + '/members');
+                if (merror) {
+                    await mkdir('./data/guilds/' + g + '/members');
+                }
+
+                for (m in guilds[g].members) {
+                    await writefile('./data/guilds/' + g + '/members/' + m + '.json', JSON.stringify(guilds[g].members[m]));
+                }
+            }
+        }
+
+        for (u in users) {
+            await writefile('./data/users/' + u + '.json', JSON.stringify(users[u], null, 4));
+        }
+
+        console.log(false);
+    });*/
+
+    client.user.setActivity('storing data', { type: 'STREAMING', url: 'https://www.twitch.tv/redshadium' });
     for (g in data.guilds) {
         if (!fs.existsSync('./data/guilds/' + g)) {
             fs.mkdirSync('./data/guilds/' + g);
@@ -129,22 +163,25 @@ function save() {
     for (u in data.users) {
         fs.writeFileSync('./data/users/' + u + '.json', JSON.stringify(data.users[u], null, 4), 'utf8');
     }
+
+    client.user.setActivity('with my code', { type: 'PLAYING' });
 }
 
 client.on('ready', function() {
+    console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
     setInterval(function() {
         save();
     }, 1800000);
 });
 
-process.stdin.resume();
-
-function exitHandler() {
+function exit() {
     save();
-    process.exit();
+    client.user.setStatus('online').then(process.exit)
 }
 
-process.on('SIGINT', exitHandler.bind());
+//process.stdin.resume();
+
+process.on('SIGINT', exit.bind());
 
 client.on('message', function(message) { try { events.message(exports, message) } catch(error) { console.error(error.stack) }});
 client.on('guildMemberAdd', function(member) { try { events.guildMemberAdd(exports, member) } catch(error) { console.error(error.stack) }});

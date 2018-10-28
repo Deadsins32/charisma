@@ -12,7 +12,7 @@ module.exports = function(imports, arguments) {
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     if (arguments[0] == undefined) {
-        discriminator = imports.user.user.discriminator;
+        discriminator = imports.user.discriminator;
         identifier = 'Your';
         identifier2 = 'You are';
         identifier3 = 'You pose';

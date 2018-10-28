@@ -78,7 +78,7 @@ module.exports = function(imports, arguments) {
             selfroles: []
         },
 
-        user: new Member(imports.user),
+        user: new Member(imports.member),
         channel: new Channel(imports.channel),
     }
 

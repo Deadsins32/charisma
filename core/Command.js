@@ -1,4 +1,4 @@
-var config = require('./../config/config.json');
+var masterID = require('./../config/config.json').master;
 
 module.exports = {
     commands: {},
@@ -196,13 +196,13 @@ module.exports = {
                 }
 
                 else if (config.permissions[p] == 'owner') {
-                    if (exports.member.id != exports.guild.ownerID) {
+                    if (exports.user.id != exports.guild.ownerID) {
                         usable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'master') {
-                    if (exports.member.id != config.master) {
+                    if (exports.user.id != masterID) {
                         usable = false;
                     }
 
@@ -275,27 +275,29 @@ module.exports = {
 
             var error = false;
 
-            if (arguments.length == 0 && config.params[0].required == true) {
-                error = true;
-            }
+            if (config.params.length != 0) {
+                if (arguments.length == 0 && config.params[0].required == true) {
+                    error = true;
+                }
 
-            if (arguments.length > config.params.length) {
-                error = true;
-            }
+                if (arguments.length > config.params.length) {
+                    error = true;
+                }
 
-            if (requirements > arguments.length) {
-                error = true;
-            }
+                if (requirements > arguments.length) {
+                    error = true;
+                }
 
-            if (arguments.length <= config.params.length) {
-                for (a in arguments) {
-                    if (module.exports.methods[config.params[a].type](arguments[a]).pass == false) {
-                        error = true;
-                    }
-
-                    if (a == arguments.length - 1) {
-                        if ((arguments.length >= requirements) == false) {
+                if (arguments.length <= config.params.length) {
+                    for (a in arguments) {
+                        if (module.exports.methods[config.params[a].type](arguments[a]).pass == false) {
                             error = true;
+                        }
+
+                        if (a == arguments.length - 1) {
+                            if ((arguments.length >= requirements) == false) {
+                                error = true;
+                            }
                         }
                     }
                 }

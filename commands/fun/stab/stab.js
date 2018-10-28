@@ -18,18 +18,19 @@ module.exports = function(imports, arguments) {
         "https://media.giphy.com/media/cThssR9peQeoo/giphy.gif"
     ]
 
-    var username = imports.guild.members.find('id', imports.Command.methods.mention(arguments[0]).value).user.username;
+    var id = imports.Command.methods.mention(arguments[0]).value;
+    var username = imports.guild.members.get(id).user.username;
     if (imports.user.id == '393915173406244885' || imports.user.id == imports.config.master) {
         var url = gifs[Math.floor(Math.random() * gifs.length)];
         var embed = new Discord.RichEmbed();
         embed.setAuthor('Charisma', imports.client.user.avatarURL);
-        embed.setDescription(imports.user.user.username + ' stabbed ' + username);
+        embed.setDescription(imports.user.username + ' stabbed ' + username);
         embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
         embed.setImage(url);
         imports.channel.send(embed);
     }
 
     else {
-        imports.channel.send('You either need to be Luxamine or Red');
+        imports.channel.send('only kewl kids can stab people :shrug:');
     }
 }
