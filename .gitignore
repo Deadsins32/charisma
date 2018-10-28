@@ -1,11 +1,10 @@
 config/config.json
 
+data/defaults.json
 data/guilds/*
 data/users/*
 
 logs
 *.log
-
-build/Release
 
 node_modules/
