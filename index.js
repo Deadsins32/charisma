@@ -52,34 +52,46 @@ for (g in groups) {
 var users = fs.readdirSync('./data/users');
 var userTotal = 0;
 for (u in users) {
-    userTotal++;
-    data.users[users[u].split('.json')[0]] = require('./data/users/' + users[u]);
+    if (users[u] != '.gitkeep') {
+        userTotal++;
+        data.users[users[u].split('.json')[0]] = require('./data/users/' + users[u]);
+    }
 }
 
 var guilds = fs.readdirSync('./data/guilds');
 var guildTotal = 0;
 
 for (g in guilds) {
-    guildTotal++;
-    var object = {
-        config: require('./data/guilds/' + guilds[g] + '/config.json'),
-        colors: require('./data/guilds/' + guilds[g] + '/colors.json'),
-        features: require('./data/guilds/' + guilds[g] + '/features.json'),
-        selfroles: require('./data/guilds/' + guilds[g] + '/selfroles.json'),
-        whitelist: require('./data/guilds/' + guilds[g] + '/whitelist.json'),
-        blacklist: require('./data/guilds/' + guilds[g] + '/blacklist.json'),
-        members: new Object()
-    }
+    if (guilds[g] != '.gitkeep') {
+        guildTotal++;
+        var object = {
+            config: require('./data/guilds/' + guilds[g] + '/config.json'),
+            colors: require('./data/guilds/' + guilds[g] + '/colors.json'),
+            features: require('./data/guilds/' + guilds[g] + '/features.json'),
+            selfroles: require('./data/guilds/' + guilds[g] + '/selfroles.json'),
+            whitelist: require('./data/guilds/' + guilds[g] + '/whitelist.json'),
+            blacklist: require('./data/guilds/' + guilds[g] + '/blacklist.json'),
+            members: new Object()
+        }
 
-    var members = fs.readdirSync('./data/guilds/' + guilds[g] + '/members');
-    for (m in members) {
-        object.members[members[m].split('.json')[0]] = require('./data/guilds/' + guilds[g] + '/members/' + members[m]);
-    }
+        var members = fs.readdirSync('./data/guilds/' + guilds[g] + '/members');
+        for (m in members) {
+            if (members[m] != '.gitkeep') {
+                object.members[members[m].split('.json')[0]] = require('./data/guilds/' + guilds[g] + '/members/' + members[m]);
+            }
+        }
 
-    data.guilds[guilds[g]] = object;
+        data.guilds[guilds[g]] = object;
+    }
 }
 
-data.defaults = require('./data/defaults.json');
+if (fs.existsSync('./data/defaults.json')) {
+    data.defaults = require('./data/defaults.json');
+}
+
+else {
+    data.defaults = require('./data/defaults.example.json');
+}
 
 var exports = {
     client: client,
