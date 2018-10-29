@@ -1,7 +1,7 @@
 {
     "guild": {
         "config": {
-            "prefix": "//",
+            "prefix": "s/",
             "flavor": "upbeat",
             "description": "not much to say about this guild...",
             "expcurve": 1.5,
@@ -10,7 +10,7 @@
         },
 
         "colors": {
-            "accent": "#9DA0CB",
+            "accent": "#ADCAFF",
             "logs": {
                 "joins": "#42F49B",
                 "leaves": "#F44141",
@@ -42,7 +42,7 @@
     "user": {
         "achievements": [],
         "badges": [],
-        "color": "#9DA0CB",
+        "color": "#ADCAFF",
         "description": "I'm not very creative...",
         "exp": 0,
         "level": 0,
