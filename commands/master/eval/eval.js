@@ -11,7 +11,7 @@ module.exports = function(imports, parameters) {
         }
     
         else {
-            imports.channel.send('json```' + object + '```');
+            imports.channel.send('```json\n' + object + '\n```');
         }
     }
 

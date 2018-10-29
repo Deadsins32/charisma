@@ -1,0 +1,10 @@
+{
+    "permissions": ["all"],
+    "description": "natures frosting :ok_hand:",
+    "hidden": false,
+    "nsfw": true,
+    "tags": ["fun", "nsfw"],
+    "params": [
+        { "type": "string", "required": false }
+    ]
+}
