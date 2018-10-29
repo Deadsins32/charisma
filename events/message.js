@@ -105,6 +105,9 @@ module.exports = function(imports, message) {
             command.name = actual;
         }
 
+        var embed = new Discord.RichEmbed();
+        embed.setColor(exports.local.guild.colors.accent);
+
         if (command.object != null) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
                 if (command.object.params[command.object.params.length - 1].type == 'string') {
@@ -141,8 +144,6 @@ module.exports = function(imports, message) {
 
             if (status.blacklisted) {
                 //if (message.author.id != imports.config.master) {
-                    var embed = new Discord.RichEmbed();
-                    embed.setColor(exports.local.guild.colors.accent);
                     embed.setDescription('you have been blacklisted from using that command');
                     message.channel.send(embed);
                 //}
@@ -171,8 +172,6 @@ module.exports = function(imports, message) {
                             }
 
                             else {
-                                var embed = new Discord.RichEmbed();
-                                embed.setColor(local.guild.colors.accent);
                                 embed.setTitle('invalid syntax');
                                 embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                                 message.channel.send(embed);
@@ -181,11 +180,13 @@ module.exports = function(imports, message) {
 
                         else {
                             if (status.visible) {
-                                message.channel.send('`you need to be in an nsfw channel to use that`');
+                                embed.setDescription('you need to be in an nsfw channel to use that');
+                                message.channel.send(embed);
                             }
 
                             else {
-                                message.channel.send('`command not found`');
+                                embed.setDescription('command not found');
+                                message.channel.send(embed);
                             }
                         }
                     }
@@ -216,15 +217,14 @@ module.exports = function(imports, message) {
 
                         else {
                             if (status.visible) {
-                                var embed = new Discord.RichEmbed();
-                                embed.setColor(local.guild.colors.accent);
                                 embed.setTitle('invalid syntax');
                                 embed.addField('usage:', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
                                 message.channel.send(embed);
                             }
 
                             else {
-                                message.channel.send('`command not found`');
+                                embed.setDescription('command not found');
+                                message.channel.send(embed);
                             }
                         }
                     }
@@ -232,18 +232,21 @@ module.exports = function(imports, message) {
 
                 else {
                     if (status.visible) {
-                        message.channel.send('`' + JSON.stringify(status.requiredPermissions) + ' is required' + '`');
+                        embed.setDescription('`' + JSON.stringify(status.requiredPermissions) + '` is required');
+                        message.channel.send(embed);
                     }
 
                     else {
-                        message.channel.send('`command not found`');
+                        embed.setDescription('command not found');
+                        message.channel.send(embed);
                     }
                 }
             }
         }
 
         else {
-            message.channel.send('`command not found`');
+            embed.setDescription('command not found');
+            message.channel.send(embed);
         }
     }
 
