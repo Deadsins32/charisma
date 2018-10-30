@@ -5,8 +5,8 @@
     "nsfw": false,
     "tags": ["management", "admin"],
     "params": [
-        { "type": "string", "required": true },
-        { "type": "string", "required": false },
+        { "type": "string", "required": true, "name": "get | add | remove | clear" },
+        { "type": "mention", "required": false },
         { "type": "string", "required": false }
     ]
 }

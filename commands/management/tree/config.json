@@ -5,6 +5,6 @@
     "nsfw": false,
     "tags": ["utility", "management"],
     "params": [
-        { "type": "string", "required": true }
+        { "type": "string", "required": true, "name": "path" }
     ]
 }

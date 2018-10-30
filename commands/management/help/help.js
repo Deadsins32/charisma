@@ -2,12 +2,12 @@ var Discord = require('discord.js');
 
 module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
-
+    
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
     function parse(name, command) {
         var status = imports.Command.get.status(imports, name, command, imports.blacklist);
-        if (status.usable && status.visible && !status.blacklisted) {
+        if (status.userUsable && status.visible && !status.blacklisted) {
             if (status.nsfw) {
                 if (imports.channel.nsfw) {
                     return true;
@@ -51,10 +51,7 @@ module.exports = function(imports, arguments) {
             }
 
             else {
-                if (configs[arguments[0]]) {
-                    name = true;
-                }
-
+                if (configs[arguments[0]]) { name = true }
                 else {
                     for (c in configs) {
                         for (t in configs[c].tags) {
@@ -117,6 +114,7 @@ module.exports = function(imports, arguments) {
             page = parseInt(arguments[1]) - 1;
         }
     }
+    
     var maxPage = Math.ceil(array.length / 10) - 1;
     
     if (page > maxPage) {

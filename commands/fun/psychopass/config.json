@@ -4,5 +4,7 @@
     "hidden": true,
     "nsfw": false,
     "tags": ["fun"],
-    "params": [{ "type": "mention", "required": false }]
+    "params": [
+        { "type": "mention", "required": false, "name": "user" }
+    ]
 }

@@ -5,6 +5,6 @@
     "nsfw": false,
     "tags": ["fun"],
     "params": [
-        { "type": "string", "required": true }
+        { "type": "string", "required": true, "name": "search terms" }
     ]
 }

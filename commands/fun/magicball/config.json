@@ -4,5 +4,7 @@
     "hidden": false,
     "nsfw": false,
     "tags": ["fun"],
-    "params": [{ "type": "string", "required": true }]
+    "params": [
+        { "type": "string", "required": true, "name": "true / false question" }
+    ]
 }

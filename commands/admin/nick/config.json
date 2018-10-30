@@ -5,7 +5,8 @@
     "hidden": false,
     "nsfw": false,
     "params": [
-        { "type": "string", "required": true },
-        { "type": "string", "required": true }
+        { "type": "string", "required": true, "name": "set | remove" },
+        { "type": "mention", "required": true, "name": "user" },
+        { "type": "string", "required": false, "name": "nickname" }
     ]
 }

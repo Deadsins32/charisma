@@ -140,7 +140,9 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command.name, command.object, local.guild.blacklist[message.author.id]);
+            var status = imports.Command.get.status(exports, command, command.object, local.guild.blacklist[message.author.id]);
+
+            for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
 
             if (status.blacklisted) {
                 //if (message.author.id != imports.config.master) {
@@ -164,69 +166,76 @@ module.exports = function(imports, message) {
             }
 
             else {
-                if (status.usable) {
-                    if (status.nsfw) {
-                        if (message.channel.nsfw) {
-                            if (imports.Command.syntax.check(command.object, command.arguments)) {
-                                imports.Command.commands[command.name](exports, command.arguments);
+                if (status.userUsable) {
+                    if (status.botUsable) {
+                        if (status.nsfw) {
+                            if (message.channel.nsfw) {
+                                if (imports.Command.syntax.check(command.object, command.arguments)) {
+                                    imports.Command.commands[command.name](exports, command.arguments);
+                                }
+
+                                else {
+                                    embed.setTitle('invalid syntax');
+                                    embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
+                                    message.channel.send(embed);
+                                }
                             }
 
                             else {
-                                embed.setTitle('invalid syntax');
-                                embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
-                                message.channel.send(embed);
-                            }
-                        }
+                                if (status.visible) {
+                                    embed.setDescription('you need to be in an nsfw channel to use that');
+                                    message.channel.send(embed);
+                                }
 
-                        else {
-                            if (status.visible) {
-                                embed.setDescription('you need to be in an nsfw channel to use that');
-                                message.channel.send(embed);
-                            }
-
-                            else {
-                                embed.setDescription('command not found');
-                                message.channel.send(embed);
-                            }
-                        }
-                    }
-
-                    else {
-                        if (imports.Command.syntax.check(command.object, command.arguments)) {
-                            try {
-                                imports.Command.commands[command.name](exports, command.arguments);
-                            }
-
-                            catch(error) {
-                                var lines = error.stack.split('\n');
-                                for (l in lines) {
-                                    if (l == 0) {
-                                        imports.console.error(lines[l]);
-                                    }
-
-                                    else if (l == lines.length - 1) {
-                                        console.log(chalk.redBright(' └─────'), lines[1].slice(4));
-                                    }
-
-                                    else {
-                                        console.log(chalk.redBright(' ├─────'), lines[l].slice(4));
-                                    }
+                                else {
+                                    embed.setDescription('command not found');
+                                    message.channel.send(embed);
                                 }
                             }
                         }
 
                         else {
-                            if (status.visible) {
-                                embed.setTitle('invalid syntax');
-                                embed.addField('usage:', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
-                                message.channel.send(embed);
+                            if (imports.Command.syntax.check(command.object, command.arguments)) {
+                                try {
+                                    imports.Command.commands[command.name](exports, command.arguments);
+                                }
+
+                                catch(error) {
+                                    var lines = error.stack.split('\n');
+                                    for (l in lines) {
+                                        if (l == 0) {
+                                            imports.console.error(lines[l]);
+                                        }
+
+                                        else if (l == lines.length - 1) {
+                                            console.log(chalk.redBright(' └─────'), lines[1].slice(4));
+                                        }
+
+                                        else {
+                                            console.log(chalk.redBright(' ├─────'), lines[l].slice(4));
+                                        }
+                                    }
+                                }
                             }
 
                             else {
-                                embed.setDescription('command not found');
-                                message.channel.send(embed);
+                                if (status.visible) {
+                                    embed.setTitle('invalid syntax');
+                                    embed.addField('usage:', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
+                                    message.channel.send(embed);
+                                }
+
+                                else {
+                                    embed.setDescription('command not found');
+                                    message.channel.send(embed);
+                                }
                             }
                         }
+                    }
+
+                    else {
+                        embed.setDescription('I don\'t have permission to do that');
+                        message.channel.send(embed);
                     }
                 }
 

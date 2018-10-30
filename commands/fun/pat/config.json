@@ -5,6 +5,6 @@
     "nsfw": false,
     "tags": ["fun"],
     "params": [
-        { "type": "mention", "required": true }
+        { "type": "mention", "required": true, "name": "user" }
     ]
 }

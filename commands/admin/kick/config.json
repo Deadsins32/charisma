@@ -5,7 +5,7 @@
     "nsfw": false,
     "tags": ["management", "admin"],
     "params": [
-        { "type": "mention", "required": true },
-        { "type": "string", "required": false }
+        { "type": "mention", "required": true, "name": "member" },
+        { "type": "string", "required": false, "name": "reason" }
     ]
 }

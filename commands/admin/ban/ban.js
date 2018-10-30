@@ -1,7 +1,13 @@
+var Discord = require('discord.js');
+
 module.exports = function(imports, arguments) {
-    var id = imports.Command.methods.mention(arguments[0]).value;
+    var id = arguments[0];
     var reason = 'NO REASON';
     var days = 0;
+
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+
     if (arguments[1] != undefined) {
         reason = arguments[1];
     }
@@ -12,14 +18,15 @@ module.exports = function(imports, arguments) {
 
     if (imports.user.id != id) {
         var member = imports.guild.members.find('id', id);
-        member.ban({reason: reason, days: days})
-            .then(() => imports.channel.send('`user: ' + member.displayName + ' has been banned for reason: "' + reason + '"`\n`' + days + ' day(s) worth of messages deleted`'))
-            .catch((function(error) {
-                imports.channel.send('`' + error + '`');
-            }));
+        var name = member.user.username + '#' + member.user.descriminator;
+        member.ban({reason: reason, days: days}).then(function() {
+            embed.setDescription('user: ' + name + ' has been banned for reason: "' + reason + '"; ' + days + ' day(s) worth of messages have been deleted');
+            imports.channel.send(embed);
+        }).catch((function(error) { console.log(error) }));
     }
 
     else {
-        imports.channel.send('`you can\'t ban yourself`');
+        embed.setDescription('you can\'t ban yourself');
+        imports.channel.send(embed);
     }
 }

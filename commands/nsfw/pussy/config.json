@@ -5,6 +5,6 @@
     "nsfw": true,
     "tags": ["fun", "nsfw"],
     "params": [
-        { "type": "string", "required": false }
+        { "type": "string", "required": false, "name": "gif?" }
     ]
 }

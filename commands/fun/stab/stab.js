@@ -18,7 +18,7 @@ module.exports = function(imports, arguments) {
         "https://media.giphy.com/media/cThssR9peQeoo/giphy.gif"
     ]
 
-    var id = imports.Command.methods.mention(arguments[0]).value;
+    var id = arguments[0];
     var username = imports.guild.members.get(id).user.username;
     if (imports.user.id == '393915173406244885' || imports.user.id == imports.config.master) {
         var url = gifs[Math.floor(Math.random() * gifs.length)];

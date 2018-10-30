@@ -5,7 +5,7 @@
     "nsfw": false,
     "tags": ["management", "utility"],
     "params": [
-        { "type": "string", "required": true },
-        { "type": "string", "required": false }
+        { "type": "string", "required": true, "name": "path" },
+        { "type": "string", "required": false, "name": "user | role | channel" }
     ]
 }

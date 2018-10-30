@@ -3,7 +3,7 @@ var Discord = require('discord.js');
 var Flavors = require('./Flavors.js');
 
 module.exports = function(imports, name, parameters) {
-    var id = imports.Command.methods.mention(parameters[0]).value;
+    var id = parameters[0];
     var displayName = imports.guild.members.get(id).displayName;
 
     var embed = new Discord.RichEmbed();

@@ -5,7 +5,7 @@ module.exports = {
     configs: {},
     methods: {
         any: function(input) {
-            return true;
+            var output = { pass: true, value: input }
         },
 
         mention: function(input) {
@@ -57,23 +57,19 @@ module.exports = {
         },
 
         string: function(input) {
-            var output = { pass: true };
-            output.value = input;
-
+            var output = { pass: true, value: input };
             return output;
         },
 
         number: function(input) {
-            var output = { pass: true };
-            if (isNaN(input)) {
-                output = { pass: false };
-            }
-
+            var output = { pass: true, value: null }
+            if (isNaN(input)) { output.pass = false }
+            else { output.value = parseInt(input) }
             return output;
         },
 
         color: function(input) {
-            var output = { pass: true };
+            var output = { pass: true, value: null };
             var input = input.toLowerCase();
 
             if (input.startsWith('#')) {
@@ -142,15 +138,9 @@ module.exports = {
             }
 
             else { output.pass = false }
-
-            if (output.pass) {
-                output.value = '0x' + input;
-            }
-
-            else {
-                output.value = null;
-            }
-
+            
+            if (output.pass) { output.value = input }
+            else { output.value = null }
             return output;
         }
     },
@@ -166,9 +156,11 @@ module.exports = {
             }
         },
 
-        status: function(exports, name, config, blacklist) {
+        status: function(exports, command, config, blacklist) {
             var requiredPermissions = config.permissions;
-            var usable = true;
+            var parameters = new Array();
+            var userUsable = true;
+            var botUsable = true;
             var visible = true;
             var nsfw = false;
             var blacklisted = false;
@@ -177,7 +169,7 @@ module.exports = {
             var Discord = require('discord.js');
 
             for (b in blacklist) {
-                if (blacklist[b] == name) {
+                if (blacklist[b] == command.name) {
                     blacklisted = true;
                 }
             }
@@ -185,31 +177,39 @@ module.exports = {
             for (p in config.permissions) {
                 if (Discord.Permissions.FLAGS[config.permissions[p]] != undefined) {
                     if (!exports.member.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
-                        usable = false;
+                        userUsable = false;
+                    }
+
+                    if (!exports.guild.me.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
+                        botUsable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'admin') {
                     if (!exports.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
-                        usable = false;
+                        userUsable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'owner') {
                     if (exports.user.id != exports.guild.ownerID) {
-                        usable = false;
+                        userUsable = false;
                     }
                 }
 
                 else if (config.permissions[p] == 'master') {
                     if (exports.user.id != masterID) {
-                        usable = false;
+                        userUsable = false;
                     }
 
                     else {
                         master = true;
                     }
                 }
+            }
+
+            for (a in command.arguments) {
+                parameters.push(module.exports.methods[config.params[a].type](command.arguments[a]).value);
             }
 
             if (config.hidden) {
@@ -230,7 +230,9 @@ module.exports = {
 
             return {
                 requiredPermissions: requiredPermissions,
-                usable: usable,
+                parameters: parameters,
+                userUsable: userUsable,
+                botUsable: botUsable,
                 visible: visible,
                 nsfw: nsfw,
                 blacklisted: blacklisted
@@ -244,12 +246,15 @@ module.exports = {
             if (module.exports.configs[command]) {
                 syntax += prefix + command;
                 for (p in module.exports.configs[command].params) {
+                    var insert = module.exports.configs[command].params[p].type;
+                    if (module.exports.configs[command].params[p].name) { insert = module.exports.configs[command].params[p].name }
+
                     if (module.exports.configs[command].params[p].required) {
-                        syntax += ' <' + module.exports.configs[command].params[p].type + '>';
+                        syntax += ' <' + insert + '>';
                     }
 
                     else {
-                        syntax += ' [' + module.exports.configs[command].params[p].type + ']';
+                        syntax += ' [' + insert + ']';
                     }
                 }
             }
@@ -290,10 +295,6 @@ module.exports = {
 
                 if (arguments.length <= config.params.length) {
                     for (a in arguments) {
-                        if (module.exports.methods[config.params[a].type](arguments[a]).pass == false) {
-                            error = true;
-                        }
-
                         if (a == arguments.length - 1) {
                             if ((arguments.length >= requirements) == false) {
                                 error = true;
