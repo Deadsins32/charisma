@@ -1,8 +1,7 @@
-var fs = require('fs');
-var Discord = require('discord.js');
-var chalk = require('chalk');
-
 module.exports = function(imports, message) {
+    var Discord = require('discord.js');
+    var chalk = require('chalk');
+
     if (message.author.bot) {
         return;
     }
