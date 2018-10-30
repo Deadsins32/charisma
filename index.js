@@ -149,7 +149,6 @@ function save() {
         console.log(false);
     });*/
 
-    client.user.setActivity('storing data', { type: 'STREAMING', url: 'https://www.twitch.tv/redshadium' });
     for (g in data.guilds) {
         if (!fs.existsSync('./data/guilds/' + g)) {
             fs.mkdirSync('./data/guilds/' + g);
@@ -175,8 +174,6 @@ function save() {
     for (u in data.users) {
         fs.writeFileSync('./data/users/' + u + '.json', JSON.stringify(data.users[u], null, 4), 'utf8');
     }
-
-    client.user.setActivity('with my code', { type: 'PLAYING' });
 }
 
 client.on('ready', function() {
