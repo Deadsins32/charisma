@@ -1,6 +1,6 @@
 {
     "permissions": ["all"],
-    "description": "Displays your profile or the profile of whoever you specify",
+    "description": "Gets some nice user info",
     "hidden": false,
     "nsfw": false,
     "tags": ["utility", "fun"],

@@ -5,7 +5,7 @@
     "hidden": false,
     "nsfw": false,
     "params": [
-        { "type": "mention", "required": true },
-        { "type": "string", "required": true }
+        { "type": "mention", "required": true, "name": "possession" },
+        { "type": "string", "required": true, "name": "command" }
     ]
 }
