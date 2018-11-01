@@ -139,15 +139,22 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command, command.object, local.guild.blacklist[message.author.id]);
+            var status = imports.Command.get.status(exports, command, command.object, local.guild.blacklist[message.author.id], local.guild.whitelist);
 
             for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
 
-            if (status.blacklisted) {
-                //if (message.author.id != imports.config.master) {
+            if (status.whitelistedCommand && !status.isWhitelisted) {
+                if (message.author.id != imports.config.master) {
+                    embed.setDescription('you need to be whitelisted to use that command');
+                    message.channel.send(embed);
+                }
+            }
+
+            else if (status.blacklisted) {
+                if (message.author.id != imports.config.master) {
                     embed.setDescription('you have been blacklisted from using that command');
                     message.channel.send(embed);
-                //}
+                }
 
                 /*else {
                     if (imports.Command.syntax.check(command.object, command.arguments)) {

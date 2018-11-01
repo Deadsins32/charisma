@@ -156,7 +156,7 @@ module.exports = {
             }
         },
 
-        status: function(exports, command, config, blacklist) {
+        status: function(exports, command, config, blacklist, whitelist) {
             var requiredPermissions = config.permissions;
             var parameters = new Array();
             var userUsable = true;
@@ -164,13 +164,21 @@ module.exports = {
             var visible = true;
             var nsfw = false;
             var blacklisted = false;
+            var whitelistedCommand = false;
+            var isWhitelisted = false;
             var master = true;
 
             var Discord = require('discord.js');
 
-            for (b in blacklist) {
-                if (blacklist[b] == command.name) {
-                    blacklisted = true;
+            for (b in blacklist) { if (blacklisted[b] == command.name) { blacklisted = true } }
+            for (w in whitelist) {
+                if (w == command.name) {
+                    if (whitelist[w].length != 0) { whitelistedCommand = true }
+                    for (var m = 0; m < whitelist[w].length; m++) {
+                        if (whitelist[w][m] == exports.user.id) {
+                            isWhitelisted = true;
+                        }
+                    }
                 }
             }
 
@@ -224,7 +232,15 @@ module.exports = {
 
             if (blacklisted) {
                 if (!master) {
-                    usable = false;
+                    userUsable = false;
+                }
+            }
+
+            if (whitelistedCommand) {
+                if (!master) {
+                    if (!whitelisted) {
+                        userUsable = false;
+                    }
                 }
             }
 
@@ -235,7 +251,9 @@ module.exports = {
                 botUsable: botUsable,
                 visible: visible,
                 nsfw: nsfw,
-                blacklisted: blacklisted
+                blacklisted: blacklisted,
+                whitelistedCommand: whitelistedCommand,
+                isWhitelisted: isWhitelisted
             }
         }
     },
