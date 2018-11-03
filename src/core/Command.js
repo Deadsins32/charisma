@@ -1,3 +1,4 @@
+var Discord = require('discord.js');
 var masterID = require('./../config/config.json').master;
 
 module.exports = {
@@ -145,188 +146,102 @@ module.exports = {
         }
     },
 
-    get: {
-        command: function(command) {
-            if (module.exports.configs[command]) {
-                return module.exports.configs[command];
-            }
+    get: function(command) { if (module.exports.configs[command]) { return module.exports.configs[command] } },
 
-            else {
-                return null;
-            }
-        },
-
-        status: function(exports, command, config, blacklist, whitelist) {
-            var requiredPermissions = config.permissions;
-            var parameters = new Array();
+    status: function(command, local, member, channel, guild) {
+        var config = module.exports.get(command.name);
+        if (config) {
+            var required = config.permissions;
+            var missingPerm = false;
             var userUsable = true;
             var botUsable = true;
             var visible = true;
             var nsfw = false;
             var blacklisted = false;
-            var whitelistedCommand = false;
-            var isWhitelisted = false;
-            var master = true;
+            var whitelisted = true;
+            var parameters = new Array();
 
-            var Discord = require('discord.js');
+            var master = false;
 
-            for (b in blacklist) { if (blacklisted[b] == command.name) { blacklisted = true } }
-            for (w in whitelist) {
-                if (w == command.name) {
-                    if (whitelist[w].length != 0) { whitelistedCommand = true }
-                    for (var m = 0; m < whitelist[w].length; m++) {
-                        if (whitelist[w][m] == exports.user.id) {
-                            isWhitelisted = true;
-                        }
-                    }
+            var blacklist = local.blacklist[local.member.id];
+            var whitelist = [];
+            if (local.whitelist[command.name]) { whitelist = local.whitelist[command.name] }
+
+            for (b in blacklist) { if (blacklist[b] == command.name) { blacklisted = true } }
+            if (whitelist.length != 0) { if (!whitelist.includes(local.member.id)) { whitelisted = false } }
+
+            for (r in required) {
+                if (Discord.Permissions.FLAGS[required[r]]) {
+                    if (!member.hasPermission(Discord.Permissions.FLAGS[required[r]])) { missingPerm = true }
+                    if (!guild.me.hasPermission(Discord.Permissions.FLAGS[required[r]])) { botUsable = false }
                 }
+
+                else if (required[r] == 'admin') { if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { missingPerm = true } }
+                else if (required[r] == 'owner') { if (member.user.id != guild.ownerID) { missingPerm = true } }
+                else if (required[r] == 'master') { if (member.user.id != masterID) { missingPerm = true } else { master = true } }
             }
 
-            for (p in config.permissions) {
-                if (Discord.Permissions.FLAGS[config.permissions[p]] != undefined) {
-                    if (!exports.member.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
-                        userUsable = false;
-                    }
+            for (a in command.arguments) { parameters.push(module.exports.methods[config.params[a].type](command.arguments[a]).value) }
 
-                    if (!exports.guild.me.hasPermission(Discord.Permissions.FLAGS[config.permissions[p]])) {
-                        botUsable = false;
-                    }
-                }
+            if (blacklisted || !whitelisted || missingPerm ) { userUsable = false }
 
-                else if (config.permissions[p] == 'admin') {
-                    if (!exports.member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
-                        userUsable = false;
-                    }
-                }
+            if (config.hidden) { visible = false }
+            if (config.nsfw) { nsfw = true }
 
-                else if (config.permissions[p] == 'owner') {
-                    if (exports.user.id != exports.guild.ownerID) {
-                        userUsable = false;
-                    }
-                }
-
-                else if (config.permissions[p] == 'master') {
-                    if (exports.user.id != masterID) {
-                        userUsable = false;
-                    }
-
-                    else {
-                        master = true;
-                    }
-                }
-            }
-
-            for (a in command.arguments) {
-                parameters.push(module.exports.methods[config.params[a].type](command.arguments[a]).value);
-            }
-
-            if (config.hidden) {
-                if (!master) {
-                    visible = false;
-                }
-            }
-
-            if (config.nsfw) {
-                nsfw = true;
-            }
-
-            if (blacklisted) {
-                if (!master) {
-                    userUsable = false;
-                }
-            }
-
-            if (whitelistedCommand) {
-                if (!master) {
-                    if (!whitelisted) {
-                        userUsable = false;
-                    }
-                }
-            }
+            if (nsfw && !channel.nsfw) { userUsable = false }
 
             return {
-                requiredPermissions: requiredPermissions,
-                parameters: parameters,
                 userUsable: userUsable,
                 botUsable: botUsable,
+
                 visible: visible,
                 nsfw: nsfw,
+
+                missingPerm: missingPerm,
+
                 blacklisted: blacklisted,
-                whitelistedCommand: whitelistedCommand,
-                isWhitelisted: isWhitelisted
+                whitelisted: whitelisted,
+
+                parameters: parameters,
+                master: master
             }
         }
     },
 
-    syntax: {
-        get: function(prefix, command) {
-            var syntax = '';
-            if (module.exports.configs[command]) {
-                syntax += prefix + command;
-                for (p in module.exports.configs[command].params) {
-                    var insert = module.exports.configs[command].params[p].type;
-                    if (module.exports.configs[command].params[p].name) { insert = module.exports.configs[command].params[p].name }
-
-                    if (module.exports.configs[command].params[p].required) {
-                        syntax += ' <' + insert + '>';
-                    }
-
-                    else {
-                        syntax += ' [' + insert + ']';
-                    }
-                }
-            }
-
-            if (syntax != '') {
-                return syntax;
-            }
-
-            else {
-                return null;
-            }
-        },
-
-        check: function(config, arguments) {
-            var output = true;
+    check: function(name, parameters) {
+        var config = module.exports.get(name);
+        if (config) {
             var requirements = 0;
 
-            for (p in config.params) {
-                if (config.params[p].required) {
-                    requirements++;
-                }
-            }
+            for (p in config.params) { if (config.params[p].required) { requirements++ } }
 
             var error = false;
 
             if (config.params.length != 0) {
-                if (arguments.length == 0 && config.params[0].required == true) {
-                    error = true;
-                }
-
-                if (arguments.length > config.params.length) {
-                    error = true;
-                }
-
-                if (requirements > arguments.length) {
-                    error = true;
-                }
-
-                if (arguments.length <= config.params.length) {
-                    for (a in arguments) {
-                        if (a == arguments.length - 1) {
-                            if ((arguments.length >= requirements) == false) {
-                                error = true;
-                            }
-                        }
-                    }
-                }
+                if (parameters.length == 0 && config.params[0].required == true) { error = true }
+                if (parameters.length > config.params.length) { error = true }
+                if (requirements > parameters.length) { error = true }
+                if (parameters.length <= config.params.length) { for (p in parameters) { if (p == parameters.length - 1) { if (!(parameters.length >= requirements)) { error = true } } } }
             }
 
-            if (error) {
-                output = false;
+            for (p in parameters) { if (!module.exports.methods[config.params[p].type](parameters[p]).pass) { error = true } }
+
+            return !error;
+        }
+    },
+
+    syntax: function(prefix, command) {
+        var config = module.exports.get(command);
+        if (config) {
+            var syntax = [prefix + command];
+            for (p in config.params) {
+                var insert = config.params[p].type;
+                if (config.params[p].name) { insert = config.params[p].name }
+                if (config.params[p].required) { syntax.push(`<${insert}>`) }
+                else { syntax.push(`[${insert}]`) }
             }
 
-            return output;
+            return syntax.join(' ');
         }
     }
 }

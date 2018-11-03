@@ -3,6 +3,8 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 }
 
+var Discord = require('discord.js');
+
 var messageParser = require('../../../events/message.js').toString();
 
 module.exports = function(imports, arguments) {

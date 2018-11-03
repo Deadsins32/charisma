@@ -1,6 +1,6 @@
 {
     "name": "say",
-    "permissions": ["master"],
+    "permissions": [],
     "description": "makes the bot say whatever you specify",
     "hidden": false,
     "nsfw": true,

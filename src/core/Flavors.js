@@ -1,27 +1,19 @@
 var fs = require('fs');
 var enabled = require('./../flavors/enabled.json');
 var accentbank = require('./../flavors/accentbank.json');
+var flavors = new Object();
+var root = fs.readdirSync('./src/flavors/');
+for (r in root) {
+    if (!root[r].endsWith('.json')) {
+        flavors[root[r]] = new Object();
+        var files = fs.readdirSync(`./src/flavors/${root[r]}/`);
+        for (f in files) { flavors[root[r]][files[f].split('.json')[0]] = require(`./../flavors/${root[r]}/${files[f]}`) }
+    }
+}
 
 module.exports = {
     get: function(flavor) {
-        var output = null;
-        var root = fs.readdirSync('./flavors/');
-
-        for (r in root) {
-            if (!root[r].endsWith('.json')) {
-                if (root[r] == flavor) {
-                    output = new Object();
-                    var files = fs.readdirSync('./flavors/' + flavor + '/');
-                    for (f in files) {
-                        var current = fs.readFileSync('./flavors/' + flavor + '/' + files[f], 'utf8');
-                        var json = JSON.parse(current, 'utf8');
-                        output[files[f].split('.json')[0]] = json;
-                    }
-                }
-            }
-        }
-
-        return output;
+        if (flavors[flavor]) { return flavors[flavor] }
     },
 
     getFlavors: function() {

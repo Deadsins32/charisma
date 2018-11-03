@@ -1,10 +1,8 @@
-module.exports = function(imports, message) {
-    var Discord = require('discord.js');
-    var chalk = require('chalk');
+var Discord = require('discord.js');
+var chalk = require('chalk');
 
-    if (message.author.bot) {
-        return;
-    }
+module.exports = function(imports, message) {
+    if (message.author.bot) { return }
     
     if (imports.client.user.id != message.author.id) {
         if (!imports.data.guilds[message.guild.id]) {
@@ -48,12 +46,26 @@ module.exports = function(imports, message) {
     }
 
     var local = {
-        guild: imports.data.guilds[message.guild.id],
-        member: imports.data.guilds[message.guild.id].members[message.author.id],
-        user: imports.data.users[message.author.id]
+        guild: {
+            id: message.guild.id,
+            data: imports.data.guilds[message.guild.id]
+        },
+
+        member: {
+            id: message.author.id,
+            data: imports.data.guilds[message.guild.id].members[message.author.id]
+        },
+
+        user: {
+            id: message.author.id,
+            data: imports.data.users[message.author.id]
+        },
+
+        blacklist: imports.data.guilds[message.guild.id].blacklist,
+        whitelist: imports.data.guilds[message.guild.id].whitelist
     }
 
-    if (message.content.startsWith(local.guild.config.prefix)) {
+    if (message.content.startsWith(local.guild.data.config.prefix)) {
         var exports = {
             Command: imports.Command,
             Flavors: imports.Flavors,
@@ -78,36 +90,31 @@ module.exports = function(imports, message) {
 
         var content;
 
-        if (imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
-            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
+        if (imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(local.guild.data.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]);
         }
 
         else {
             content = message.content;
         }
 
+        var name = content.slice(local.guild.data.config.prefix.length).split(' ')[0];
+        if (imports.aliases[name]) { name = imports.aliases[name] }
+
         var command = {
-            object: imports.Command.get.command(content.split(local.guild.config.prefix)[1].split(' ')[0]),
-            full: content.slice(local.guild.config.prefix.length),
-            name: content.slice(local.guild.config.prefix.length).split(' ')[0],
+            object: imports.Command.get(name),
+            full: content.slice(local.guild.data.config.prefix.length),
+            name: name,
             arguments: new Array()
         }
 
         var longArguments1 = command.full.match(/("([^"]|"")*")/g);
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
-        if (imports.aliases[command.name] != undefined) {
-            var actual = imports.aliases[command.name];
-
-            command.object = imports.Command.get.command(actual);
-            command.full = command.full.replace(command.name, actual);
-            command.name = actual;
-        }
-
         var embed = new Discord.RichEmbed();
-        embed.setColor(exports.local.guild.colors.accent);
+        embed.setColor(exports.local.guild.data.colors.accent);
 
-        if (command.object != null) {
+        if (command.object) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
                 if (command.object.params[command.object.params.length - 1].type == 'string') {
                     var text = command.full.split(' ').splice(command.object.params.length);
@@ -121,7 +128,7 @@ module.exports = function(imports, message) {
             var longArguments2 = command.full.match(/("([^"]|"")*")/g);
             command.full = command.full.replace(/("([^"]|"")*")/g, '[ss]');
 
-            command.arguments = command.full.slice(local.guild.config.prefix.length + command.name + 1).split(' ');
+            command.arguments = command.full.slice(local.guild.data.config.prefix.length + command.name + 1).split(' ');
 
             var s = 0;
             var ss = 0;
@@ -139,128 +146,47 @@ module.exports = function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.get.status(exports, command, command.object, local.guild.blacklist[message.author.id], local.guild.whitelist);
-
-            for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
-
-            if (status.whitelistedCommand && !status.isWhitelisted) {
-                if (message.author.id != imports.config.master) {
-                    embed.setDescription('you need to be whitelisted to use that command');
-                    message.channel.send(embed);
-                }
-            }
-
-            else if (status.blacklisted) {
-                if (message.author.id != imports.config.master) {
-                    embed.setDescription('you have been blacklisted from using that command');
-                    message.channel.send(embed);
-                }
-
-                /*else {
-                    if (imports.Command.syntax.check(command.object, command.arguments)) {
-                        imports.Command.commands[command.name](exports, command.arguments);
+            if (imports.Command.check(command.name, command.arguments)) {
+                var status = imports.Command.status(command, local, message.member, message.channel, message.guild);
+                if (status) {
+                    for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
+                    if (status.master) {
+                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) { imports.Command.commands[command.name](exports, command.arguments) }
+                        else { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
                     }
 
                     else {
-                        var embed = new Discord.RichEmbed();
-                        embed.setColor(local.guild.colors.accent);
-                        embed.setTitle('invalid syntax');
-                        embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
-                        message.channel.send(embed);
+                        if (status.userUsable && status.botUsable) { imports.Command.commands[command.name](exports, command.arguments) }
+
+                        else {
+                            if (status.visible) {
+                                if (!status.userUsable) {
+                                    if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
+                                    else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
+                                    else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
+                                    else if (status.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
+                                }
+
+                                else { if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) } }
+                            }
+
+                            else { embed.setDescription(`command not found`) }
+                        }
                     }
-                }*/
+
+                    if (embed.description) { message.channel.send(embed) }
+                }
             }
 
             else {
-                if (status.userUsable) {
-                    if (status.botUsable) {
-                        if (status.nsfw) {
-                            if (message.channel.nsfw) {
-                                if (imports.Command.syntax.check(command.object, command.arguments)) {
-                                    imports.Command.commands[command.name](exports, command.arguments);
-                                }
-
-                                else {
-                                    embed.setTitle('invalid syntax');
-                                    embed.addField('usage', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
-                                    message.channel.send(embed);
-                                }
-                            }
-
-                            else {
-                                if (status.visible) {
-                                    embed.setDescription('you need to be in an nsfw channel to use that');
-                                    message.channel.send(embed);
-                                }
-
-                                else {
-                                    embed.setDescription('command not found');
-                                    message.channel.send(embed);
-                                }
-                            }
-                        }
-
-                        else {
-                            if (imports.Command.syntax.check(command.object, command.arguments)) {
-                                try {
-                                    imports.Command.commands[command.name](exports, command.arguments);
-                                }
-
-                                catch(error) {
-                                    var lines = error.stack.split('\n');
-                                    for (l in lines) {
-                                        if (l == 0) {
-                                            imports.console.error(lines[l]);
-                                        }
-
-                                        else if (l == lines.length - 1) {
-                                            console.log(chalk.redBright(' └─────'), lines[1].slice(4));
-                                        }
-
-                                        else {
-                                            console.log(chalk.redBright(' ├─────'), lines[l].slice(4));
-                                        }
-                                    }
-                                }
-                            }
-
-                            else {
-                                if (status.visible) {
-                                    embed.setTitle('invalid syntax');
-                                    embed.addField('usage:', '`' + imports.Command.syntax.get(local.guild.config.prefix, command.name) + '`');
-                                    message.channel.send(embed);
-                                }
-
-                                else {
-                                    embed.setDescription('command not found');
-                                    message.channel.send(embed);
-                                }
-                            }
-                        }
-                    }
-
-                    else {
-                        embed.setDescription('I don\'t have permission to do that');
-                        message.channel.send(embed);
-                    }
-                }
-
-                else {
-                    if (status.visible) {
-                        embed.setDescription('`' + JSON.stringify(status.requiredPermissions) + '` is required');
-                        message.channel.send(embed);
-                    }
-
-                    else {
-                        embed.setDescription('command not found');
-                        message.channel.send(embed);
-                    }
-                }
+                embed.setTitle(`invalid syntax`);
+                embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.data.config.prefix, command.name)}\``);
+                message.channel.send(embed);
             }
         }
 
         else {
-            embed.setDescription('command not found');
+            embed.setDescription(`command not found`);
             message.channel.send(embed);
         }
     }
