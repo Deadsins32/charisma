@@ -4,15 +4,15 @@ var chalk = require('chalk');
 var Discord = require('discord.js');
 var client = new Discord.Client();
 
-var Command = require('./core/Command.js');
-var Flavors = require('./core/Flavors.js');
-var Seed = require('./core/Seed.js');
+var Command = require(`./src/core/Command.js`);
+var Flavors = require(`./src/core/Flavors.js`);
+var Seed = require('./src/core/Seed.js');
 
-var aliases = require('./config/aliases.json');
-var shorthands = require('./config/shorthands.json');
+var aliases = require('./src/config/aliases.json');
+var shorthands = require('./src/config/shorthands.json');
 
-var config = require('./config/config.json');
-var events = require('./events.js');
+var config = require('./src/config/config.json');
+var events = require('./src/events.js');
 
 var CONSOLE = console;
 
@@ -38,14 +38,14 @@ var data = {
 }
 
 var commandTotal = 0;
-var groups = fs.readdirSync('./commands');
+var groups = fs.readdirSync('./src/commands');
 for (g in groups) {
-    var commands = fs.readdirSync('./commands/' + groups[g]);
+    var commands = fs.readdirSync('./src/commands/' + groups[g]);
     for (c in commands) {
         commandTotal++;
         //exports.Command.commands[name] = file;
-        Command.commands[commands[c]] = require('./commands/' + groups[g] + '/' + commands[c] + '/' + commands[c] + '.js');
-        Command.configs[commands[c]] = require('./commands/' + groups[g] + '/' + commands[c] + '/config.json');
+        Command.commands[commands[c]] = require('./src/commands/' + groups[g] + '/' + commands[c] + '/' + commands[c] + '.js');
+        Command.configs[commands[c]] = require('./src/commands/' + groups[g] + '/' + commands[c] + '/config.json');
     }
 }
 
@@ -64,7 +64,13 @@ var guildTotal = 0;
 for (g in guilds) {
     if (guilds[g] != '.gitkeep') {
         guildTotal++;
-        var object = {
+        var object = new Object();
+        object.members = new Object();
+
+        var curr = fs.readdirSync(`./data/guilds/${guilds[g]}`);
+        for (c in curr) { if (curr[c] != 'members') { object[curr[c].split('.json')[0]] = require(`./data/guilds/${guilds[g]}/${curr[c]}`) } }
+
+        /*var object = {
             config: require('./data/guilds/' + guilds[g] + '/config.json'),
             colors: require('./data/guilds/' + guilds[g] + '/colors.json'),
             features: require('./data/guilds/' + guilds[g] + '/features.json'),
@@ -72,7 +78,7 @@ for (g in guilds) {
             whitelist: require('./data/guilds/' + guilds[g] + '/whitelist.json'),
             blacklist: require('./data/guilds/' + guilds[g] + '/blacklist.json'),
             members: new Object()
-        }
+        }*/
 
         var members = fs.readdirSync('./data/guilds/' + guilds[g] + '/members');
         for (m in members) {
@@ -85,13 +91,8 @@ for (g in guilds) {
     }
 }
 
-if (fs.existsSync('./data/defaults.json')) {
-    data.defaults = require('./data/defaults.json');
-}
-
-else {
-    data.defaults = require('./data/defaults.example.json');
-}
+if (fs.existsSync('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
+else { data.defaults = require('./data/defaults.example.json') }
 
 var exports = {
     client: client,
@@ -150,30 +151,16 @@ function save() {
     });*/
 
     for (g in data.guilds) {
-        if (!fs.existsSync('./data/guilds/' + g)) {
-            fs.mkdirSync('./data/guilds/' + g);
-        }
-
+        if (!fs.existsSync(`./data/guilds/${g}`)) { fs.mkdirSync(`./data/guilds/${g}`) }
         for (p in data.guilds[g]) {
-            if (p != 'members') {
-                fs.writeFileSync('./data/guilds/' + g + '/' + p + '.json', JSON.stringify(data.guilds[g][p], null, 4), 'utf8');
-            }
-
-            else {
-                if (!fs.existsSync('./data/guilds/' + g + '/members')) {
-                    fs.mkdirSync('./data/guilds/' + g + '/members');
-                }
-            }
+            if (p != 'members') { fs.writeFileSync(`./data/guilds/${g}/${p}.json`, JSON.stringify(data.guilds[g][p], null, 4), 'utf8') }
+            else { if (!fs.existsSync(`./data/guilds/${g}/members`)) { fs.mkdirSync(`./data/guilds/${g}/members`) } }
         }
 
-        for (m in data.guilds[g].members) {
-            fs.writeFileSync('./data/guilds/' + g + '/members/' + m + '.json', JSON.stringify(data.guilds[g].members[m], null, 4), 'utf8');
-        }
+        for (m in data.guilds[g].members) { fs.writeFileSync(`./data/guilds/${g}/members/${m}.json`, JSON.stringify(data.guilds[g].members[m], null, 4), 'utf8') }
     }
 
-    for (u in data.users) {
-        fs.writeFileSync('./data/users/' + u + '.json', JSON.stringify(data.users[u], null, 4), 'utf8');
-    }
+    for (u in data.users) { fs.writeFileSync(`./data/users/${u}.json`, JSON.stringify(data.users[u], null, 4), 'utf8') }
 }
 
 client.on('ready', function() {
