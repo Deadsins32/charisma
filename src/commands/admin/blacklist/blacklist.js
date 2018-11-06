@@ -26,7 +26,7 @@ module.exports = function(imports, parameters) {
         var member = imports.guild.members.get(id);
         if (member) {
             if (parameters[2] != undefined) {
-                if (imports.Command.get.command(parameters[2]) != null) {
+                if (imports.Command.get(parameters[2])) {
                     var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
                     var exists = false;
                     for (b = 0; b < blacklist.length; b++) {
@@ -65,7 +65,7 @@ module.exports = function(imports, parameters) {
         var member = imports.guild.members.get(id);
         if (member) {
             if (parameters[2] != undefined) {
-                if (imports.Command.get.command(parameters[2]) != null) {
+                if (imports.Command.get(parameters[2])) {
                     var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
                     var exists = false;
                     for (b = 0; b < blacklist.length; b++) {
