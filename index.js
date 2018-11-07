@@ -40,12 +40,12 @@ var data = {
 var commandTotal = 0;
 var groups = fs.readdirSync('./src/commands');
 for (g in groups) {
-    var commands = fs.readdirSync('./src/commands/' + groups[g]);
+    var commands = fs.readdirSync(`./src/commands/${groups[g]}`);
     for (c in commands) {
         commandTotal++;
         //exports.Command.commands[name] = file;
-        Command.commands[commands[c]] = require('./src/commands/' + groups[g] + '/' + commands[c] + '/' + commands[c] + '.js');
-        Command.configs[commands[c]] = require('./src/commands/' + groups[g] + '/' + commands[c] + '/config.json');
+        Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
+        Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
     }
 }
 
@@ -54,7 +54,7 @@ var userTotal = 0;
 for (u in users) {
     if (users[u] != '.gitkeep') {
         userTotal++;
-        data.users[users[u].split('.json')[0]] = require('./data/users/' + users[u]);
+        data.users[users[u].split('.json')[0]] = require(`./data/users/${users[u]}`);
     }
 }
 
@@ -80,10 +80,10 @@ for (g in guilds) {
             members: new Object()
         }*/
 
-        var members = fs.readdirSync('./data/guilds/' + guilds[g] + '/members');
+        var members = fs.readdirSync(`./data/guilds/${guilds[g]}/members`);
         for (m in members) {
             if (members[m] != '.gitkeep') {
-                object.members[members[m].split('.json')[0]] = require('./data/guilds/' + guilds[g] + '/members/' + members[m]);
+                object.members[members[m].split('.json')[0]] = require(`./data/guilds/${guilds[g]}/members/${members[m]}`);
             }
         }
 
