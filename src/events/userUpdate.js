@@ -4,7 +4,7 @@ module.exports = function(imports, oldUser, newUser) {
     for (g in imports.data.guilds) {
         if (imports.data.guilds[g]) {
             if (imports.data.guilds[g].config.logchannel != '') {
-                if (imports.data.guilds[g].features.logs.namechanges) {
+                if (imports.data.guilds[g].options.logs.namechanges) {
                     var id = imports.data.guilds[g].config.logchannel;
                     if (imports.client.guilds.find('id', g)) {
                         var guild = imports.client.guilds.find('id', g);

@@ -19,11 +19,13 @@
             }
         },
 
-        "features": {
+        "options": {
             "leveling": true,
             "achievements": true,
             "currency": true,
-            "indexed": false,
+            "silentErrors": false,
+            "staticFlavor": false,
+            "trackNameChanges": true,
             "logs": {
                 "joins": false,
                 "leaves": false,

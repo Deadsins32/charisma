@@ -50,11 +50,9 @@ module.exports = function(imports, arguments) {
     function Channel(channel) {
         this.name = channel.name;
         this.id = channel.id;
-        if (channel.parent) {
-            this.category = channel.parent.name;
-        }
         this.type = channel.type;
         this.createdAt = channel.createdAt.toString();
+        if (channel.parent) { this.category = channel.parent.name }
     }
 
     var objects = {
@@ -63,7 +61,6 @@ module.exports = function(imports, arguments) {
             id: imports.client.user.id,
             discriminator: '#' + imports.client.user.discriminator,
             avatar: imports.client.user.avatarURL,
-            status: null,
             createdAt: imports.client.user.createdAt.toString(),
             flavors: imports.Flavors.getFlavors()
         },
@@ -85,15 +82,11 @@ module.exports = function(imports, arguments) {
     var selfroles = imports.data.guilds[imports.guild.id].selfroles;
 
     for (s in selfroles) {
-        var role = imports.guild.roles.find('id', selfroles[s]);
-        if (role) {
-            objects.guild.selfroles.push(role.name);
-        }
+        var role = imports.guild.roles.get(selfroles[s]);
+        if (role) { objects.guild.selfroles.push(role.name) }
     }
 
-    if (imports.client.user.presence.game) {
-        objects.charisma.status = imports.client.user.presence.game.name;
-    }
+    if (imports.client.user.presence.game) { objects.charisma.status = imports.client.user.presence.game.name }
 
     if (arguments[1]) {
         if (imports.Command.methods.mention(arguments[1]).pass) {

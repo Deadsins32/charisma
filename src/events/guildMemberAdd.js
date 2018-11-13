@@ -3,7 +3,7 @@ var Discord = require('discord.js');
 module.exports = function(imports, member) {
     if (imports.data.guilds[member.guild.id]) {
         if (imports.data.guilds[member.guild.id].config.logchannel != '') {
-            if (imports.data.guilds[member.guild.id].features.logs.joins) {
+            if (imports.data.guilds[member.guild.id].options.logs.joins) {
                 var id = imports.data.guilds[member.guild.id].config.logchannel;
                 if (member.guild.channels.find('id', id)) {
                     var channel = member.guild.channels.find('id', id);
