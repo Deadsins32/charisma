@@ -1,9 +1,7 @@
 var Discord = require('discord.js');
-var chalk = require('chalk');
 
 module.exports = function(imports, message) {
     if (message.author.bot) { return }
-    
     if (imports.client.user.id != message.author.id) {
         if (!imports.data.guilds[message.guild.id]) {
             imports.data.guilds[message.guild.id] = imports.data.defaults.guild;
@@ -82,6 +80,10 @@ module.exports = function(imports, message) {
             blacklist: imports.data.guilds[message.guild.id].blacklist,
 
             local: local,
+            music: imports.music,
+
+            youtube: imports.youtube,
+            ytdl: imports.ytdl,
 
             config: imports.config,
             aliases: imports.aliases,

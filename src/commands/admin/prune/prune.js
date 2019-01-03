@@ -1,20 +1,20 @@
 var Discord = require('discord.js');
 
-module.exports = function(imports, arguments) {
-    if (parseInt(arguments[0]) < 2 || parseInt(arguments[0]) > 100) {
-        imports.channel.send('`please enter a number between 2 and 100`');
+module.exports = async function(imports, parameters) {
+    var number = parseInt(parameters[0]);
+    var whole = Math.floor(number / 100);
+    var remainder = number % 100;
+
+    for (var w = 0; w < whole; w++) {
+        var fetched = await imports.channel.fetchMessages({ limit: 100 });
+        for (f in fetched.array()) { await fetched.array()[f].delete() }
     }
 
-    else {
-        imports.channel.fetchMessages({ limit: parseInt(arguments[0]) })
-            .then(messages => messages.forEach(function(message) {
-                message.delete();
-            })).catch(console.error);
+    var fetched = await imports.channel.fetchMessages({limit: remainder + 1})
+    for (f in fetched.array()) { await fetched.array()[f].delete() }
 
-        var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
-        embed.setAuthor('Charisma', imports.client.user.avatarURL);
-        embed.setDescription(imports.user.displayName + ' prune ' + arguments[0] + ' messages');
-        imports.channel.send(embed);
-    }
-};
+    var embed = new Discord.RichEmbed();
+    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+    embed.setDescription(`${number} messages have been deleted`);
+    imports.channel.send(embed);
+}

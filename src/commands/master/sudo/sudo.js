@@ -4,18 +4,17 @@ String.prototype.replaceAll = function(search, replacement) {
 }
 
 var Discord = require('discord.js');
+var messageParser = require('./../../../core/parseMessage.js').toString();
 
-var messageParser = require('../../../events/message.js').toString();
-
-module.exports = function(imports, arguments) {
-    var member = imports.guild.members.get(arguments[0]);
+module.exports = function(imports, parameters) {
+    var member = imports.guild.members.get(parameters[0]);
     
     var message = {
         author: member.user,
         member: member,
         channel: imports.channel,
         guild: imports.guild,
-        content: imports.data.guilds[imports.guild.id].config.prefix + arguments[1]
+        content: imports.data.guilds[imports.guild.id].config.prefix + parameters[1]
     }
 
     var stringFunction = messageParser.replaceAll("'", '@').replaceAll('"', "'").replaceAll('@', '"');

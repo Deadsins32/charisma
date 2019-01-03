@@ -38,9 +38,8 @@ module.exports = function(imports, parameters) {
 
             else {
                 if (configs[parameters[0]]) { name = true }
-                else { for (c in configs) { if (configs[c].tags) { if (configs[c].tags.includes(parameters[0])) { tag = true } } } }
-
-                if (tag) { for (c in configs) { if (configs[c].tags) { if (configs[c].tags.includes(parameters[0])) { if (parse(c)) { list[c] = configs[c] } } } } }
+                else { for (c in configs) { if (configs[c].tags.includes(parameters[0])) { tag = true } } }
+                if (tag) { for (c in configs) { if (configs[c].tags.includes(parameters[0])) { if (parse(c)) { list[c] = configs[c] } } } }
                 if (name) {
                     var config = configs[parameters[0]];
 
@@ -57,7 +56,7 @@ module.exports = function(imports, parameters) {
         }
     }
 
-    else { for (var c = 0; c < configs.length; c++) { if (parse(c)) { list[c] = configs[c] } } }
+    else { for (c in configs) { if (parse(c)) { list[c] = configs[c] } } }
 
 
     var array = new Array();
@@ -68,7 +67,7 @@ module.exports = function(imports, parameters) {
     var maxPage = Math.ceil(array.length / 10) - 1;
     
     if (page > maxPage) {
-        embed.setDescription('no information could be found');
+        embed.setDescription('please specify a smaller page number');
         return imports.channel.send(embed);
     }
 

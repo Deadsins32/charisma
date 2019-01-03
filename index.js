@@ -1,8 +1,45 @@
-var fs = require('fs');
+function readDir(path) {
+    return new Promise(function(resolve, reject) {
+        fs.readdir(path, function(error, files) {
+            if (error) { reject(error) }
+            else { resolve(files) }
+        });
+    });
+}
+
+function writeFile(path, data) {
+    return new Promise(function(resolve, reject) {
+        fs.writeFile(path, data, function(error) {
+            if (error) { reject(error) }
+            else { resolve(true) }
+        });
+    });
+}
+
+function createDirectory(path) {
+    return new Promise(function(resolve, reject) {
+        fs.mkdir(path, function(error) {
+            if (error) { reject(error) }
+            else { resolve(true) }
+        });
+    });
+}
+
+function exists(path) {
+    return new Promise(function(resolve, reject) {
+        fs.exists(path, function(bool) { resolve(bool) });
+    });
+}
+
+var readline = require('readline');
 
 var chalk = require('chalk');
 var Discord = require('discord.js');
 var client = new Discord.Client();
+
+var fs = require('fs');
+var YouTube = require('simple-youtube-api');
+var ytdl = require('ytdl-core');
 
 var Command = require(`./src/core/Command.js`);
 var Flavors = require(`./src/core/Flavors.js`);
@@ -12,7 +49,6 @@ var aliases = require('./src/config/aliases.json');
 var shorthands = require('./src/config/shorthands.json');
 
 var config = require('./src/config/config.json');
-var events = require('./src/events.js');
 
 var CONSOLE = console;
 
@@ -37,153 +73,157 @@ var data = {
     guilds: new Object()
 }
 
+var consoleCommands = new Object();
+var daemons = new Array();
 var commandTotal = 0;
-var groups = fs.readdirSync('./src/commands');
-for (g in groups) {
-    var commands = fs.readdirSync(`./src/commands/${groups[g]}`);
-    for (c in commands) {
-        commandTotal++;
-        //exports.Command.commands[name] = file;
-        Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
-        Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
-    }
-}
-
-var users = fs.readdirSync('./data/users');
+var consoleCommandTotal = 0;
+var daemonTotal = 0;
 var userTotal = 0;
-for (u in users) {
-    if (users[u] != '.gitkeep') {
-        userTotal++;
-        data.users[users[u].split('.json')[0]] = require(`./data/users/${users[u]}`);
-    }
-}
-
-var guilds = fs.readdirSync('./data/guilds');
 var guildTotal = 0;
 
-for (g in guilds) {
-    if (guilds[g] != '.gitkeep') {
-        guildTotal++;
-        var object = new Object();
-        object.members = new Object();
-
-        var curr = fs.readdirSync(`./data/guilds/${guilds[g]}`);
-        for (c in curr) { if (curr[c] != 'members') { object[curr[c].split('.json')[0]] = require(`./data/guilds/${guilds[g]}/${curr[c]}`) } }
-
-        /*var object = {
-            config: require('./data/guilds/' + guilds[g] + '/config.json'),
-            colors: require('./data/guilds/' + guilds[g] + '/colors.json'),
-            features: require('./data/guilds/' + guilds[g] + '/features.json'),
-            selfroles: require('./data/guilds/' + guilds[g] + '/selfroles.json'),
-            whitelist: require('./data/guilds/' + guilds[g] + '/whitelist.json'),
-            blacklist: require('./data/guilds/' + guilds[g] + '/blacklist.json'),
-            members: new Object()
-        }*/
-
-        var members = fs.readdirSync(`./data/guilds/${guilds[g]}/members`);
-        for (m in members) {
-            if (members[m] != '.gitkeep') {
-                object.members[members[m].split('.json')[0]] = require(`./data/guilds/${guilds[g]}/members/${members[m]}`);
-            }
+async function initialize() {
+    var groups = await readDir('./src/commands');
+    for (g in groups) {
+        var commands = await readDir(`./src/commands/${groups[g]}`);
+        for (c in commands) {
+            commandTotal++;
+            Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
+            Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
         }
-
-        data.guilds[guilds[g]] = object;
     }
+
+    var consoleCommandFiles = await readDir('./src/console');
+    for (c in consoleCommandFiles) {
+        consoleCommandTotal++;
+        consoleCommands[consoleCommandFiles[c].split('.js')[0]] = require(`./src/console/${consoleCommandFiles[c]}`);
+    }
+
+    var users = client.users.array();
+    for (u in users) {
+        userTotal++;
+        if (await exists(`./data/users/${users[u].id}`)) { data.users[users[u].id] = require(`./data/users/${users[u]/id}`) }
+    }
+
+    var guilds = client.guilds.array();
+    for (g in guilds) {
+        if (await exists(`./data/guilds/${guilds[g].id}`)) {
+            guildTotal++;
+            var object = new Object();
+            object.members = new Object();
+
+            var current = await readDir(`./data/guilds/${guilds[g].id}`);
+            for (c in current) { if (current[c] != 'members') { object[current[c].split('.json')[0]] = require(`./data/guilds/${guilds[g].id}/${current[c]}`) } }
+
+            var members = guilds[g].members.array();
+            for (m in members) {
+                if (await exists(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`)) {
+                    object.members[members[m].id] = require(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`);
+                }
+            }
+
+            data.guilds[guilds[g].id] = object;
+        }
+    }
+
+    var daemonFiles = await readDir('./src/daemons');
+    for (d in daemonFiles) {
+        daemonTotal++;
+        daemons.push(require(`./src/daemons/${daemonFiles[d]}`));
+    }
+
+    if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
+    else { data.defaults = require('./data/defaults.example.json') }
+
+    var exports = {
+        client: client,
+        error: function(error) { console.log(error.stack) },
+    
+        youtube: new YouTube(config.googleApiKey),
+        ytdl: ytdl,
+    
+        Command: Command,
+        Flavors: Flavors,
+        Seed: Seed,
+    
+        data: data,
+    
+        config: config,
+        shorthands: shorthands,
+        aliases: aliases,
+    
+        console: console,
+    
+        music: new Object()
+    }
+
+    for (d in daemons) { daemons[d](exports) }
+
+    console.ready(`${commandTotal} commands have been loaded`);
+    console.ready(`${consoleCommandTotal} console commands have been loaded`);
+    console.ready(`${guildTotal} guilds have been loaded`);
+    console.ready(`${userTotal} users have been loaded`);
+    console.ready(`${daemonTotal} daemons have been initialized`);
 }
 
-if (fs.existsSync('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
-else { data.defaults = require('./data/defaults.example.json') }
-
-var exports = {
-    client: client,
-
-    Command: Command,
-    Flavors: Flavors,
-    Seed: Seed,
-
-    data: data,
-
-    config: config,
-    shorthands: shorthands,
-    aliases: aliases,
-
-    console, console
-}
-
-console.ready(commandTotal + ' commands have been loaded');
-console.ready(guildTotal + ' guilds have been loaded');
-console.ready(userTotal + ' users have been loaded');
-
-function save() {
+async function save() {
     console.ready('saving guild and user information...');
-    /*client.user.setStatus('dnd').then(async function() {
-        var guilds = data.guilds;
-        var users = data.users;
-
-        for (g in guilds) {
-            var gerror = await access('./data/guilds/' + g);
-            console.log(gerror);
-            if (gerror) {
-                await mkdir('./data/guilds/' + g);
-            }
-
-            for (p in guilds[g]) {
-                if (p != 'members') {
-                    await writefile('./data/guilds/' + g + '/' + p + '.json', JSON.stringify(guilds[g][p], null, 4));
-                }
-            
-                var merror = await access('./data/guilds/' + g + '/members');
-                if (merror) {
-                    await mkdir('./data/guilds/' + g + '/members');
-                }
-
-                for (m in guilds[g].members) {
-                    await writefile('./data/guilds/' + g + '/members/' + m + '.json', JSON.stringify(guilds[g].members[m]));
-                }
-            }
-        }
-
-        for (u in users) {
-            await writefile('./data/users/' + u + '.json', JSON.stringify(users[u], null, 4));
-        }
-
-        console.log(false);
-    });*/
 
     for (g in data.guilds) {
-        if (!fs.existsSync(`./data/guilds/${g}`)) { fs.mkdirSync(`./data/guilds/${g}`) }
+        if (!await exists(`./data/guilds/${g}`)) { await createDirectory(`./data/guilds/${g}`) }
         for (p in data.guilds[g]) {
-            if (p != 'members') { fs.writeFileSync(`./data/guilds/${g}/${p}.json`, JSON.stringify(data.guilds[g][p], null, 4), 'utf8') }
-            else { if (!fs.existsSync(`./data/guilds/${g}/members`)) { fs.mkdirSync(`./data/guilds/${g}/members`) } }
+            if (p != 'members') { await writeFile(`./data/guilds/${g}/${p}.json`, JSON.stringify(data.guilds[g][p], null, 4)) }
+            else { if (!await exists(`./data/guilds/${g}/members`)) { await createDirectory(`./data/guilds/${g}/members`) } }
         }
 
-        for (m in data.guilds[g].members) { fs.writeFileSync(`./data/guilds/${g}/members/${m}.json`, JSON.stringify(data.guilds[g].members[m], null, 4), 'utf8') }
+        for (m in data.guilds[g].members) { await writeFile(`./data/guilds/${g}/members/${m}.json`, JSON.stringify(data.guilds[g].members[m], null, 4)) }
     }
 
-    for (u in data.users) { fs.writeFileSync(`./data/users/${u}.json`, JSON.stringify(data.users[u], null, 4), 'utf8') }
+    for (u in data.users) { await writeFile(`./data/users/${u}.json`, JSON.stringify(data.users[u], null, 4)) }
 }
 
-client.on('ready', function() {
+client.on('ready', async function() {
+    await initialize();
     console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
     setInterval(function() {
         save();
     }, 1800000);
 });
 
-function exit() {
-    save();
-    client.user.setStatus('online').then(process.exit)
+async function exit() {
+    var connections = client.voiceConnections.array();
+    for (c in connections) { connections[c].disconnect() }
+    await save();
+    process.exit();
 }
 
 //process.stdin.resume();
 
 process.on('SIGINT', exit.bind());
 
-client.on('message', function(message) { try { events.message(exports, message) } catch(error) { console.error(error.stack) }});
-client.on('guildMemberAdd', function(member) { try { events.guildMemberAdd(exports, member) } catch(error) { console.error(error.stack) }});
-client.on('guildMemberRemove', function(member) { try { events.guildMemberRemove(exports, member) } catch(error) { console.error(error.stack) }});
-client.on('guildMemberUpdate', function(oldMember, newMember) { try { events.guildMemberUpdate(exports, oldMember, newMember) } catch(error) { console.error(error.stack) }});
-client.on('userUpdate', function(oldUser, newUser) { try { events.userUpdate(exports, oldUser, newUser) } catch(error) { console.error(error.stack) }});
-client.on('error', function(error) { console.error(error.stack) });
+client.on('error', function(error) { console.log(error.stack) });
+
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on('line', function(input) {
+    try {
+        var parsed = input.split(' ');
+        var command = parsed[0];
+        if (consoleCommands[command]) {
+            parsed.shift();
+            consoleCommands[command](exports, parsed);
+        }
+
+        else {
+            console.log('unknown command');
+        }
+    }
+
+    catch(error) {
+        CONSOLE.error(error);
+    }
+});
 
 client.login(config.token);

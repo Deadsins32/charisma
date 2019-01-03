@@ -23,7 +23,7 @@ Object.size = function(obj) {
 
 var Discord = require('discord.js');
 
-module.exports = function(imports, arguments) {
+module.exports = function(imports, parameters) {
     var embed = new Discord.RichEmbed();
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
     embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
@@ -88,37 +88,37 @@ module.exports = function(imports, arguments) {
 
     if (imports.client.user.presence.game) { objects.charisma.status = imports.client.user.presence.game.name }
 
-    if (arguments[1]) {
-        if (imports.Command.methods.mention(arguments[1]).pass) {
-            objects.user = new Member(imports.guild.members.find('id', imports.Command.methods.mention(arguments[1]).value));
+    if (parameters[1]) {
+        if (imports.Command.methods.mention(parameters[1]).pass) {
+            objects.user = new Member(imports.guild.members.find('id', imports.Command.methods.mention(parameters[1]).value));
         }
 
-        else if (imports.Command.methods.channel(arguments[1]).pass) {
-            objects.channel = new Channel(imports.guild.channels.find('id', imports.Command.methods.channel(arguments[1]).value));
+        else if (imports.Command.methods.channel(parameters[1]).pass) {
+            objects.channel = new Channel(imports.guild.channels.find('id', imports.Command.methods.channel(parameters[1]).value));
         }
 
         else {
-            if (arguments[0] == 'role') {
-                if (imports.guild.roles.find('name', arguments[1])) {
-                    objects.role = new Role(imports.guild.roles.find('name', arguments[1]));
+            if (parameters[0] == 'role') {
+                if (imports.guild.roles.find('name', parameters[1])) {
+                    objects.role = new Role(imports.guild.roles.find('name', parameters[1]));
                 }
 
-                else if (imports.guild.roles.find('id', arguments[1])) {
-                    objects.role = new Role(imports.guilds.roles.find('id', arguments[1]));
+                else if (imports.guild.roles.find('id', parameters[1])) {
+                    objects.role = new Role(imports.guilds.roles.find('id', parameters[1]));
                 }
             }
         }
     }
 
-    if (arguments[0] == 'user') {
+    if (parameters[0] == 'user') {
         embed.setThumbnail(objects.user.avatar);
     }
 
-    if (arguments[0] == 'user.avatar') {
+    if (parameters[0] == 'user.avatar') {
         embed.setImage(objects.user.avatar);
     }
 
-    var object = Object.byString(objects, arguments[0]);
+    var object = Object.byString(objects, parameters[0]);
 
     if (object != undefined) {
         if (object.color) {
@@ -147,19 +147,12 @@ module.exports = function(imports, arguments) {
 
         if (object instanceof Object) {
             if (object instanceof Array) {
-                if (object.length == 0) {
-                    embed.setDescription('there\'s no subvalues in `' + arguments[0] + '`');
-                }
-
-                else {
-                    embed.addField(arguments[0], object.join('\n'));
-                }
+                if (object.length == 0) { embed.setDescription(`${parameters[0]} does not have any properties`) }
+                else { embed.addField(parameters[0], object.join('\n')) }
             }
 
             else {
-                if (Object.size(object) == 0) {
-                    embed.setDescription('there\'s no subvalues in `' + arguments[0] + '`');
-                }
+                if (Object.size(object) == 0) { embed.setDescription(`${parameters[0]} does not have any properties`) }
             }
         }
 
@@ -174,7 +167,7 @@ module.exports = function(imports, arguments) {
 
     else {
         embed.setThumbnail('');
-        embed.setDescription('`' + arguments[0] + '` does not exist');
+        embed.setDescription('`' + parameters[0] + '` does not exist');
         imports.channel.send(embed);
     }
 }
