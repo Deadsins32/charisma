@@ -221,9 +221,13 @@ rl.on('line', function(input) {
         }
     }
 
-    catch(error) {
-        CONSOLE.error(error);
-    }
+    catch(error) { console.log(error.stack) }
+});
+
+process.on('unhandledRejection', function(error, promise) {
+    console.log('An unhandledRejection occurred');
+    console.log(promise);
+    console.log(`Rejection: ${error}`);
 });
 
 client.login(config.token);

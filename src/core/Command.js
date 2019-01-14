@@ -223,8 +223,10 @@ module.exports = {
                 if (requirements > parameters.length) { error = true }
                 if (parameters.length <= config.params.length) { for (p in parameters) { if (p == parameters.length - 1) { if (!(parameters.length >= requirements)) { error = true } } } }
             }
+            
+            if (parameters.length <= config.params.length) { for (p in parameters) { if (!module.exports.methods[config.params[p].type](parameters[p]).pass) { error = true } } }
 
-            for (p in parameters) { if (!module.exports.methods[config.params[p].type](parameters[p]).pass) { error = true } }
+            else { error = true }
 
             return !error;
         }
