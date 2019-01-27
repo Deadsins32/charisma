@@ -51,6 +51,7 @@ var shorthands = require('./src/config/shorthands.json');
 var config = require('./src/config/config.json');
 
 var CONSOLE = console;
+var exports = {};
 
 console.ready = function(str) {
     CONSOLE.log(chalk.greenBright('[+]'), str);
@@ -134,7 +135,7 @@ async function initialize() {
     if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
     else { data.defaults = require('./data/defaults.example.json') }
 
-    var exports = {
+    exports = {
         client: client,
         error: function(error) { console.log(error.stack) },
     
