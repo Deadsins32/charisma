@@ -6,13 +6,6 @@ $('.dropdown').on('hide.bs.dropdown', function() {
     $(this).find('.dropdown-menu').first().stop(true, true).slideUp();
 });
 
-/*$(function(){ 
-     var navMain = $("#nav-main");
-     navMain.on("click", "a", null, function () {
-         navMain.collapse('hide');
-     });
- });*/
-
  $('.navbar-collapse').on('click', 'a', null, function() {
     $('.navbar-collapse').collapse('hide');
  });
@@ -81,17 +74,29 @@ async function init() {
         commandHead.setAttribute('class', 'commandHeader');
         commandHead.innerText = c;
 
+        if (commands[c].nsfw) { commandDiv.setAttribute('class', 'hidden') }
+
         commandDiv.appendChild(commandHead);
         commandQuery.appendChild(commandDiv);
     }
 
     var queryTags = document.getElementById('queryTags');
     for (var t = 0; t < tags.length; t++) {
-        var divTag = document.createElement('div');
-        divTag.setAttribute('class', 'queryTag p-2');
-        divTag.setAttribute('onclick', `filterTag('${tags[t]}')`);
-        divTag.innerText = tags[t];
-        queryTags.appendChild(divTag);
+        var checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('id', `${tags[t]}-tag`);
+        
+        var label = document.createElement('label');
+        label.setAttribute('for', `${tags[t]}-tag`);
+        label.innerText = tags[t];
+
+        var span = document.createElement('span');
+        span.setAttribute('class', 'queryTag');
+        span.setAttribute('onclick', 'filterTag()');
+        span.appendChild(checkbox);
+        span.appendChild(label);
+
+        queryTags.appendChild(span);
     }
 }
 
@@ -104,6 +109,17 @@ function filterTag(tag) {
     var tagElements = queryTags.getElementsByClassName('queryTag');
 
     for (var c = 0; c < commandElements.length; c++) { commandElements[c].classList.remove('hidden') }
+    if (tag != 'nsfw') {
+        for (var c = 0; c < commandElements.length; c++) {
+            if (commands[commandElements[c].getAttribute('name')].nsfw) {
+                commandElements[c].classList.add('hidden');
+            }
+        }
+    }
+    else {
+        console.log(true);
+    }
+
     if (filter.getAttribute('tag') == tag) {
         for (var t = 0; t < tagElements.length; t++) { tagElements[t].classList.remove('active') }
         filter.setAttribute('tag', '');
