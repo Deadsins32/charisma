@@ -64,31 +64,14 @@ module.exports = function(imports, message) {
     }
 
     if (message.content.startsWith(local.guild.data.config.prefix)) {
-        var exports = {
-            Command: imports.Command,
-            Flavors: imports.Flavors,
-            Seed: imports.Seed,
 
-            client: imports.client,
-            guild: message.guild,
-            channel: message.channel,
-            user: message.author,
-            member: message.member,
-            message: message,
-
-            data: imports.data,
-            blacklist: imports.data.guilds[message.guild.id].blacklist,
-
-            local: local,
-            music: imports.music,
-
-            youtube: imports.youtube,
-            ytdl: imports.ytdl,
-
-            config: imports.config,
-            aliases: imports.aliases,
-            shorthands: imports.shorthands
-        }
+        imports.guild = message.guild;
+        imports.channel = message.channel;
+        imports.user = message.author;
+        imports.member = message.member;
+        imports.message = message;
+        imports.blacklist = imports.data.guilds[message.guild.id].blacklist;
+        imports.local = local;
 
         var content;
 
@@ -114,7 +97,7 @@ module.exports = function(imports, message) {
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
         var embed = new Discord.RichEmbed();
-        embed.setColor(exports.local.guild.data.colors.accent);
+        embed.setColor(imports.local.guild.data.colors.accent);
 
         if (command.object) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
@@ -153,12 +136,12 @@ module.exports = function(imports, message) {
                 if (status) {
                     for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
                     if (status.master) {
-                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) { imports.Command.commands[command.name](exports, command.arguments) }
+                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) { imports.Command.commands[command.name](imports, command.arguments) }
                         else { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
                     }
 
                     else {
-                        if (status.userUsable && status.botUsable) { imports.Command.commands[command.name](exports, command.arguments) }
+                        if (status.userUsable && status.botUsable) { imports.Command.commands[command.name](imports, command.arguments) }
 
                         else {
                             if (status.visible) {

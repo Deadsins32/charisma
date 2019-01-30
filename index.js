@@ -1,6 +1,8 @@
 var Discord = require('discord.js');
 var fs = require('fs');
 
+var config = require('./src/config/config.json');
+
 function readDir(path) {
     return new Promise(function(resolve, reject) {
         fs.readdir(path, function(error, files) {
@@ -29,8 +31,15 @@ async function start() {
 
     await writeFile('./docs/commands.json', JSON.stringify(commandData, null, 4));
 
-    var Manager = new Discord.ShardingManager('./bot.js');
-    Manager.spawn(2);
+    var manager = new Discord.ShardingManager('./bot.js', {
+        token: config.token
+    });
+
+    manager.spawn(2);
+    
+    manager.on('launch', function(shard) {
+        console.log(`[SHARD] shard ${shard.id}/${manager.totalShards} launched`);
+    });
 }
 
 start();

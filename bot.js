@@ -31,11 +31,16 @@ function exists(path) {
     });
 }
 
+var aliases = require('./src/config/aliases.json');
+var shorthands = require('./src/config/shorthands.json');
+var config = require('./src/config/config.json');
+
+var Discord = require('discord.js');
+var client = new Discord.Client();
+
 var readline = require('readline');
 
 var chalk = require('chalk');
-var Discord = require('discord.js');
-var client = new Discord.Client();
 
 var fs = require('fs');
 var YouTube = require('simple-youtube-api');
@@ -45,13 +50,8 @@ var Command = require(`./src/core/Command.js`);
 var Flavors = require(`./src/core/Flavors.js`);
 var Seed = require('./src/core/Seed.js');
 
-var aliases = require('./src/config/aliases.json');
-var shorthands = require('./src/config/shorthands.json');
-
-var config = require('./src/config/config.json');
-
 var CONSOLE = console;
-var exports = {};
+var imports = {};
 
 console.ready = function(str) {
     CONSOLE.log(chalk.greenBright('[+]'), str);
@@ -101,8 +101,10 @@ async function initialize() {
 
     var users = client.users.array();
     for (u in users) {
-        userTotal++;
-        if (await exists(`./data/users/${users[u].id}`)) { data.users[users[u].id] = require(`./data/users/${users[u]/id}`) }
+        if (await exists(`./data/users/${users[u].id}`)) {
+            userTotal++;
+            data.users[users[u].id] = require(`./data/users/${users[u]/id}`);
+        }
     }
 
     var guilds = client.guilds.array();
@@ -135,9 +137,8 @@ async function initialize() {
     if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
     else { data.defaults = require('./data/defaults.example.json') }
 
-    exports = {
+    imports = {
         client: client,
-        active: true,
         error: function(error) { console.log(error.stack) },
     
         youtube: new YouTube(config.googleApiKey),
@@ -158,7 +159,7 @@ async function initialize() {
         music: new Object()
     }
 
-    for (d in daemons) { daemons[d](exports) }
+    for (d in daemons) { daemons[d](imports) }
 
     console.ready(`${commandTotal} commands have been loaded`);
     console.ready(`${consoleCommandTotal} console commands have been loaded`);
@@ -184,19 +185,11 @@ async function save() {
 }
 
 client.on('ready', async function() {
-    if (exports.active) {
-        exports = {};
-        await client.destroy();
-        client.emit('ready');
-    }
-
-    else {
-        await initialize();
-        console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-        setInterval(function() {
-            save();
-        }, 1800000);
-    }
+    await initialize();
+    console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+    setInterval(function() {
+        save();
+    }, 1800000);
 });
 
 async function exit() {
@@ -223,7 +216,7 @@ rl.on('line', function(input) {
         var command = parsed[0];
         if (consoleCommands[command]) {
             parsed.shift();
-            consoleCommands[command](exports, parsed);
+            consoleCommands[command](imports, parsed);
         }
 
         else {
@@ -240,4 +233,4 @@ process.on('unhandledRejection', function(error, promise) {
     console.log(`Rejection: ${error}`);
 });
 
-client.login(config.token);
+if (!config.sharded) { client.login(config.token) }

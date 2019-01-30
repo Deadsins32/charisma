@@ -11,6 +11,12 @@ module.exports = async function(imports, arguments) {
                 playing: false
             }
 
+            imports.music[imports.guild.id].connection.on('error', function(error) {
+                imports.error(error);
+                imports.music[imports.guild.id].connection.disconnect();
+                delete imports.music[imports.guild.id];
+            });
+
             embed.setDescription(`connected to \`${imports.member.voiceChannel.name}\``);
         }
 
