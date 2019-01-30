@@ -126,10 +126,18 @@ async function init() {
         var commandBottom = document.createElement('div');
         commandBottom.setAttribute('class', 'command-bottom');
 
-        var commandDescription = document.createElement('p');
-        commandDescription.setAttribute('class', 'command-description');
-        commandDescription.innerText = commands[c].description;
-        commandBottom.appendChild(commandDescription);
+        if (commands[c].description) {
+            var commandDescription = document.createElement('p');
+            commandDescription.setAttribute('class', 'command-description');
+
+            var description = commands[c].description;
+            var regex = /\:(.*?)\:/g;
+            var found = description.match(regex);
+            if (found) { description = description.replace(found[0], `<i class="em em-${found[0].substring(1, found[0].length-1)}"></i>`) }
+
+            commandDescription.innerHTML = description;
+            commandBottom.appendChild(commandDescription);
+        }
 
         if (commands[c].tags) {
             var commandTagsContainer = document.createElement('div');
