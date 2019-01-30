@@ -1,6 +1,6 @@
 var Discord = require('discord.js');
 
-module.exports = async function(imports, arguments) {
+module.exports = function(imports, arguments) {
     var embed = new Discord.RichEmbed();
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
