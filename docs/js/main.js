@@ -35,6 +35,18 @@ async function read(file) {
     });
 }
 
+function getSyntax(command, name) {
+    var syntax = [`//${name}`]
+    for (var p = 0; p < command.params.length; p++) {
+        var insert = command.params[p].type;
+        if (command.params[p].name) { insert = command.params[p].name }
+        if (command.params[p].required) { syntax.push(`<${insert}>`) }
+        else { syntax.push(`[${insert}]`) }
+    }
+
+    return syntax.join(' ');
+}
+
 function navigate(destination, id) {
     var container = document.getElementsByClassName('container')[0];
 
@@ -52,11 +64,11 @@ function navigate(destination, id) {
 }
 
 var commands;
+var tags = new Array();
 
 async function init() {
     var commandQuery = document.getElementById('commandQuery');
     commands = JSON.parse(await read('commands.json'));
-    var tags = new Array();
 
     for (c in commands) {
         if (commands[c].tags) {
@@ -66,18 +78,83 @@ async function init() {
                 if (!has) { tags.push(commands[c].tags[t]) }
             }
         }
-        var commandDiv = document.createElement('div');
-        commandDiv.setAttribute('class', 'command');
-        commandDiv.setAttribute('name', c);
-        
-        commandHead = document.createElement('p');
-        commandHead.setAttribute('class', 'commandHeader');
-        commandHead.innerText = c;
 
-        if (commands[c].nsfw) { commandDiv.setAttribute('class', 'hidden') }
+        /*<div class="command">
+                    <div class="command-top">
+                        <span class="command-nsfw">nsfw</span>
+                        <span class="command-name">sudo</span>
+                        <span class="command-usage">//sudo [posession] [command]</span>
+                    </div>
+                    <div class="command-bottom">
+                        <p class="command-description">use any command as if you were someone else</p>
+                        <div class="command-tags-container">
+                            <span class="command-tags-label">tags</span>
+                            <div class="command-tags">
+                                <span class="command-tag">master</span>
+                                <span class="command-tag">management</span>
+                                <span class="command-tag">moderation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>*/
 
-        commandDiv.appendChild(commandHead);
-        commandQuery.appendChild(commandDiv);
+        var commandElement = document.createElement('div');
+        commandElement.setAttribute('class', 'command');
+        commandElement.setAttribute('name', c);
+
+        var commandTop = document.createElement('div');
+        commandTop.setAttribute('class', 'command-top');
+
+        var nsfwSpan = document.createElement('span');
+        nsfwSpan.setAttribute('class', 'command-nsfw');
+        nsfwSpan.innerText = 'nsfw';
+        if (!commands[c].nsfw) { nsfwSpan.style.display = 'none' }
+        commandTop.appendChild(nsfwSpan);
+
+        var commandName = document.createElement('span');
+        commandName.setAttribute('class', 'command-name');
+        commandName.innerText = c;
+        commandTop.appendChild(commandName);
+
+        var commandUsage = document.createElement('span');
+        commandUsage.setAttribute('class', 'command-usage');
+        commandUsage.innerText = getSyntax(commands[c], c);
+        commandTop.appendChild(commandUsage);
+
+        commandElement.appendChild(commandTop);
+
+        var commandBottom = document.createElement('div');
+        commandBottom.setAttribute('class', 'command-bottom');
+
+        var commandDescription = document.createElement('p');
+        commandDescription.setAttribute('class', 'command-description');
+        commandDescription.innerText = commands[c].description;
+        commandBottom.appendChild(commandDescription);
+
+        if (commands[c].tags) {
+            var commandTagsContainer = document.createElement('div');
+            commandTagsContainer.setAttribute('class', 'command-tags-container');
+
+            var commandTagsLabel = document.createElement('span');
+            commandTagsLabel.setAttribute('class', 'command-tags-label');
+            commandTagsLabel.innerText = 'tags';
+            commandTagsContainer.appendChild(commandTagsLabel);
+            var commandTags = document.createElement('div');
+            commandTags.setAttribute('class', 'command-tags');
+            for (var t = 0; t < commands[c].tags.length; t++) {
+                var commandTag = document.createElement('span');
+                commandTag.setAttribute('class', 'command-tag');
+                commandTag.innerText = commands[c].tags[t];
+                commandTags.appendChild(commandTag);
+            }
+
+            commandTagsContainer.appendChild(commandTags);
+            commandBottom.appendChild(commandTagsContainer);
+        }
+
+        commandElement.appendChild(commandTop);
+        commandElement.appendChild(commandBottom);
+        commandQuery.appendChild(commandElement);
     }
 
     var queryTags = document.getElementById('queryTags');
@@ -92,7 +169,7 @@ async function init() {
 
         var span = document.createElement('span');
         span.setAttribute('class', 'queryTag');
-        span.setAttribute('onclick', 'filterTag()');
+        span.setAttribute('onclick', 'filterTags()');
         span.appendChild(checkbox);
         span.appendChild(label);
 
@@ -100,60 +177,36 @@ async function init() {
     }
 }
 
-function filterTag(tag) {
+function filterTags() {
+    var activeTags = new Array();
+    for (var t = 0; t < tags.length; t++) {
+        var checkbox = document.getElementById(`${tags[t]}-tag`);
+        if (checkbox.checked) { activeTags.push(tags[t]) }
+    }
+
     var commandQuery = document.getElementById('commandQuery');
     var commandElements = commandQuery.getElementsByClassName('command');
-    var filter = document.getElementById('currentFilter');
 
-    var queryTags = document.getElementById('queryTags');
-    var tagElements = queryTags.getElementsByClassName('queryTag');
-
-    for (var c = 0; c < commandElements.length; c++) { commandElements[c].classList.remove('hidden') }
-    if (tag != 'nsfw') {
-        for (var c = 0; c < commandElements.length; c++) {
-            if (commands[commandElements[c].getAttribute('name')].nsfw) {
-                commandElements[c].classList.add('hidden');
-            }
-        }
-    }
-    else {
-        console.log(true);
-    }
-
-    if (filter.getAttribute('tag') == tag) {
-        for (var t = 0; t < tagElements.length; t++) { tagElements[t].classList.remove('active') }
-        filter.setAttribute('tag', '');
-    }
-
-    else {
-        var displayCommands = new Array();
-        for (c in commands) {
-            var exists = false;
-            if (commands[c].tags) {
-                for (var t = 0; t < commands[c].tags.length; t++) {
-                    if (commands[c].tags[t] == tag) { exists = true }
+    for (var c = 0; c < commandElements.length; c++) {
+        commandElements[c].classList.remove('hidden');
+        var isVisible = true;
+        var command = commands[commandElements[c].getAttribute('name')];
+        for (var a = 0; a < activeTags.length; a++) {
+            var hasTag = false;
+            if (!command.tags) { command.tags = [] }
+            for (var t = 0; t < command.tags.length; t++) {
+                if (command.tags[t] == activeTags[a]) {
+                    hasTag = true;
                 }
             }
 
-            if (exists) { displayCommands.push(c) }
-        }
-
-        for (var t = 0; t < tagElements.length; t++) {
-            if (tagElements[t].innerText == tag) {
-                tagElements[t].classList.add('active');
+            if (!hasTag) {
+                isVisible = false;
             }
         }
 
-        filter.setAttribute('tag', tag);
-
-        for (var c = 0; c < commandElements.length; c++) {
-            var name = commandElements[c].getAttribute('name');
-            var exists = false;
-            for (var d = 0; d < displayCommands.length; d++) {
-                if (displayCommands[d] == name) { exists = true }
-            }
-
-            if (!exists) { commandElements[c].classList.add('hidden') }
+        if (!isVisible) {
+            commandElements[c].classList.add('hidden');
         }
     }
 }
