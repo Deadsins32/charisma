@@ -1,22 +1,65 @@
 var Discord = require('discord.js');
 
+function clone(obj) {
+    var copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
+
+function randBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function percentageOf(num, percentage) {
+    return (percentage / 100) * num;
+}
+
 module.exports = function(imports, message) {
+
     if (message.author.bot) { return }
     if (imports.client.user.id != message.author.id) {
         if (!imports.data.guilds[message.guild.id]) {
-            imports.data.guilds[message.guild.id] = imports.data.defaults.guild;
+            imports.data.guilds[message.guild.id] = clone(imports.data.defaults.guild);
         }
 
         else {
             for (g in imports.data.defaults.guilds) {
                 if (!imports.data.guilds[message.guild.id][g]) {
-                    imports.data.guilds[message.guild.id][g] = imports.data.defaults.guilds[g];
+                    imports.data.guilds[message.guild.id][g] = clone(imports.data.defaults.guilds[g]);
                 }
             }
         }
 
         if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
-            imports.data.guilds[message.guild.id].members[message.author.id] = imports.data.defaults.member;
+            imports.data.guilds[message.guild.id].members[message.author.id] = clone(imports.data.defaults.member);
             if (!imports.data.guilds[message.guild.id].blacklist[message.author.id]) {
                 imports.data.guilds[message.guild.id].blacklist[message.author.id] = new Array();
             }
@@ -25,19 +68,19 @@ module.exports = function(imports, message) {
         else {
             for (m in imports.data.defaults.member) {
                 if (!imports.data.guilds[message.guild.id].members[message.author.id][m]) {
-                    imports.data.guilds[message.guild.id].members[message.author.id][m] = imports.data.defaults.member[m];
+                    imports.data.guilds[message.guild.id].members[message.author.id][m] = clone(imports.data.defaults.member[m]);
                 }
             }
         }
 
         if (!imports.data.users[message.author.id]) {
-            imports.data.users[message.author.id] = imports.data.defaults.user;
+            imports.data.users[message.author.id] = clone(imports.data.defaults.user);
         }
 
         else {
             for (u in imports.data.defaults.user) {
                 if (!imports.data.users[message.author.id][u]) {
-                    imports.data.users[message.author.id][u] = imports.data.defaults.user[u];
+                    imports.data.users[message.author.id][u] = clone(imports.data.defaults.user[u]);
                 }
             }
         }
@@ -63,16 +106,15 @@ module.exports = function(imports, message) {
         whitelist: imports.data.guilds[message.guild.id].whitelist
     }
 
+    imports.guild = message.guild;
+    imports.channel = message.channel;
+    imports.user = message.author;
+    imports.member = message.member;
+    imports.message = message;
+    imports.blacklist = imports.data.guilds[message.guild.id].blacklist;
+    imports.local = local;
+
     if (message.content.startsWith(local.guild.data.config.prefix)) {
-
-        imports.guild = message.guild;
-        imports.channel = message.channel;
-        imports.user = message.author;
-        imports.member = message.member;
-        imports.message = message;
-        imports.blacklist = imports.data.guilds[message.guild.id].blacklist;
-        imports.local = local;
-
         var content;
 
         if (imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]) {
@@ -177,33 +219,12 @@ module.exports = function(imports, message) {
     }
 
     else {
-        /*if (imports.settings.guilds[message.guild.id].features.leveling) {
-            var baseExp = 100;
-            var recievedExp = 20;
+        //Math.floor(Math.random() * (max - min + 1)) + min;
+        var experience = randBetween(90, 120);
+        var length = message.content.length;
+        var letterExp = Math.floor(percentageOf(length, 50));
+        experience += letterExp;
 
-            //imports.settings.guilds[message.guild.id].members[message.member.id].exp += 20;
-
-            console.log(imports.settings.guilds[message.guild.id].members[message.member.id].exp);
-
-            var lvl = imports.settings.guilds[message.guild.id].members[message.member.id].level + 1;
-            var crve = imports.settings.guilds[message.guild.id].expcurve;
-
-            function nextLevel(level, curve) {
-                return Math.floor(baseExp * (Math.pow(level, curve)));
-            }
-
-            if (imports.settings.guilds[message.guild.id].members[message.member.id].exp >= nextLevel(lvl, crve)) {
-                imports.settings.guilds[message.guild.id].members[message.member.id].level += 1;
-                var embed = new imports.Discord.RichEmbed();
-                embed.setFooter('Charisma', imports.client.user.avatarURL);
-                embed.setDescription(message.member.displayName + ' has advanced to level ' + (imports.settings.guilds[message.guild.id].members[message.member.id].level) + '!');
-                embed.setColor(eval('0x' + imports.settings.guilds[message.guild.id].accentcolor.split('#')[1]));
-                message.channel.send(embed);
-            }
-
-            imports.settings.guilds[message.guild.id].members[message.member.id].exp += recievedExp;
-            //var json = JSON.stringify(imports.settings.guilds, null, 4);
-            //imports.fs.writeFileSync('./data/settings/guilds.json', json);
-        };*/
+        imports.Experience.add(imports, experience);
     }
 }

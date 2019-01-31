@@ -49,6 +49,7 @@ var ytdl = require('ytdl-core');
 var Command = require(`./src/core/Command.js`);
 var Flavors = require(`./src/core/Flavors.js`);
 var Seed = require('./src/core/Seed.js');
+var Experience = require('./src/core/Experience');
 
 var CONSOLE = console;
 var imports = {};
@@ -147,6 +148,7 @@ async function initialize() {
         Command: Command,
         Flavors: Flavors,
         Seed: Seed,
+        Experience: Experience,
     
         data: data,
     
