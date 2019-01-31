@@ -225,6 +225,6 @@ module.exports = function(imports, message) {
         var letterExp = Math.floor(percentageOf(length, 50));
         experience += letterExp;
 
-        imports.Experience.add(imports, experience);
+        imports.Experience.add(imports, message.member, experience);
     }
 }

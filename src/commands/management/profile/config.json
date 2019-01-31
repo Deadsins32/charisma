@@ -1,0 +1,10 @@
+{
+    "permissions": ["all"],
+    "description": "get your profile card",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["utility", "fun"],
+    "params": [
+        { "type": "mention", "required": false, "name": "user" }
+    ]
+}

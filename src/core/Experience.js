@@ -1,32 +1,35 @@
 var Discord = require('discord.js');
 
 module.exports = {
-    add: function(imports, exp) {
+    add: function(imports, member, exp) {
         if (imports.data.guilds[imports.guild.id].features.leveling) {
-            var level = imports.data.guilds[imports.guild.id].members[imports.member.id].level + 1;
+            var level = imports.data.guilds[imports.guild.id].members[member.id].level;
             var factor = imports.data.guilds[imports.guild.id].config.expcurve;
-            var nextLevel = Math.floor(200 * Math.pow(level, factor));
-            imports.data.guilds[imports.guild.id].members[imports.member.id].exp += exp;
+            var nextLevel = this.toNext(level + 1, factor);
+            imports.data.guilds[imports.guild.id].members[member.id].exp += exp;
+            var currentExp = imports.data.guilds[imports.guild.id].members[member.id].exp;
+            var passed = 0;
 
-            console.log(imports.data.guilds[imports.guild.id].members);
-            var currentExp = imports.data.guilds[imports.guild.id].members[imports.member.id].exp;
+            while (currentExp >= nextLevel) {
+                passed += 1;
+                level += 1;
+                currentExp -= nextLevel;
+                nextLevel = this.toNext(level, factor);
+            }
 
-            if (currentExp >= nextLevel) {
+            if (passed >= 1) {
+                imports.data.guilds[imports.guild.id].members[member.id].level = level;
+                imports.data.guilds[imports.guild.id].members[member.id].exp = currentExp;
                 var embed = new Discord.RichEmbed();
                 embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
-                embed.setTitle('level up!');
-                embed.setDescription(`${imports.member.displayName} advanced to **level ${level}**`);
+                if (passed == 1) { embed.setDescription(`${member.displayName} has advanced to **level ${level}**`) }
+                else { embed.setDescription(`${member.displayName} has skipped **${passed} levels** and advanced to **level ${level}**`) }
                 imports.channel.send(embed);
-                imports.data.guilds[imports.guild.id].members[imports.member.id].level = level;
-                imports.data.guilds[imports.guild.id].members[imports.member.id].exp = currentExp - nextLevel;
             }
         }
     },
 
-    toNext: function(imports) {
-        var level = imports.data.guilds[imports.guild.id].members[imports.member.id].level + 1;
-        var factor = imports.data.guilds[imports.guild.id].config.expcurve;
-        var nextLevel = Math.floor(200 * Math.pow(level, factor));
-        return nextLevel;
+    toNext: function(level, factor) {
+        return Math.floor(200 * Math.pow(level, factor));
     }
 }
