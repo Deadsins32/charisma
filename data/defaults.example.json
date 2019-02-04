@@ -47,15 +47,11 @@
         "color": "#9DA0CB",
         "description": "I'm not very creative...",
         "exp": 0,
-        "level": 0,
-        "balance": 0,
         "karma": 0
     },
 
     "member": {
         "exp": 0,
-        "level": 0,
-        "balance": 0,
         "karma": 0
     }
 }
