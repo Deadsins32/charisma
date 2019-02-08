@@ -21,12 +21,50 @@ Object.size = function(obj) {
     return size;
 };
 
-var Discord = require('discord.js');
+function index(obj, is, value) {
+    try {
+        if (typeof is == 'string') { return index(obj,is.split('.'), value) }
+        else if (is.length == 1 && value !== undefined) { return obj[is[0]] = value }
+        else if (is.length == 0) { return obj }
+        else { return index(obj[is[0]], is.slice(1), value) }
+    }
 
-module.exports = function(imports, parameters) {
+    catch(error) {}
+}
+
+var Discord = require('discord.js');
+var average = require('image-average-color');
+var request = require('request');
+async function getBuffer(url) {
+    return new Promise(function(resolve, reject) {
+        request({ url, encoding: null }, function(error, response, buffer) {
+            if (error) { reject(error) }
+            else { resolve(buffer) }
+        });
+    });
+}
+
+async function getAverage(buffer) {
+    return new Promise(function(resolve, reject) {
+        average(buffer, function(error, color) {
+            if (error) { reject(error) }
+            else { resolve(color) }
+        });
+    });
+}
+
+function toHex(r, g, b) {
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+}
+
+module.exports = async function(imports, parameters) {
     var embed = new Discord.RichEmbed();
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
-    embed.setFooter(imports.client.user.username, imports.client.user.avatarURL);
 
     function Member(member) {
         this.username = member.user.username;
@@ -55,7 +93,7 @@ module.exports = function(imports, parameters) {
         if (channel.parent) { this.category = channel.parent.name }
     }
 
-    var objects = {
+    var keys = {
         charisma: {
             username: imports.client.user.username,
             id: imports.client.user.id,
@@ -72,7 +110,8 @@ module.exports = function(imports, parameters) {
             defaultRole: new Role(imports.guild.defaultRole),
             config: imports.data.guilds[imports.guild.id].config,
             colors: imports.data.guilds[imports.guild.id].colors,
-            selfroles: []
+            selfroles: [],
+            avatar: imports.guild.iconURL
         },
 
         user: new Member(imports.member),
@@ -83,91 +122,81 @@ module.exports = function(imports, parameters) {
 
     for (s in selfroles) {
         var role = imports.guild.roles.get(selfroles[s]);
-        if (role) { objects.guild.selfroles.push(role.name) }
+        if (role) { keys.guild.selfroles.push(role.name) }
     }
 
-    if (imports.client.user.presence.game) { objects.charisma.status = imports.client.user.presence.game.name }
+    if (imports.client.user.presence.game) { keys.charisma.status = imports.client.user.presence.game.name }
+
+    var guildIconBuff = await getBuffer(keys.guild.avatar);
+    var average = await getAverage(guildIconBuff);
+    var averageHex = toHex(average[0], average[1], average[2]);
+    keys.guild.hideColor = averageHex;
+
 
     if (parameters[1]) {
         if (imports.Command.methods.mention(parameters[1]).pass) {
-            objects.user = new Member(imports.guild.members.find('id', imports.Command.methods.mention(parameters[1]).value));
+            if (imports.guild.members.get(imports.Command.methods.mention(parameters[1]).value)) {
+                keys.user = new Member(imports.guild.members.get(imports.Command.methods.mention(parameters[1]).value));
+            }
         }
 
         else if (imports.Command.methods.channel(parameters[1]).pass) {
-            objects.channel = new Channel(imports.guild.channels.find('id', imports.Command.methods.channel(parameters[1]).value));
+            if (imports.guild.channels.get(imports.Command.methods.channel(parameters[1]).value)) {
+                keys.channel = new Channel(imports.guild.channels.get(imports.Command.methods.channel(parameters[1]).value));
+            }
         }
 
         else {
             if (parameters[0] == 'role') {
-                if (imports.guild.roles.find('name', parameters[1])) {
-                    objects.role = new Role(imports.guild.roles.find('name', parameters[1]));
-                }
-
-                else if (imports.guild.roles.find('id', parameters[1])) {
-                    objects.role = new Role(imports.guilds.roles.find('id', parameters[1]));
-                }
+                if (imports.guild.roles.find('name', parameters[1])) { keys.role = new Role(imports.guild.roles.find('name', parameters[1])) }
+                else if (imports.guild.roles.find(parameters[1])) { keys.role = new Role(imports.guilds.roles.find(parameters[1])) }
             }
         }
     }
 
-    if (parameters[0] == 'user') {
-        embed.setThumbnail(objects.user.avatar);
-    }
 
-    if (parameters[0] == 'user.avatar') {
-        embed.setImage(objects.user.avatar);
-    }
+    //if (parameters[0] == 'user') { embed.setThumbnail(keys.user.avatar) }
+    //else if (parameters[0] == 'user.avatar') { embed.setImage(keys.user.avatar) }
 
-    var object = Object.byString(objects, parameters[0]);
-
-    if (object != undefined) {
-        if (object.color) {
-            embed.setColor(object.color);
-        }
-
-        for (o in object) {
-            if (isNaN(o)) {
-                if (object[o] instanceof Object) {
-                    if (object[o] instanceof Array) {
-                        embed.addField(o, object[o].length + ' items', true);
-                    }
-
-                    else {
-                        embed.addField(o, Object.size(object[o]) + ' items', true);
-                    }
-                }
-
-                else {
-                    if (object[o]) {
-                        embed.addField(o, object[o], true);
-                    }
-                }
-            }
-        }
-
+    //var object = Object.byString(objects, parameters[0]);
+    var object = index(keys, parameters[0]);
+    if (object) {
+        var size;
         if (object instanceof Object) {
-            if (object instanceof Array) {
-                if (object.length == 0) { embed.setDescription(`${parameters[0]} does not have any properties`) }
-                else { embed.addField(parameters[0], object.join('\n')) }
+            var size;
+            if (object instanceof Array) { size = object.length }
+            else { size = Object.size(object) }
+            
+            if (size != 0) {
+                if (object instanceof Array) { embed.setDescription(object.join(',\n')) }
+                else {
+                    if (object.color) { embed.setColor(object.color) }
+                    if (object.hideColor) { embed.setColor(object.hideColor) }
+                    if (object.avatar) { embed.setImage(object.avatar) }
+                    for (o in object) {
+                        if (object[o] instanceof Array) { embed.addField(o, `${object[o].length} items`, true) }
+                        else if (object[o] instanceof Object) { embed.addField(o, `${Object.size(object[o])} items`, true) }
+                        else {
+                            if (o != 'avatar' && o != 'hideColor' && object[o] != null) {
+                                if (object[o] == '') { embed.addField(o, null, true) }
+                                else { embed.addField(o, object[o], true) }
+                            }
+                        }
+                    }
+                }
             }
 
-            else {
-                if (Object.size(object) == 0) { embed.setDescription(`${parameters[0]} does not have any properties`) }
-            }
+            else { embed.setDescription(`${parameters[0]} does not have any properties`) }
         }
 
-        else if (imports.Command.methods.color(object).pass) {
-            embed.setColor(object);
-            embed.setDescription(object);
-            embed.setFooter('');
-        }
-
-        imports.channel.send(embed);
+        else { embed.setDescription(`cannot display individual properties`) }
     }
 
     else {
         embed.setThumbnail('');
-        embed.setDescription('`' + parameters[0] + '` does not exist');
-        imports.channel.send(embed);
+        embed.setImage('');
+        embed.setDescription(`${parameters[0]} does not exist`);
     }
+
+    imports.channel.send(embed);
 }

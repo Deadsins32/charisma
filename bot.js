@@ -1,3 +1,10 @@
+var fs = require('fs');
+var chalk = require('chalk');
+var Discord = require('discord.js');
+var client = new Discord.Client();
+
+var config = require('./src/config/config.json');
+
 function readDir(path) {
     return new Promise(function(resolve, reject) {
         fs.readdir(path, function(error, files) {
@@ -31,143 +38,105 @@ function exists(path) {
     });
 }
 
-var aliases = require('./src/config/aliases.json');
-var shorthands = require('./src/config/shorthands.json');
-var config = require('./src/config/config.json');
-
-var Discord = require('discord.js');
-var client = new Discord.Client();
-
-var readline = require('readline');
-
-var chalk = require('chalk');
-
-var fs = require('fs');
-var YouTube = require('simple-youtube-api');
-var ytdl = require('ytdl-core');
-
-var Command = require(`./src/core/Command.js`);
-var Flavors = require(`./src/core/Flavors.js`);
-var Seed = require('./src/core/Seed.js');
-var Experience = require('./src/core/Experience');
-
 var CONSOLE = console;
-var imports = {};
 
-console.ready = function(str) {
-    CONSOLE.log(chalk.greenBright('[+]'), str);
-}
-
-console.warn = function(str) {
-    CONSOLE.log(chalk.yellowBright('[-]'), str);
-}
-
-console.error = function(str) {
-    CONSOLE.log(chalk.redBright('[!]'), str);
-}
-
-console.info = function(str) {
-    CONSOLE.log(chalk.cyanBright('[?]'), str);
-}
+console.ready = function(str) { CONSOLE.log(chalk.greenBright('[+]'), str) }
+console.warn = function(str) { CONSOLE.log(chalk.yellowBright('[-]'), str) }
+console.error = function(str) { CONSOLE.log(chalk.redBright('[!]'), str) }
+console.info = function(str) { CONSOLE.log(chalk.cyanBright('[?]'), str) }
 
 var data = {
     users: new Object(),
     guilds: new Object()
 }
 
-var consoleCommands = new Object();
+var YouTube = require('simple-youtube-api');
+
+var imports = {
+    client: client,
+    error: function(error) { console.log(error.stack) },
+
+    youtube: new YouTube(config.googleApiKey),
+    ytdl: require('ytdl-core'),
+
+    Command: require(`./src/core/Command.js`),
+    Flavors: require(`./src/core/Flavors.js`),
+    Seed: require('./src/core/Seed.js'),
+    Experience: require('./src/core/Experience'),
+
+    data: data,
+
+    config: config,
+    shorthands: require('./src/config/shorthands.json'),
+    aliases: require('./src/config/aliases.json'),
+
+    console: console,
+    music: new Object()
+}
+
 var daemons = new Array();
-var commandTotal = 0;
-var consoleCommandTotal = 0;
-var daemonTotal = 0;
-var userTotal = 0;
-var guildTotal = 0;
 
-async function initialize() {
-    var groups = await readDir('./src/commands');
-    for (g in groups) {
-        var commands = await readDir(`./src/commands/${groups[g]}`);
-        for (c in commands) {
-            commandTotal++;
-            Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
-            Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
-        }
-    }
-
-    var consoleCommandFiles = await readDir('./src/console');
-    for (c in consoleCommandFiles) {
-        consoleCommandTotal++;
-        consoleCommands[consoleCommandFiles[c].split('.js')[0]] = require(`./src/console/${consoleCommandFiles[c]}`);
-    }
-
-    var users = client.users.array();
-    for (u in users) {
-        if (await exists(`./data/users/${users[u].id}`)) {
-            userTotal++;
-            data.users[users[u].id] = require(`./data/users/${users[u]/id}`);
-        }
-    }
-
-    var guilds = client.guilds.array();
-    for (g in guilds) {
-        if (await exists(`./data/guilds/${guilds[g].id}`)) {
-            guildTotal++;
-            var object = new Object();
-            object.members = new Object();
-
-            var current = await readDir(`./data/guilds/${guilds[g].id}`);
-            for (c in current) { if (current[c] != 'members') { object[current[c].split('.json')[0]] = require(`./data/guilds/${guilds[g].id}/${current[c]}`) } }
-
-            var members = guilds[g].members.array();
-            for (m in members) {
-                if (await exists(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`)) {
-                    object.members[members[m].id] = require(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`);
-                }
+var load = {
+    commands: async function() {
+        var groups = await readDir('./src/commands');
+        var total = 0;
+        for (g in groups) {
+            var commands = await readDir(`./src/commands/${groups[g]}`);
+            for (c in commands) {
+                total++;
+                imports.Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
+                imports.Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
             }
-
-            data.guilds[guilds[g].id] = object;
         }
+
+        return total;
+    },
+
+    users: async function(users) {
+        var total = 0;
+        for (u in users) {
+            if (!data.users[users[u]] && await exists(`./data/users/${users[u].id}.json`)) {
+                total++;
+                data.users[users[u].id] = require(`./data/users/${users[u].id}.json`);
+            }
+        }
+
+        return total;
+    },
+
+    guilds: async function(guilds) {
+        var total = 0;
+        for (g in guilds) {
+            if (!data.guilds[guilds[g]] && await exists(`./data/guilds/${guilds[g].id}`)) {
+                total++;
+                var object = new Object();
+                object.members = new Object();
+                var current = await readDir(`./data/guilds/${guilds[g].id}`);
+                for (c in current) { if (current[c] != 'members') { object[current[c].split('.json')[0]] = require(`./data/guilds/${guilds[g].id}/${current[c]}`) } }
+                var members = guilds[g].members.array();
+                for (m in members) {
+                    if (await exists(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`)) {
+                        object.members[members[m].id] = require(`./data/guilds/${guilds[g].id}/members/${members[m].id}.json`);
+                    }
+                }
+
+                data.guilds[guilds[g].id] = object;
+            }
+        }
+
+        return total;
+    },
+
+    daemons: async function() {
+        var total = 0;
+        var files = await readDir('./src/daemons');
+        for (f in files) {
+            total++;
+            daemons.push(require(`./src/daemons/${files[f]}`));
+        }
+
+        return total;
     }
-
-    var daemonFiles = await readDir('./src/daemons');
-    for (d in daemonFiles) {
-        daemonTotal++;
-        daemons.push(require(`./src/daemons/${daemonFiles[d]}`));
-    }
-
-    if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
-    else { data.defaults = require('./data/defaults.example.json') }
-
-    imports = {
-        client: client,
-        error: function(error) { console.log(error.stack) },
-    
-        youtube: new YouTube(config.googleApiKey),
-        ytdl: ytdl,
-    
-        Command: Command,
-        Flavors: Flavors,
-        Seed: Seed,
-        Experience: Experience,
-    
-        data: data,
-    
-        config: config,
-        shorthands: shorthands,
-        aliases: aliases,
-    
-        console: console,
-    
-        music: new Object()
-    }
-
-    for (d in daemons) { daemons[d](imports) }
-
-    console.ready(`${commandTotal} commands have been loaded`);
-    console.ready(`${consoleCommandTotal} console commands have been loaded`);
-    console.ready(`${guildTotal} guilds have been loaded`);
-    console.ready(`${userTotal} users have been loaded`);
-    console.ready(`${daemonTotal} daemons have been initialized`);
 }
 
 async function save() {
@@ -186,13 +155,20 @@ async function save() {
     for (u in data.users) { await writeFile(`./data/users/${u}.json`, JSON.stringify(data.users[u], null, 4)) }
 }
 
-client.on('ready', async function() {
-    await initialize();
-    console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-    setInterval(function() {
-        save();
-    }, 1800000);
-});
+async function start() {
+    if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
+    else { data.defaults = require('./data/defaults.example.json') }
+
+    console.ready(`${await load.commands()} commands have been loaded`);
+    console.ready(`${await load.daemons()} daemons have been initialized`);
+    for (d in daemons) { daemons[d](imports) }
+    setInterval(function() { save() }, 1800000);
+    client.on('ready', async function() {
+        console.ready(`${await load.guilds(client.guilds.array())} guilds have been loaded`);
+        console.ready(`${await load.users(client.users.array())} users have been loaded`);
+        console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+    });
+}
 
 async function exit() {
     var connections = client.voiceConnections.array();
@@ -207,28 +183,6 @@ process.on('SIGINT', exit.bind());
 
 client.on('error', function(error) { console.log(error.stack) });
 
-var rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-rl.on('line', function(input) {
-    try {
-        var parsed = input.split(' ');
-        var command = parsed[0];
-        if (consoleCommands[command]) {
-            parsed.shift();
-            consoleCommands[command](imports, parsed);
-        }
-
-        else {
-            console.log('unknown command');
-        }
-    }
-
-    catch(error) { console.log(error.stack) }
-});
-
 process.on('unhandledRejection', function(error, promise) {
     console.log('An unhandledRejection occurred');
     console.log(promise);
@@ -236,3 +190,5 @@ process.on('unhandledRejection', function(error, promise) {
 });
 
 if (!config.sharded) { client.login(config.token) }
+
+start();
