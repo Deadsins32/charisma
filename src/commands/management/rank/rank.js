@@ -8,21 +8,15 @@ module.exports = function(imports, parameters) {
     var id = imports.user.id;
     if (parameters[0]) { id = parameters[0] }
     var member = imports.guild.members.get(id);
-    embed.setAuthor(`${member.user.username}#${member.user.discriminator}`);
-    embed.setThumbnail(member.user.avatarURL);
+    embed.setAuthor(`${member.user.username}#${member.user.discriminator}`, member.user.avatarURL);
 
     var factor = imports.data.guilds[imports.guild.id].config.expcurve;
     var experience = imports.data.guilds[imports.guild.id].members[member.id].exp;
-
     var level = imports.Experience.expToLevel(experience, factor);
-    var currentExp = imports.Experience.levelToExp(level, factor);
-    var nextExp = imports.Experience.levelToExp(level + 1, factor);
-
-    var relativeExp = experience - currentExp;
-    var relativeMax = nextExp - currentExp;
+    var relative = imports.Experience.getRelative(experience, factor);
 
     embed.addField('level', level, true);
-    embed.addField('experience', `${relativeExp}/${relativeMax}`, true);
+    embed.addField('experience', `${relative[0]}/${relative[1]}`, true);
 
     imports.channel.send(embed);
 }

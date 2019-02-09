@@ -45,5 +45,15 @@ module.exports = {
         }
 
         return exp;
+    },
+
+    getRelative: function(exp, factor) {
+        var level = this.expToLevel(exp, factor);
+        var currentExp = this.levelToExp(level, factor);
+        var nextExp = this.levelToExp(level + 1, factor);
+        var relativeExp = exp - currentExp;
+        var relativeMax = nextExp - currentExp;
+
+        return [relativeExp, relativeMax];
     }
 }

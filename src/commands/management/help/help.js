@@ -26,58 +26,42 @@ module.exports = function(imports, parameters) {
     var list = new Object();
 
     if (parameters[0]) {
-        if (!isNaN(parameters[0])) {
-            page = parseInt(parameters[0]) - 1;
-            for (c in configs) { if (parse(c)) { list[c] = configs[c] } }
-        }
-
-        else {
-            if (parameters[0] == 'help') {
-                return imports.channel.send(':unamused:');
-            }
-
-            else {
-                if (configs[parameters[0]]) { name = true }
-                else { for (c in configs) { if (configs[c].tags.includes(parameters[0])) { tag = true } } }
-                if (tag) { for (c in configs) { if (configs[c].tags.includes(parameters[0])) { if (parse(c)) { list[c] = configs[c] } } } }
-                if (name) {
-                    var config = configs[parameters[0]];
-
-                    embed.addField('description', config.description, true);
-                    embed.addField('usage', '`' + imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, parameters[0]) + '`', true);
-                    if (config.tags) {
-                        embed.addField('tags', `` + JSON.stringify(config.tags) + '`', true);
-                    }
-
-                    embed.addField('nsfw', config.nsfw, true);
-                    return imports.channel.send(embed);
-                }
-            }
-        }
+        for (c in configs) { if (configs[c].tags) { for (t in configs[c].tags) { if (configs[c].tags[t] == parameters[0]) { tag = true; break; } } } }
+        for (c in configs) { if (configs[c].tags) { if (configs[c].tags.includes(parameters[0])) { tag = true; break; } } }
+        for (c in configs) { if (parameters[0] == c) { name = true } }
+        if (!name && !tag) { if (!isNaN(parameters[0])) { page = parseInt(parameters[0]) - 1 } }
+        else if (parameters[1]) { if (!isNaN(parameters[1])) { page = parseInt(parameters[1]) - 1 } }
     }
 
-    else { for (c in configs) { if (parse(c)) { list[c] = configs[c] } } }
-
-
-    var array = new Array();
-    for (l in list) { array.push([l, list[l]]) }
-    
-    if (tag) { if (!isNaN(parameters[1])) { page = parseInt(parameters[1]) - 1 } }
-
-    var maxPage = Math.ceil(array.length / 10) - 1;
-    
-    if (page > maxPage) {
-        embed.setDescription('please specify a smaller page number');
+    if (name) {
+        var config = configs[parameters[0]];
+        embed.addField(`description`, config.description, true);
+        embed.addField(`usage`, `\`${imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, parameters[0])}\``, true);
+        if (config.tags) { embed.addField(`tags`, config.tags.join(', '), true) }
+        embed.addField(`nsfw`, config.nsfw, true);
         return imports.channel.send(embed);
     }
 
-    for (i = 0; i < 10; i++) {
-        if (array[(page * 10) + i]) {
-            var syntax = imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, array[(page * 10) + i][0]);
-            embed.addField(array[(page * 10) + i][0], '`' + syntax + '`');
+    else {
+        if (tag) { for (c in configs) { if (parse(c) && configs[c].tags && configs[c].tags.includes(parameters[0])) { list[c] = configs[c] } } }
+        else { for (c in configs) { if (parse(c)) { list[c] = configs[c] } } }
+        var array = new Array();
+        for (l in list) { array.push([l, list[l]]) }
+        if (array.length == 0) { embed.setDescription(`no commands were found`); return imports.channel.send(embed) }
+        var maxPage = Math.ceil(array.length / 10) - 1;
+        if (page > maxPage) {
+            embed.setDescription(`please specify a smaller page number`);
+            return imports.channel.send(embed);
         }
-    }
 
-    embed.setFooter('page ' + (page + 1) + ' / ' + (maxPage + 1), imports.client.user.avatarURL);
-    imports.channel.send(embed);
+        for (var i = 0; i < 10; i++) {
+            if (array[(page * 10) + i]) {
+                var syntax = imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, array[(page * 10) + i][0]);
+                embed.addField(array[(page * 10) + i][0], `\`${syntax}\``);
+            }
+        }
+
+        embed.setFooter(`page ${page + 1}/${maxPage + 1}`, imports.client.user.avatarURL);
+        imports.channel.send(embed);
+    }
 }

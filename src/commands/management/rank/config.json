@@ -1,6 +1,6 @@
 {
     "permissions": ["all"],
-    "description": "get your profile card",
+    "description": "gets your ranking",
     "hidden": false,
     "nsfw": false,
     "tags": ["utility", "fun"],
