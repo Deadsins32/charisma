@@ -26,7 +26,6 @@ module.exports = function(imports, parameters) {
     var list = new Object();
 
     if (parameters[0]) {
-        for (c in configs) { if (configs[c].tags) { for (t in configs[c].tags) { if (configs[c].tags[t] == parameters[0]) { tag = true; break; } } } }
         for (c in configs) { if (configs[c].tags) { if (configs[c].tags.includes(parameters[0])) { tag = true; break; } } }
         for (c in configs) { if (parameters[0] == c) { name = true } }
         if (!name && !tag) { if (!isNaN(parameters[0])) { page = parseInt(parameters[0]) - 1 } }
@@ -43,16 +42,13 @@ module.exports = function(imports, parameters) {
     }
 
     else {
+        if (!tag && parameters[0] && isNaN(parameters[0])) { embed.setDescription(`no commands were found`); return imports.channel.send(embed) }
         if (tag) { for (c in configs) { if (parse(c) && configs[c].tags && configs[c].tags.includes(parameters[0])) { list[c] = configs[c] } } }
         else { for (c in configs) { if (parse(c)) { list[c] = configs[c] } } }
         var array = new Array();
         for (l in list) { array.push([l, list[l]]) }
-        if (array.length == 0) { embed.setDescription(`no commands were found`); return imports.channel.send(embed) }
         var maxPage = Math.ceil(array.length / 10) - 1;
-        if (page > maxPage) {
-            embed.setDescription(`please specify a smaller page number`);
-            return imports.channel.send(embed);
-        }
+        if (page > maxPage) { embed.setDescription(`please specify a smaller page number`); return imports.channel.send(embed) }
 
         for (var i = 0; i < 10; i++) {
             if (array[(page * 10) + i]) {
@@ -61,7 +57,7 @@ module.exports = function(imports, parameters) {
             }
         }
 
-        embed.setFooter(`page ${page + 1}/${maxPage + 1}`, imports.client.user.avatarURL);
+        embed.setFooter(`page ${page + 1}/${maxPage + 1}`);
         imports.channel.send(embed);
     }
 }
