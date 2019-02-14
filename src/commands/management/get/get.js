@@ -159,7 +159,8 @@ module.exports = async function(imports, parameters) {
     //else if (parameters[0] == 'user.avatar') { embed.setImage(keys.user.avatar) }
 
     //var object = Object.byString(objects, parameters[0]);
-    var object = index(keys, parameters[0]);
+    if (parameters[0] == '.') { object = keys }
+    else { object = index(keys, parameters[0]) }
     if (object) {
         var size;
         if (object instanceof Object) {
