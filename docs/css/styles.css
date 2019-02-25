@@ -178,3 +178,11 @@ div.container div.selected {
     margin-left: 5px;
     cursor: default;
 }
+
+#experience div {
+    display: block;
+}
+
+.modebar {
+    display: none;
+}

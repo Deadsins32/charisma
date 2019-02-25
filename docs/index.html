@@ -22,6 +22,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="usageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">usage</a>
                     <div class="dropdown-menu" aria-labelledby="usageDropdown">
                         <a class="dropdown-item" onclick="navigate('commands', 'usageNav')">commands</a>
+                        <a class="dropdown-item" onclick="navigate('experience', 'usageNav')">experience</a>
                         <a class="dropdown-item" onclick="navigate('faq', 'usageNav')">frequently asked questions</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" onclick="navigate('getStarted', 'usageNav')">get started</a>
@@ -48,6 +49,11 @@
             <div id="queryTags" class="d-flex justify-content-start"></div>
             <div id="commandQuery"></div>
         </div>
+
+        <div id="experience">
+            <div id="expChart"></div>
+        </div>
+
         <div id="faq">
             <h1>frequently asked questions</h1>
         </div>
@@ -78,5 +84,10 @@
 <script src="js/jquery.js"></script>
 <script src="js/popper.js"></script>
 <script src="js/bootstrap.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script src="js/initializers/commandQuery.js"></script>
+<script src="js/initializers/expChart.js"></script>
+
 <script src="js/main.js"></script>
 </html>
