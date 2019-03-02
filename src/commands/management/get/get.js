@@ -19,7 +19,7 @@ Object.size = function(obj) {
         if (obj.hasOwnProperty(key)) size++;
     }
     return size;
-};
+}
 
 function index(obj, is, value) {
     try {
@@ -30,6 +30,16 @@ function index(obj, is, value) {
     }
 
     catch(error) {}
+}
+
+function validURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
 }
 
 var Discord = require('discord.js');
@@ -60,6 +70,13 @@ function toHex(r, g, b) {
     }
 
     return `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
+}
+
+async function imageToAverage(url) {
+    var buffer = await getBuffer(url);
+    var average = await getAverage(buffer);
+    var hex = toHex(average[0], average[1], average[2]);
+    return hex;
 }
 
 module.exports = async function(imports, parameters) {
@@ -154,11 +171,6 @@ module.exports = async function(imports, parameters) {
         }
     }
 
-
-    //if (parameters[0] == 'user') { embed.setThumbnail(keys.user.avatar) }
-    //else if (parameters[0] == 'user.avatar') { embed.setImage(keys.user.avatar) }
-
-    //var object = Object.byString(objects, parameters[0]);
     if (parameters[0] == '.') { object = keys }
     else { object = index(keys, parameters[0]) }
     if (object) {
@@ -190,7 +202,14 @@ module.exports = async function(imports, parameters) {
             else { embed.setDescription(`${parameters[0]} does not have any properties`) }
         }
 
-        else { embed.setDescription(`cannot display individual properties`) }
+        else {
+            if (validURL(object)) {
+                embed.setColor(await imageToAverage(object));
+                embed.setImage(object);
+            }
+            
+            else { embed.setDescription(object) }
+        }
     }
 
     else {

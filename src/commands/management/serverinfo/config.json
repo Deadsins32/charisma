@@ -1,0 +1,8 @@
+{
+    "permissions": ["all"],
+    "description": "gets some nice server info",
+    "hidden": false,
+    "nsfw": false,
+    "tags": ["utility", "fun"],
+    "params": []
+}
