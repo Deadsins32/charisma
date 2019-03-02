@@ -48,7 +48,11 @@ module.exports = function(imports, parameters) {
         var array = new Array();
         for (l in list) { array.push([l, list[l]]) }
         var maxPage = Math.ceil(array.length / 10) - 1;
-        if (page > maxPage) { embed.setDescription(`please specify a smaller page number`); return imports.channel.send(embed) }
+        if (page > maxPage) {
+            if (array.length == 0) { embed.setDescription(`no commands were found`) }
+            else { embed.setDescription(`please specify a smaller page number`) }
+            return imports.channel.send(embed);
+        }
 
         for (var i = 0; i < 10; i++) {
             if (array[(page * 10) + i]) {
