@@ -5,45 +5,19 @@ var client = new Discord.Client();
 
 var config = require('./src/config/config.json');
 
-function readDir(path) {
-    return new Promise(function(resolve, reject) {
-        fs.readdir(path, function(error, files) {
-            if (error) { reject(error) }
-            else { resolve(files) }
-        });
-    });
-}
-
-function writeFile(path, data) {
-    return new Promise(function(resolve, reject) {
-        fs.writeFile(path, data, function(error) {
-            if (error) { reject(error) }
-            else { resolve(true) }
-        });
-    });
-}
-
-function createDirectory(path) {
-    return new Promise(function(resolve, reject) {
-        fs.mkdir(path, function(error) {
-            if (error) { reject(error) }
-            else { resolve(true) }
-        });
-    });
-}
-
-function exists(path) {
-    return new Promise(function(resolve, reject) {
-        fs.exists(path, function(bool) { resolve(bool) });
-    });
-}
-
 var CONSOLE = console;
 
 console.ready = function(str) { CONSOLE.log(chalk.greenBright('[+]'), str) }
 console.warn = function(str) { CONSOLE.log(chalk.yellowBright('[-]'), str) }
-console.error = function(str) { CONSOLE.log(chalk.redBright('[!]'), str) }
-console.info = function(str) { CONSOLE.log(chalk.cyanBright('[?]'), str) }
+console.error = function(str) {
+    var str = str.stack;
+    var lines = str.split('\n');
+    for (var l = 0; l < lines.length; l++) { CONSOLE.log(chalk.redBright('[!]'), lines[l]) }
+}
+
+console.info = function(str) {
+    CONSOLE.log(chalk.cyanBright('[?]'), str);
+}
 
 var data = {
     users: new Object(),
@@ -54,7 +28,15 @@ var YouTube = require('simple-youtube-api');
 
 var imports = {
     client: client,
-    error: function(error) { console.log(error.stack) },
+    errors: {
+        date: new Date(),
+        logs: new Array()
+    },
+
+    error: function(error) {
+        this.errors.logs.push(error.stack);
+        console.error(error);
+    },
 
     youtube: new YouTube(config.googleApiKey),
     ytdl: require('ytdl-core'),
@@ -74,7 +56,9 @@ var imports = {
     music: new Object()
 }
 
-var daemons = new Array();
+var syncFs = require('./src/core/syncFs.js');
+var exists = syncFs.exists;
+var readDir = syncFs.readDir;
 
 var load = {
     commands: async function() {
@@ -132,37 +116,19 @@ var load = {
         var files = await readDir('./src/daemons');
         for (f in files) {
             total++;
-            daemons.push(require(`./src/daemons/${files[f]}`));
+            require(`./src/daemons/${files[f]}`)(imports);
+            console.ready(`${files[f].split('.js')[0]} daemon has been initialized`);
         }
 
         return total;
     }
 }
 
-async function save() {
-    console.ready('saving guild and user information...');
-
-    for (g in data.guilds) {
-        if (!await exists(`./data/guilds/${g}`)) { await createDirectory(`./data/guilds/${g}`) }
-        for (p in data.guilds[g]) {
-            if (p != 'members') { await writeFile(`./data/guilds/${g}/${p}.json`, JSON.stringify(data.guilds[g][p], null, 4)) }
-            else { if (!await exists(`./data/guilds/${g}/members`)) { await createDirectory(`./data/guilds/${g}/members`) } }
-        }
-
-        for (m in data.guilds[g].members) { await writeFile(`./data/guilds/${g}/members/${m}.json`, JSON.stringify(data.guilds[g].members[m], null, 4)) }
-    }
-
-    for (u in data.users) { await writeFile(`./data/users/${u}.json`, JSON.stringify(data.users[u], null, 4)) }
-}
-
 async function start() {
     if (await exists('./data/defaults.json')) { data.defaults = require('./data/defaults.json') }
     else { data.defaults = require('./data/defaults.example.json') }
-
+    console.ready(`${await load.daemons()} daemons have been loaded`);
     console.ready(`${await load.commands()} commands have been loaded`);
-    console.ready(`${await load.daemons()} daemons have been initialized`);
-    for (d in daemons) { daemons[d](imports) }
-    setInterval(function() { save() }, 1800000);
     client.on('ready', async function() {
         console.ready(`${await load.guilds(client.guilds.array())} guilds have been loaded`);
         console.ready(`${await load.users(client.users.array())} users have been loaded`);
@@ -170,20 +136,21 @@ async function start() {
     });
 }
 
-async function exit() {
+/*async function exit() {
     var connections = client.voiceConnections.array();
     for (c in connections) { connections[c].disconnect() }
     await save();
     process.exit();
-}
+}*/
 
 //process.stdin.resume();
 
-process.on('SIGINT', exit.bind());
+//process.on('SIGINT', exit.bind());
 
-client.on('error', function(error) { console.log(error.stack) });
+client.on('error', function(error) { imports.error(error) });
 
 process.on('unhandledRejection', function(error, promise) {
+    imports.error(error);
     console.log('An unhandledRejection occurred');
     console.log(promise);
     console.log(`Rejection: ${error}`);
