@@ -10,7 +10,6 @@ var CONSOLE = console;
 console.ready = function(str) { CONSOLE.log(chalk.greenBright('[+]'), str) }
 console.warn = function(str) { CONSOLE.log(chalk.yellowBright('[-]'), str) }
 console.error = function(str) {
-    var str = str.stack;
     var lines = str.split('\n');
     for (var l = 0; l < lines.length; l++) { CONSOLE.log(chalk.redBright('[!]'), lines[l]) }
 }
@@ -35,7 +34,7 @@ var imports = {
 
     error: function(error) {
         this.errors.logs.push(error.stack);
-        console.error(error);
+        console.error(error.stack);
     },
 
     youtube: new YouTube(config.googleApiKey),
