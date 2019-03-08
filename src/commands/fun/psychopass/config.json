@@ -1,5 +1,5 @@
 {
-    "permissions": ["any"],
+    "permissions": [],
     "description": "retrieves your crime coefficient!",
     "hidden": true,
     "nsfw": false,

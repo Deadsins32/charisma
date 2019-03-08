@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gets a cute neko~! (*^ω^*)",
     "hidden": false,
     "nsfw": false,

@@ -1,5 +1,5 @@
 {
-    "permissions": ["MANAGE_NICKNAMES"],
+    "permissions": ["DISCORD.MANAGE_NICKNAMES"],
     "description": "changes the nickname of whoever you specify to whatever you specify",
     "tags": ["management", "admin"],
     "hidden": false,

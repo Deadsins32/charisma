@@ -1,5 +1,5 @@
 {
-    "permissions": ["master"],
+    "permissions": ["BOT.MASTER"],
     "description": "fetches the current directory tree or file associated with the specified path",
     "hidden": false,
     "nsfw": false,

@@ -1,5 +1,5 @@
 {
-    "permissions": ["any"],
+    "permissions": [],
     "description": "get the queue of selected songs",
     "hidden": false,
     "nsfw": false,

@@ -1,5 +1,5 @@
 {
-    "permissions": ["master"],
+    "permissions": ["BOT.MASTER"],
     "description": "evaluates the given statement and returns the output",
     "hidden": false,
     "nsfw": false,

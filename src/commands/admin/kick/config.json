@@ -1,5 +1,5 @@
 {
-    "permissions": ["KICK_MEMBERS"],
+    "permissions": ["DISCORD.KICK_MEMBERS"],
     "description": "kicks whoever you specify",
     "hidden": false,
     "nsfw": false,

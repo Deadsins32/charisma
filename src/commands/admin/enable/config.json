@@ -1,5 +1,5 @@
 {
-    "permissions": ["ADMINISTRATOR"],
+    "permissions": ["DISCORD.ADMINISTRATOR"],
     "description": "enables a specific feature on the server",
     "hidden": false,
     "nsfw": false,

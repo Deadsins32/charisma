@@ -1,5 +1,5 @@
 {
-    "permissions": ["admin"],
+    "permissions": ["DISCORD.ADMINISTRATOR"],
     "description": "sets a local value to whatever you specify",
     "hidden": false,
     "nsfw": false,

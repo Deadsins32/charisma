@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gets your ranking",
     "hidden": false,
     "nsfw": false,

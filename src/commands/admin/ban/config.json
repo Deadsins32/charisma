@@ -1,5 +1,5 @@
 {
-    "permissions": ["BAN_MEMBERS"],
+    "permissions": ["DISCORD.BAN_MEMBERS"],
     "description": "bans whoever you specify",
     "tags": ["management", "admin"],
     "hidden": false,

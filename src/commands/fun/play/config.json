@@ -1,5 +1,5 @@
 {
-    "permissions": ["any"],
+    "permissions": [],
     "description": "play a song",
     "hidden": false,
     "nsfw": false,

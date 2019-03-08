@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gets the ping of the bot in milliseconds",
     "hidden": false,
     "nsfw": false,

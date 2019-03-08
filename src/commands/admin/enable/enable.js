@@ -39,9 +39,9 @@ module.exports = function(imports, arguments) {
 
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
-    if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) != undefined) {
-        if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) == false) {
-            set(imports.data.guilds[imports.guild.id].features, arguments[0], true);
+    if (Object.byString(imports.data.guilds[imports.guild.id].options, arguments[0]) != undefined) {
+        if (Object.byString(imports.data.guilds[imports.guild.id].options, arguments[0]) == false) {
+            set(imports.data.guilds[imports.guild.id].options, arguments[0], true);
             embed.setDescription('`' + arguments[0] + '` has been enabled');
         }
 

@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "stab whoever you mention",
     "hidden": true,
     "nsfw": false,

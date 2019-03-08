@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gets some nice nsfw pics :smirk:",
     "hidden": false,
     "nsfw": true,

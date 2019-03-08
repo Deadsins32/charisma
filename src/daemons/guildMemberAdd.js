@@ -6,7 +6,7 @@ module.exports = function(imports) {
         try {
             if (imports.data.guilds[member.guild.id]) {
                 if (imports.data.guilds[member.guild.id].config.logchannel != '') {
-                    if (imports.data.guilds[member.guild.id].features.logs.joins) {
+                    if (imports.data.guilds[member.guild.id].options.logs.joins) {
                         var id = imports.data.guilds[member.guild.id].config.logchannel;
                         if (member.guild.channels.get(id)) {
                             var channel = member.guild.channels.get(id);

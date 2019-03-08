@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 
 module.exports = {
     add: function(imports, member, exp, logExp) {
-        if (imports.data.guilds[imports.guild.id].features.leveling) {
+        if (imports.data.guilds[imports.guild.id].options.leveling) {
             var factor = imports.data.guilds[imports.guild.id].config.expcurve;
             var beforeLevel = this.expToLevel(imports.data.guilds[imports.guild.id].members[member.id].exp, factor);
             var afterLevel = this.expToLevel(imports.data.guilds[imports.guild.id].members[member.id].exp + exp, factor);

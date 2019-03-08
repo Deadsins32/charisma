@@ -1,5 +1,5 @@
 {
-    "permissions": ["any"],
+    "permissions": [],
     "description": "it's a magic ball!",
     "hidden": false,
     "nsfw": false,

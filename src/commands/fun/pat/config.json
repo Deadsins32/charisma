@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gives the person of your choosing a nice pat on the head",
     "hidden": false,
     "nsfw": false,

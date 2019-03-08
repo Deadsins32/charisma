@@ -1,5 +1,5 @@
 {
-    "permissions": ["any"],
+    "permissions": [],
     "description": "easily search for anime!",
     "hidden": false,
     "nsfw": false,

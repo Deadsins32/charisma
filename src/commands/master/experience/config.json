@@ -1,5 +1,5 @@
 {
-    "permissions": ["master"],
+    "permissions": ["BOT.MASTER"],
     "description": "makes the bot say whatever you specify",
     "hidden": false,
     "nsfw": false,

@@ -1,5 +1,5 @@
 {
-    "permissions": ["MANAGE_MESSAGES"],
+    "permissions": ["DISCORD.MANAGE_MESSAGES"],
     "description": "deletes a specified amount of messages",
     "hidden": false,
     "nsfw": false,

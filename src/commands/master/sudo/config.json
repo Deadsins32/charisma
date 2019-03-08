@@ -1,6 +1,6 @@
 {
     "name": "sudo",
-    "permissions": ["master"],
+    "permissions": ["BOT.MASTER"],
     "description": "runs a command as if you were whoever you specify",
     "hidden": false,
     "nsfw": false,

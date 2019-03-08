@@ -1,5 +1,5 @@
 {
-    "permissions": ["admin"],
+    "permissions": ["DISCORD.ADMINISTRATOR"],
     "description": "used for managing command blacklisting",
     "hidden": false,
     "nsfw": false,

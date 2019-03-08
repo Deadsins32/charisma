@@ -6,7 +6,7 @@ module.exports = function(imports) {
         try {
             if (imports.data.guilds[newMember.guild.id]) {
                 if (imports.data.guilds[newMember.guild.id].config.logchannel != '') {
-                    if (imports.data.guilds[newMember.guild.id].features.logs.nicknamechanges) {
+                    if (imports.data.guilds[newMember.guild.id].options.logs.nicknamechanges) {
                         var id = imports.data.guilds[newMember.guild.id].config.logchannel;
                         if (newMember.guild.channels.get(id)) {
                             var channel = newMember.guild.channels.get(id);

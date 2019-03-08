@@ -32,27 +32,21 @@ function set(obj, path, value) {
 };
 
 var Discord = require('discord.js');
-var fs = require('fs');
 
-module.exports = function(imports, arguments) {
+module.exports = function(imports, parameters) {
     var embed = new Discord.RichEmbed();
-
     embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
 
-    if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) != undefined) {
-        if (Object.byString(imports.data.guilds[imports.guild.id].features, arguments[0]) == true) {
-            set(imports.data.guilds[imports.guild.id].features, arguments[0], false);
-            embed.setDescription('`' + arguments[0] + '` has been disabled');
+    if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) != undefined) {
+        if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) == true) {
+            set(imports.data.guilds[imports.guild.id].options, parameters[0], false);
+            embed.setDescription(`\`${parameters[0]}\` has been disabled`);
         }
 
-        else {
-            embed.setDescription('`' + arguments[0] + '` is already been disabled');
-        }
+        else { embed.setDescription(`\`${parameters[0]}\` has already been disabled`) }
     }
 
-    else {
-        embed.setDescription('`' + arguments[0] + '` does not exist');
-    }
+    else { embed.setDescription(`\`${parameters[0]}\` does not exist`) }
 
     imports.channel.send(embed);
 }

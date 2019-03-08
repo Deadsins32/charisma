@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gets the raw value of whatever variable you specify",
     "hidden": false,
     "nsfw": false,

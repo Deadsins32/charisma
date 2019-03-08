@@ -1,5 +1,5 @@
 {
-    "permissions": ["all"],
+    "permissions": [],
     "description": "gives the person of your choosing a nice kiss",
     "hidden": false,
     "nsfw": false,
