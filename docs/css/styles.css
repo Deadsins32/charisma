@@ -1,9 +1,14 @@
+:root {
+    --accent: #6A6D98;
+    --accent-dark: #3C3F62;
+}
+
 span.navbar-brand img {
     border-radius: 100px;
 }
 
 .navbar-dark {
-    background-color: #6A6D98;
+    background-color: var(--accent);
 }
 
 .nav-link {
@@ -12,7 +17,7 @@ span.navbar-brand img {
 }
 
 .dropdown-menu {
-    background-color: #3c3f62;
+    background-color: var(--accent-dark);
     border-radius: 5px;
 }
 
@@ -60,7 +65,7 @@ div.container div.selected {
     width: 100%;
     padding: 10px;
     border-radius: 10px;
-    background-color: #3C3F62;
+    background-color: var(--accent-dark);
     overflow: auto;
     height: 100%;
 }
@@ -71,7 +76,7 @@ div.container div.selected {
     -moz-user-select: none;
     -ms-user-select: none;
 
-    background-color: #6A6D98;
+    background-color: var(--accent);
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
     transition: all 0.3s;
@@ -87,11 +92,13 @@ div.container div.selected {
 }
 
 #queryTags span.queryTag label:hover {
-    background-color: #51547F;
+    background-color: var(--accent);
+    filter: brightness(125%);
 }
 
 #queryTags span.queryTag input:checked + label {
-    background-color: #8487B2;
+    background-color: var(--accent);
+    filter: brightness(110%);
     color: rgba(255, 255, 255, 0.8);
 }
 
@@ -133,7 +140,7 @@ div.container div.selected {
 
 #commandQuery .command .command-top .command-name {
     display: inline-block;
-    background-color: #3C3F62;
+    background-color: var(--accent-dark);
     color: #FFF;
     border-bottom-right-radius: 10px;
     padding: 8px 20px 10px 20px;
@@ -152,7 +159,7 @@ div.container div.selected {
 
 #commandQuery .command .command-bottom .command-tags-container {
     display: block;
-    background-color: #3C3F62;
+    background-color: var(--accent-dark);
     padding: 10px 10px 12px 10px;
 }
 
@@ -170,7 +177,7 @@ div.container div.selected {
     -moz-user-select: none;
     -ms-user-select: none;
     
-    background-color: #6A6D98;
+    background-color: var(--accent);
     color: #FFF;
     font-size: 12px;
     border-radius: 50px;
