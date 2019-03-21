@@ -58,22 +58,27 @@ var imports = {
 var syncFs = require('./src/core/syncFs.js');
 var exists = syncFs.exists;
 var readDir = syncFs.readDir;
+var isFolder = syncFs.isFolder;
 
 var load = {
     commands: async function() {
-        var groups = await readDir('./src/commands');
         var total = 0;
-        for (g in groups) {
-            var commands = await readDir(`./src/commands/${groups[g]}`);
-            for (c in commands) {
-                var file = require(`./src/commands/${groups[g]}/${commands[c]}`);
-                var name = commands[c].split('.js')[0];
-                imports.Command.commands[name] = file.command;
-                imports.Command.configs[name] = file.config;
-                total++;
+        async function scavenge(path) {
+            var items = await readDir(path);
+            for (i in items) {
+                items[i] = `${path}/${items[i]}`;
+                if (await isFolder(items[i])) { await scavenge(items[i]) }
+                else {
+                    var file = require(items[i]);
+                    var name = items[i].split('.js')[0];
+                    imports.Command.commands[name] = file.command;
+                    imports.Command.configs[name] = file.config;
+                    total++;
+                }
             }
         }
 
+        await scavenge('./src/commands');
         return total;
     },
 

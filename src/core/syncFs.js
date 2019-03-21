@@ -32,5 +32,34 @@ module.exports = {
         return new Promise(function(resolve, reject) {
             fs.exists(path, function(bool) { resolve(bool) });
         });
+    },
+
+    isFolder: function(path) {
+        return new Promise(function(resolve, reject) {
+            fs.lstat(path, function(error, stats) {
+                if (error) { reject(error) }
+                else { resolve(stats.isDirectory()) }
+            });
+        });
     }
 }
+
+/*
+const fs = require("fs");
+
+let path = "/path/to/something";
+
+fs.lstat(path, (err, stats) => {
+
+    if(err)
+        return console.log(err); //Handle error
+
+    console.log(`Is file: ${stats.isFile()}`);
+    console.log(`Is directory: ${stats.isDirectory()}`);
+    console.log(`Is symbolic link: ${stats.isSymbolicLink()}`);
+    console.log(`Is FIFO: ${stats.isFIFO()}`);
+    console.log(`Is socket: ${stats.isSocket()}`);
+    console.log(`Is character device: ${stats.isCharacterDevice()}`);
+    console.log(`Is block device: ${stats.isBlockDevice()}`);
+});
+*/
