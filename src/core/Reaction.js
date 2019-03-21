@@ -31,7 +31,8 @@ module.exports = async function(imports, name, parameters) {
     
     else {
         embed.setDescription(Flavors.variables(Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, name, 'standard'), [{ name: 'user', value: imports.member.displayName }, { name: 'target', value: displayName }]));
-        embed.setImage(await get(`https://nekos.life/api/v2/img/${name}`).url);
+        var json = await get(`https://nekos.life/api/v2/img/${name}`);
+        embed.setImage(json.url);
     }
 
     imports.channel.send(embed);
