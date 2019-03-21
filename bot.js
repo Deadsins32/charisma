@@ -66,9 +66,11 @@ var load = {
         for (g in groups) {
             var commands = await readDir(`./src/commands/${groups[g]}`);
             for (c in commands) {
+                var file = require(`./src/commands/${groups[g]}/${commands[c]}`);
+                var name = commands[c].split('.js')[0];
+                imports.Command.commands[name] = file.command;
+                imports.Command.configs[name] = file.config;
                 total++;
-                imports.Command.commands[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/${commands[c]}.js`);
-                imports.Command.configs[commands[c]] = require(`./src/commands/${groups[g]}/${commands[c]}/config.json`);
             }
         }
 

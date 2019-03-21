@@ -1,9 +1,0 @@
-{
-    "permissions": [],
-    "hidden": false,
-    "nsfw": false,
-    "params": [
-        { "type": "string", "required": false, "name": "search term | page number" },
-        { "type": "string", "required": false, "name": "page number (only if applicable)"}
-    ]
-}
