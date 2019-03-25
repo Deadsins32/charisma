@@ -5,17 +5,74 @@ var client = new Discord.Client();
 
 var config = require('./src/config/config.json');
 
-var CONSOLE = console;
-
-console.ready = function(str) { CONSOLE.log(chalk.greenBright('[+]'), str) }
-console.warn = function(str) { CONSOLE.log(chalk.yellowBright('[-]'), str) }
-console.error = function(str) {
-    var lines = str.split('\n');
-    for (var l = 0; l < lines.length; l++) { CONSOLE.log(chalk.redBright('[!]'), lines[l]) }
-}
-
 console.info = function(str) {
     CONSOLE.log(chalk.cyanBright('[?]'), str);
+}
+
+Function.prototype.clone = function() {
+    var that = this;
+    var temp = function temporary() { return that.apply(this, arguments); };
+    for(var key in this) {
+        if (this.hasOwnProperty(key)) {
+            temp[key] = this[key];
+        }
+    }
+    return temp;
+}
+
+var CONSOLE = {
+    log: console.log.clone()
+}
+
+global.console.log = function(string) {
+    var error = new Error();
+    var marker = '\x1b[1m\x1b[36m[?]\x1b[0m';
+    var from = error.stack.split('\n')[2].split('\\')[error.stack.split('\n')[2].split('\\').length - 1].slice(0, -1);
+    if (typeof string !== 'string') { CONSOLE.log(string) }
+    else {
+        var lines = string.split('\n');
+        console.log(lines.length);
+        if (lines.length > 1) {
+            for (l in lines) { lines[l] = `${marker} ${lines[l]}` }
+            CONSOLE.log(lines.join('\n'));
+        }
+
+        else { CONSOLE.log(`${marker} ${from}: ${string}`) }
+    }
+}
+
+global.console.ready = function(string) {
+    var marker = '\x1b[1m\x1b[32m[+]\x1b[0m';
+    var lines = string.split('\n');
+    if (lines.length > 1) {
+        for (l in lines) { lines[l] = `${marker} ${lines[l]}` }
+        CONSOLE.log(lines.join(`\n`));
+    }
+
+    else { CONSOLE.log(`${marker} ${string}`) }
+}
+
+global.console.error = function(error) {
+    var marker = '\x1b[1m\x1b[31m[!]\x1b[0m';
+    if (error instanceof Error) {
+        //CONSOLE.log(`${error.stack.split('\n').join('\n\x1b[1m\x1b[31m[!] \x1b[0m')}`)
+        var lines = error.stack.split('\n');
+        for (l in lines) { lines[l] = `${marker} ${lines[l].trim()}` }
+        CONSOLE.log(lines.join('\n'));
+    }
+
+    else { CONSOLE.log(`${marker} ${error}`) }
+}
+
+global.print = function(str) {
+    var error = new Error();
+    console.log(__dirname);
+    console.log(__filename);
+    //str = str.replace(/abc/g, '');
+    //console.log(error.stack.split('\n')[2].split(__dirname)[1].slice(0, -1).substring(1).replace(/\\/g, '/'));
+    //console.log(error.stack.split('\n')[2].split('\\')[error.stack.split('\n')[2].split('\\').length - 1].join('/').slice(0, -1).substring(1));
+    console.log(error.stack.split('\n')[2].split('\\')[error.stack.split('\n')[2].split('\\').length - 1].slice(0, -1));
+    //console.log(error.stack.split('\n')[1].split('\\'));
 }
 
 var data = {
@@ -27,15 +84,6 @@ var YouTube = require('simple-youtube-api');
 
 var imports = {
     client: client,
-    errors: {
-        date: new Date(),
-        logs: new Array()
-    },
-
-    error: function(error) {
-        this.errors.logs.push(error.stack);
-        console.error(error.stack);
-    },
 
     youtube: new YouTube(config.googleApiKey),
     ytdl: require('ytdl-core'),
@@ -70,7 +118,7 @@ var load = {
                 if (await isFolder(items[i])) { await scavenge(items[i]) }
                 else {
                     var file = require(items[i]);
-                    var name = items[i].split('.js')[0];
+                    var name = items[i].split('.js')[0].split('/')[items[i].split('.js')[0].split('/').length - 1];
                     imports.Command.commands[name] = file.command;
                     imports.Command.configs[name] = file.config;
                     total++;
@@ -153,13 +201,13 @@ async function start() {
 
 //process.on('SIGINT', exit.bind());
 
-client.on('error', function(error) { imports.error(error) });
+client.on('error', function(error) { console.error(error) });
 
 process.on('unhandledRejection', function(error, promise) {
-    imports.error(error);
-    console.log('An unhandledRejection occurred');
-    console.log(promise);
-    console.log(`Rejection: ${error}`);
+    console.error(error);
+    //console.log('An unhandledRejection occurred');
+    //console.log(promise);
+    //console.log(`Rejection: ${error}`);
 });
 
 if (!config.sharded) { client.login(config.token) }
