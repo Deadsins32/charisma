@@ -161,16 +161,16 @@ module.exports = {
                 if (!member.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.userPerms = false }
                 if (!guild.me.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.botPerms = false }
             }
+        }
 
-            else if (permission.startsWith('BOT.')) {
-                permission = permission.split('BOT.')[1];
-                if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false } }
-            }
+        else if (permission.startsWith('BOT.')) {
+            permission = permission.split('BOT.')[1];
+            if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false } }
+        }
 
-            else if (permission.startsWith('GUILD.')) {
-                permission = permission.split('GUILD.')[1];
-                if (member.user.id != guild.ownerID) { toReturn.userPerms = false }
-            }
+        else if (permission.startsWith('GUILD.')) {
+            permission = permission.split('GUILD.')[1];
+            if (member.user.id != guild.ownerID) { toReturn.userPerms = false }
         }
 
         return toReturn;
