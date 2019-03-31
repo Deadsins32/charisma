@@ -12,7 +12,6 @@ async function save(imports) {
     }
 
     for (u in imports.data.users) { await syncFs.writeFile(`./data/users/${u}.json`, JSON.stringify(imports.data.users[u], null, 4)) }
-    //console.log('saving information...');
 }
 
 module.exports = async function(imports) {

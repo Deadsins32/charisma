@@ -36,6 +36,6 @@ module.exports = function(imports) {
             }
         }
 
-        catch(error) { imports.error(error) }
+        catch(error) { console.error(error) }
     });
 }

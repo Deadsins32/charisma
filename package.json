@@ -15,6 +15,7 @@
     "seedrandom": "2.4.4",
     "simple-youtube-api": "^5.1.1",
     "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "treeify": "1.1.0",
     "ytdl-core": "^0.28.3"
   },

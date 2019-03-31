@@ -1,4 +1,3 @@
-var fs = require('fs');
 var Discord = require('discord.js');
 
 module.exports = function(imports) {
@@ -39,6 +38,6 @@ module.exports = function(imports) {
             }
         }
 
-        catch(error) { imports.error(error) }
+        catch(error) { console.error(error) }
     });
 }
