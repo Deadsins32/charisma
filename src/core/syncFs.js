@@ -1,6 +1,15 @@
 var fs = require('fs');
 
 module.exports = {
+    readFile: function(path) {
+        return new Promise(function(resolve, reject) {
+            fs.readFile(path, 'utf8', function(error, data) {
+                if (error) { reject(error) }
+                else { resolve(data) }
+            });
+        });
+    },
+
     readDir: function(path) {
         return new Promise(function(resolve, reject) {
             fs.readdir(path, function(error, files) {

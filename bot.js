@@ -1,4 +1,3 @@
-var chalk = require('chalk');
 var Discord = require('discord.js');
 
 var config = require('./src/config/config.json');

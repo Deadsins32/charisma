@@ -1,10 +1,11 @@
 var Discord = require('discord.js');
-var config = require('./src/config/config.json');
 
+var config = require('./src/config/config.json');
 var syncFs = require('./src/core/syncFs.js');
 var readDir = syncFs.readDir;
 var isFolder = syncFs.isFolder;
 var writeFile = syncFs.writeFile;
+
 
 async function start() {
     var commandData = new Object();
@@ -21,8 +22,8 @@ async function start() {
         }
     }
 
-    await scavenge('./src/commands');
-    await writeFile('./docs/commands.json', JSON.stringify(commandData, null, 4));
+    //await scavenge('./src/commands');
+    //await writeFile('./docs/commands.json', JSON.stringify(commandData, null, 4));
 
     if (config.sharded) {
         var manager = new Discord.ShardingManager('./bot.js', {
