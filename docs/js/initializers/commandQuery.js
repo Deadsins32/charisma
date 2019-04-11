@@ -10,22 +10,6 @@ function getSyntax(command, name) {
     return syntax.join(' ');
 }
 
-function navigate(destination, id) {
-    var container = document.getElementsByClassName('container')[0];
-
-    var navElement = document.getElementById(id);
-    var navItems = document.getElementsByClassName('nav-item');
-    for (var i = 0; i < navItems.length; i++) { navItems[i].classList.remove('active') }
-
-    var containerChildren = container.children;
-    for (var c = 0; c < containerChildren.length; c++) { containerChildren[c].setAttribute('class', '') }
-
-    navElement.classList.add('active');
-
-    var section = document.getElementById(destination);
-    section.setAttribute('class', 'selected');
-}
-
 async function commandQuery() {
     var commandQuery = document.getElementById('commandQuery');
     var tags = new Array();

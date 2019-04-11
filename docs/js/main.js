@@ -10,6 +10,38 @@ $('.dropdown').on('hide.bs.dropdown', function() {
     $('.navbar-collapse').collapse('hide');
  });
 
+function navigate(destination, id) {
+    var container = document.getElementsByClassName('container')[0];
+
+    var navElement = document.getElementById(id);
+    if (navElement) {
+        var navItems = document.getElementsByClassName('nav-item');
+        for (var i = 0; i < navItems.length; i++) { navItems[i].classList.remove('active') }
+
+        var containerChildren = container.children;
+        for (var c = 0; c < containerChildren.length; c++) { containerChildren[c].setAttribute('class', '') }
+
+        navElement.classList.add('active');
+        var section = document.getElementById(destination);
+        section.setAttribute('class', 'selected');
+    }
+}
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function getUrlParam(parameter, defaultvalue){
+    var urlparameter = defaultvalue;
+    if(window.location.href.indexOf(parameter) > -1){ urlparameter = getUrlVars()[parameter] }
+    return urlparameter;
+}
+
+
  async function read(file) {
     return new Promise(function(resolve, reject) {
         var request = new XMLHttpRequest();
@@ -36,6 +68,9 @@ $('.dropdown').on('hide.bs.dropdown', function() {
 }
 
 async function init() {
+    var page = getUrlParam('page', 'about');
+    if (page == 'about') { navigate(page, 'aboutNav') }
+    else { navigate(page, 'usageNav') }
     await commandQuery();
     expChart();
 }

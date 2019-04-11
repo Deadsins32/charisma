@@ -97,19 +97,42 @@ data: [{
 function expChart() {
     var canvas = document.getElementById('expChart');
 
-    var data = new Array();
-    for (var l = 0; l <= 100; l++) {
-        data.push({x: l, y: levelToExp(l, 1.5)});
+    var data = {
+        levels: new Array(),
+        values: new Array()
     }
+
+    for (var l = 0; l <= 50; l++) { data.levels.push(l); data.values.push(levelToExp(l, 1.5)) }
 
     var options = {};
 
-    var chart = new Chart(canvas, {
+    /*var chart = new Chart(canvas, {
         type: 'line',
         data: {
             datasets: [data]
         },
         options: options
+    });*/
+
+    var chat = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: data.levels,
+            datasets: [{
+                label: 'exp',
+                data: data.values,
+                backgroundColor: 'rgba(60,63,98, 0.4)',
+                borderWidth: 1
+            }]
+        },
+
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: { beginAtZero: true }
+                }]
+            }
+        }
     });
 
     /*var myChart = new Chart(canvas, {
