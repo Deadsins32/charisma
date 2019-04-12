@@ -1,8 +1,0 @@
-{
-    "permissions": ["any"],
-    "description": "get the queue of selected songs",
-    "hidden": false,
-    "nsfw": false,
-    "tags": ["fun"],
-    "params": []
-}
