@@ -9,10 +9,53 @@ levelToExp: function(level, factor) {
     },
 */
 
+/*
+expToLevel: function(exp, factor) {
+        var level = 0;
+        var required = Math.floor(500 * Math.pow(1, factor));
+        while (exp > required) {
+            exp -= required;
+            level += 1;
+            required = Math.floor(500 * Math.pow(level + 1, factor));
+        }
+
+        return level;
+},*/
+
+/*getRelative: function(exp, factor) {
+        var level = this.expToLevel(exp, factor);
+        var currentExp = this.levelToExp(level, factor);
+        var nextExp = this.levelToExp(level + 1, factor);
+        var relativeExp = exp - currentExp;
+        var relativeMax = nextExp - currentExp;
+
+return [relativeExp, relativeMax];*/
+
 function levelToExp(level, factor) {
     var exp = 0;
-    for (var l = 0; l < level; l++) { exp += Math.floor(200 * Math.pow(l + 1, factor)) }
+    for (var l = 0; l < level; l++) { exp += Math.floor(500 * Math.pow(l + 1, factor)) }
     return exp;
+}
+
+function expToLevel(exp, factor) {
+    var level = 0;
+    var required = Math.floor(500 * Math.pow(1, factor));
+    while (exp > required) {
+        exp -= required;
+        level += 1;
+        required = Math.floor(500 * Math.pow(level + 1, factor));
+    }
+
+    return level;
+}
+
+function getRelative(exp, factor) {
+    var level = expToLevel(exp, factor);
+    var currentExp = levelToExp(level, factor);
+    var nextExp = levelToExp(level + 1, factor);
+    var relativeExp = exp - currentExp;
+    var relativeMax = nextExp - currentExp;
+    return [relativeExp, relativeMax];
 }
 
 /*
@@ -102,7 +145,7 @@ function expChart() {
         values: new Array()
     }
 
-    for (var l = 0; l <= 50; l++) { data.levels.push(l); data.values.push(levelToExp(l, 1.5)) }
+    for (var l = 0; l <= 50; l++) { data.levels.push(l); data.values.push(getRelative(levelToExp(l, 2.2), 2.2)[0]) }
 
     var options = {};
 

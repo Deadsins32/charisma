@@ -10,18 +10,16 @@ $('.dropdown').on('hide.bs.dropdown', function() {
     $('.navbar-collapse').collapse('hide');
  });
 
-function navigate(destination, id) {
+function navigate(destination) {
     var container = document.getElementsByClassName('container')[0];
-
-    var navElement = document.getElementById(id);
-    if (navElement) {
-        var navItems = document.getElementsByClassName('nav-item');
-        for (var i = 0; i < navItems.length; i++) { navItems[i].classList.remove('active') }
-
+    var navButton = document.getElementsByClassName(destination);
+    if (navButton[0]) {
+        navButton = navButton[0];
+        var allButtons = document.getElementsByClassName('navButtons');
+        for (var a = 0; a < allButtons.length; a++) { allButtons[a].classList.remove('active') }
         var containerChildren = container.children;
         for (var c = 0; c < containerChildren.length; c++) { containerChildren[c].setAttribute('class', '') }
-
-        navElement.classList.add('active');
+        navButton.classList.add('active');
         var section = document.getElementById(destination);
         section.setAttribute('class', 'selected');
     }
@@ -69,8 +67,7 @@ function getUrlParam(parameter, defaultvalue){
 
 async function init() {
     var page = getUrlParam('page', 'about');
-    if (page == 'about') { navigate(page, 'aboutNav') }
-    else { navigate(page, 'usageNav') }
+    navigate(page);
     await commandQuery();
     expChart();
 }

@@ -18,14 +18,14 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="#">invite</a></li>
-                <li class="nav-item dropdown" id="usageNav">
+                <li class="nav-item dropdown navButton commands experience faq getStarted">
                     <a class="nav-link dropdown-toggle" href="#" id="usageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">usage</a>
                     <div class="dropdown-menu" aria-labelledby="usageDropdown">
                         <a class="dropdown-item" href="?page=commands">commands</a>
                         <a class="dropdown-item" href="?page=experience">experience</a>
-                        <a class="dropdown-item" onclick="navigate('faq', 'usageNav')">frequently asked questions</a>
+                        <a class="dropdown-item" href="?page=faq">frequently asked questions</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" onclick="navigate('getStarted', 'usageNav')">get started</a>
+                        <a class="dropdown-item" href="?page=getStarted">get started</a>
                     </div>
                 </li> 
             </ul>
@@ -38,7 +38,7 @@
                         <a class="dropdown-item" href="https://www.patreon.com/_red" target="_blank">Patreon</a>
                     </div>
                 </li>
-                <li class="nav-item active" id="aboutNav"><a class="nav-link" onclick="navigate('about', 'aboutNav')">about</a></li>
+                <li class="nav-item navButton about active"><a class="nav-link" href="?page=about">about</a></li>
             </ul>
         </div>
     </nav>
