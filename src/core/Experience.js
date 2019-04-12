@@ -28,11 +28,11 @@ module.exports = {
 
     expToLevel: function(exp, factor) {
         var level = 0;
-        var required = Math.floor(200 * Math.pow(1, factor));
+        var required = Math.floor(500 * Math.pow(1, factor));
         while (exp > required) {
             exp -= required;
             level += 1;
-            required = Math.floor(200 * Math.pow(level + 1, factor));
+            required = Math.floor(500 * Math.pow(level + 1, factor));
         }
 
         return level;
@@ -41,7 +41,7 @@ module.exports = {
     levelToExp: function(level, factor) {
         var exp = 0;
         for (var l = 0; l < level; l++) {
-            exp += Math.floor(200 * Math.pow(l + 1, factor));
+            exp += Math.floor(500 * Math.pow(l + 1, factor));
         }
 
         return exp;

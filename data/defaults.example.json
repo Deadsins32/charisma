@@ -3,8 +3,7 @@
         "config": {
             "prefix": "//",
             "flavor": "upbeat",
-            "description": "not much to say about this guild...",
-            "expcurve": 1.5,
+            "expcurve": 2.2,
             "logchannel": "",
             "autorole": ""
         },

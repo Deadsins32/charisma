@@ -42,27 +42,18 @@ function percentageOf(num, percentage) {
     return (percentage / 100) * num;
 }
 
-module.exports = function(imports, message) {
-
+module.exports = async function(imports, message) {
     if (message.author.bot) { return }
     if (imports.client.user.id != message.author.id) {
-        if (!imports.data.guilds[message.guild.id]) {
-            imports.data.guilds[message.guild.id] = clone(imports.data.defaults.guild);
-        }
-
+        if (!imports.data.guilds[message.guild.id]) { imports.data.guilds[message.guild.id] = clone(imports.data.defaults.guild) }
         else {
             for (g in imports.data.defaults.guilds) {
-                if (!imports.data.guilds[message.guild.id][g]) {
-                    imports.data.guilds[message.guild.id][g] = clone(imports.data.defaults.guilds[g]);
-                }
+                if (!imports.data.guilds[message.guild.id][g]) { imports.data.guilds[message.guild.id][g] = clone(imports.data.defaults.guilds[g]) }
             }
         }
 
         if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
             imports.data.guilds[message.guild.id].members[message.author.id] = clone(imports.data.defaults.member);
-            if (!imports.data.guilds[message.guild.id].blacklist[message.author.id]) {
-                imports.data.guilds[message.guild.id].blacklist[message.author.id] = new Array();
-            }
         }
 
         else {
@@ -73,15 +64,11 @@ module.exports = function(imports, message) {
             }
         }
 
-        if (!imports.data.users[message.author.id]) {
-            imports.data.users[message.author.id] = clone(imports.data.defaults.user);
-        }
+        if (!imports.data.users[message.author.id]) { imports.data.users[message.author.id] = clone(imports.data.defaults.user) }
 
         else {
             for (u in imports.data.defaults.user) {
-                if (!imports.data.users[message.author.id][u]) {
-                    imports.data.users[message.author.id][u] = clone(imports.data.defaults.user[u]);
-                }
+                if (!imports.data.users[message.author.id][u]) { imports.data.users[message.author.id][u] = clone(imports.data.defaults.user[u]) }
             }
         }
     }
@@ -178,7 +165,10 @@ module.exports = function(imports, message) {
                 if (status) {
                     for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
                     if (status.master) {
-                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) { imports.Command.commands[command.name](imports, command.arguments) }
+                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) {
+                            if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
+                            else { imports.Command.commands[command.name](imports, command.arguments) }
+                        }
                         else { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
                     }
 

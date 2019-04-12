@@ -19,6 +19,9 @@ module.exports = async function(imports) {
         var connections = imports.client.voiceConnections.array();
         for (var c = 0; c < connections.length; c++) { connections[c].disconnect() }
         await save(imports);
+        var date = new Date();
+        var dateString = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()} @ ${date.getMinutes()}:${date.getHours()}`;
+        console.log(`${dateString}: recorded user and guild information`);
         process.exit();
     }.bind());
 
