@@ -44,3 +44,4 @@ io.on('connection', function(socket) {
 process.on('SIGINT', function() {
     io.close();
 }.bind());
+

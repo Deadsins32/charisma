@@ -54,3 +54,4 @@ socket.on('connect', async function() {
         socket.disconnect();
     });
 });
+
