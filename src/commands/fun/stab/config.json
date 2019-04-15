@@ -1,7 +1,0 @@
-{
-    "permissions": ["all"],
-    "description": "stab whoever you mention",
-    "hidden": true,
-    "nsfw": false,
-    "params": [{ "type": "mention", "required": true }]
-}

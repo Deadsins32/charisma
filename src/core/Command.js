@@ -4,6 +4,7 @@ var masterID = require('./../config/config.json').master;
 module.exports = {
     commands: {},
     configs: {},
+
     methods: {
         any: function(input) {
             var output = { pass: true, value: input }
@@ -148,6 +149,33 @@ module.exports = {
 
     get: function(command) { if (module.exports.configs[command]) { return module.exports.configs[command] } },
 
+    hasPermission: function(permission, data, guild, member) {
+        var toReturn = {
+            userPerms: true,
+            botPerms: true
+        }
+
+        if (permission.startsWith('DISCORD.')) {
+            permission = permission.split('DISCORD.')[1];
+            if (Discord.Permissions.FLAGS[permission]) {
+                if (!member.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.userPerms = false }
+                if (!guild.me.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.botPerms = false }
+            }
+        }
+
+        else if (permission.startsWith('BOT.')) {
+            permission = permission.split('BOT.')[1];
+            if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false } }
+        }
+
+        else if (permission.startsWith('GUILD.')) {
+            permission = permission.split('GUILD.')[1];
+            if (member.user.id != guild.ownerID) { toReturn.userPerms = false }
+        }
+
+        return toReturn;
+    },
+
     status: function(command, local, member, channel, guild) {
         var config = module.exports.get(command.name);
         if (config) {
@@ -162,6 +190,7 @@ module.exports = {
             var parameters = new Array();
 
             var master = false;
+            var master = (member.user.id == masterID);
 
             var blacklist = local.blacklist[local.member.id];
             var whitelist = [];
@@ -171,18 +200,17 @@ module.exports = {
             if (whitelist.length != 0) { if (!whitelist.includes(local.member.id)) { whitelisted = false } }
 
             for (r in required) {
+                var permission = this.hasPermission(required[r], local, guild, member);
+                if (!permission.userPerms) { missingPerm = true }
+                if (!permission.botPerms) { botUsable = false }
+
                 if (Discord.Permissions.FLAGS[required[r]]) {
                     if (!member.hasPermission(Discord.Permissions.FLAGS[required[r]])) { missingPerm = true }
                     if (!guild.me.hasPermission(Discord.Permissions.FLAGS[required[r]])) { botUsable = false }
                 }
-
-                else if (required[r] == 'admin') { if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { missingPerm = true } }
-                else if (required[r] == 'owner') { if (member.user.id != guild.ownerID) { missingPerm = true } }
-                else if (required[r] == 'master') { if (member.user.id != masterID) { missingPerm = true } else { master = true } }
             }
 
-            for (a in command.arguments) { parameters.push(module.exports.methods[config.params[a].type](command.arguments[a]).value) }
-
+            for (a in command.arguments) { parameters.push(this.methods[config.params[a].type](command.arguments[a]).value) }
             if (blacklisted || !whitelisted || missingPerm ) { userUsable = false }
 
             if (config.hidden) { visible = false }

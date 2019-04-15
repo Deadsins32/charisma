@@ -1,8 +1,0 @@
-{
-    "permissions": ["any"],
-    "description": "skips the song that's currently playing",
-    "hidden": false,
-    "nsfw": false,
-    "tags": ["fun"],
-    "params": []
-}

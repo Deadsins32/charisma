@@ -1,7 +1,7 @@
 {
     "ban": {
         "permissions": [
-            "BAN_MEMBERS"
+            "DISCORD.BAN_MEMBERS"
         ],
         "description": "bans whoever you specify",
         "tags": [
@@ -33,7 +33,7 @@
     },
     "blacklist": {
         "permissions": [
-            "admin"
+            "DISCORD.ADMINISTRATOR"
         ],
         "description": "used for managing command blacklisting",
         "hidden": false,
@@ -62,7 +62,7 @@
     },
     "disable": {
         "permissions": [
-            "ADMINISTRATOR"
+            "DISCORD.ADMINISTRATOR"
         ],
         "description": "disables a specific feature on the server",
         "hidden": false,
@@ -81,7 +81,7 @@
     },
     "enable": {
         "permissions": [
-            "ADMINISTRATOR"
+            "DISCORD.ADMINISTRATOR"
         ],
         "description": "enables a specific feature on the server",
         "hidden": false,
@@ -100,7 +100,7 @@
     },
     "kick": {
         "permissions": [
-            "KICK_MEMBERS"
+            "DISCORD.KICK_MEMBERS"
         ],
         "description": "kicks whoever you specify",
         "hidden": false,
@@ -124,7 +124,7 @@
     },
     "nick": {
         "permissions": [
-            "MANAGE_NICKNAMES"
+            "DISCORD.MANAGE_NICKNAMES"
         ],
         "description": "changes the nickname of whoever you specify to whatever you specify",
         "tags": [
@@ -153,7 +153,7 @@
     },
     "prune": {
         "permissions": [
-            "MANAGE_MESSAGES"
+            "DISCORD.MANAGE_MESSAGES"
         ],
         "description": "deletes a specified amount of messages",
         "hidden": false,
@@ -166,13 +166,13 @@
             {
                 "type": "number",
                 "required": true,
-                "name": "2-100"
+                "name": "quantity"
             }
         ]
     },
     "whitelist": {
         "permissions": [
-            "admin"
+            "DISCORD.ADMINISTRATOR"
         ],
         "description": "used for managing command whitelisting",
         "hidden": false,
@@ -200,9 +200,7 @@
         ]
     },
     "anime": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "easily search for anime!",
         "hidden": false,
         "nsfw": false,
@@ -218,9 +216,7 @@
         ]
     },
     "hug": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gives the person of your choosing a big ol' hug",
         "hidden": false,
         "nsfw": false,
@@ -236,9 +232,7 @@
         ]
     },
     "join": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "make me join the voice channel you're in",
         "hidden": false,
         "nsfw": false,
@@ -248,9 +242,7 @@
         "params": []
     },
     "kiss": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gives the person of your choosing a nice kiss",
         "hidden": false,
         "nsfw": false,
@@ -266,9 +258,7 @@
         ]
     },
     "leave": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "make me leave the current channel",
         "hidden": false,
         "nsfw": false,
@@ -278,9 +268,7 @@
         "params": []
     },
     "magicball": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "it's a magic ball!",
         "hidden": false,
         "nsfw": false,
@@ -296,9 +284,7 @@
         ]
     },
     "neko": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets a cute neko~! (*^ω^*)",
         "hidden": false,
         "nsfw": false,
@@ -308,9 +294,7 @@
         "params": []
     },
     "pat": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gives the person of your choosing a nice pat on the head",
         "hidden": false,
         "nsfw": false,
@@ -326,9 +310,7 @@
         ]
     },
     "play": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "play a song",
         "hidden": false,
         "nsfw": false,
@@ -344,9 +326,7 @@
         ]
     },
     "psychopass": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "retrieves your crime coefficient!",
         "hidden": true,
         "nsfw": false,
@@ -362,9 +342,7 @@
         ]
     },
     "queue": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "get the queue of selected songs",
         "hidden": false,
         "nsfw": false,
@@ -374,9 +352,7 @@
         "params": []
     },
     "skip": {
-        "permissions": [
-            "any"
-        ],
+        "permissions": [],
         "description": "skips the song that's currently playing",
         "hidden": false,
         "nsfw": false,
@@ -386,9 +362,7 @@
         "params": []
     },
     "stab": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "stab whoever you mention",
         "hidden": true,
         "nsfw": false,
@@ -399,34 +373,8 @@
             }
         ]
     },
-    "config": {
-        "permissions": [
-            "all"
-        ],
-        "description": "gets or sets a specific configuration value",
-        "hidden": false,
-        "nsfw": false,
-        "tags": [
-            "management",
-            "utility"
-        ],
-        "params": [
-            {
-                "type": "string",
-                "required": true,
-                "name": "get | tree | set"
-            },
-            {
-                "type": "string",
-                "required": false,
-                "name": "value"
-            }
-        ]
-    },
     "get": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets a value from whatever you specify",
         "hidden": false,
         "nsfw": false,
@@ -448,9 +396,7 @@
         ]
     },
     "help": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "hidden": false,
         "nsfw": false,
         "params": [
@@ -467,9 +413,7 @@
         ]
     },
     "ping": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets the ping of the bot in milliseconds",
         "hidden": false,
         "nsfw": false,
@@ -479,33 +423,37 @@
         ],
         "params": []
     },
-    "raw": {
-        "permissions": [
-            "all"
-        ],
-        "description": "gets the raw value of whatever variable you specify",
+    "rank": {
+        "permissions": [],
+        "description": "gets your ranking",
         "hidden": false,
         "nsfw": false,
         "tags": [
-            "management",
-            "utility"
+            "utility",
+            "fun"
         ],
         "params": [
             {
-                "type": "string",
-                "required": true,
-                "name": "path"
-            },
-            {
-                "type": "string",
+                "type": "mention",
                 "required": false,
-                "name": "user | role | channel"
+                "name": "user"
             }
         ]
     },
+    "serverinfo": {
+        "permissions": [],
+        "description": "gets some nice server info",
+        "hidden": false,
+        "nsfw": false,
+        "tags": [
+            "utility",
+            "fun"
+        ],
+        "params": []
+    },
     "set": {
         "permissions": [
-            "admin"
+            "DISCORD.ADMINISTRATOR"
         ],
         "description": "sets a local value to whatever you specify",
         "hidden": false,
@@ -527,29 +475,8 @@
             }
         ]
     },
-    "tree": {
-        "permissions": [
-            "all"
-        ],
-        "description": "displays a hierarchical tree of whatever you specify",
-        "hidden": false,
-        "nsfw": false,
-        "tags": [
-            "utility",
-            "management"
-        ],
-        "params": [
-            {
-                "type": "string",
-                "required": true,
-                "name": "path"
-            }
-        ]
-    },
     "userinfo": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "Gets some nice user info",
         "hidden": false,
         "nsfw": false,
@@ -567,7 +494,7 @@
     },
     "eval": {
         "permissions": [
-            "master"
+            "BOT.MASTER"
         ],
         "description": "evaluates the given statement and returns the output",
         "hidden": false,
@@ -583,9 +510,31 @@
             }
         ]
     },
+    "experience": {
+        "permissions": [
+            "BOT.MASTER"
+        ],
+        "description": "makes the bot say whatever you specify",
+        "hidden": false,
+        "nsfw": false,
+        "params": [
+            {
+                "type": "string",
+                "required": true
+            },
+            {
+                "type": "number",
+                "required": false
+            },
+            {
+                "type": "mention",
+                "required": false
+            }
+        ]
+    },
     "fetch": {
         "permissions": [
-            "master"
+            "BOT.MASTER"
         ],
         "description": "fetches the current directory tree or file associated with the specified path",
         "hidden": false,
@@ -602,23 +551,10 @@
             }
         ]
     },
-    "say": {
-        "name": "say",
-        "permissions": [],
-        "description": "makes the bot say whatever you specify",
-        "hidden": false,
-        "nsfw": true,
-        "params": [
-            {
-                "type": "string",
-                "required": true
-            }
-        ]
-    },
     "sudo": {
         "name": "sudo",
         "permissions": [
-            "master"
+            "BOT.MASTER"
         ],
         "description": "runs a command as if you were whoever you specify",
         "hidden": false,
@@ -637,9 +573,7 @@
         ]
     },
     "blowjob": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "what dat tongue do",
         "hidden": false,
         "nsfw": true,
@@ -656,9 +590,7 @@
         ]
     },
     "boobs": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets some nice boobies~ :ok_hand:",
         "hidden": false,
         "nsfw": true,
@@ -675,9 +607,7 @@
         ]
     },
     "cum": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "natures frosting :ok_hand:",
         "hidden": false,
         "nsfw": true,
@@ -694,9 +624,7 @@
         ]
     },
     "hentai": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "mmmmm... hentai~",
         "hidden": false,
         "nsfw": true,
@@ -713,9 +641,7 @@
         ]
     },
     "pussy": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets some of the sweet pussy~ :smirk:",
         "hidden": false,
         "nsfw": true,
@@ -732,9 +658,7 @@
         ]
     },
     "rule34": {
-        "permissions": [
-            "all"
-        ],
+        "permissions": [],
         "description": "gets some nice nsfw pics :smirk:",
         "hidden": false,
         "nsfw": true,

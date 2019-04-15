@@ -1,8 +1,0 @@
-{
-    "name": "say",
-    "permissions": [],
-    "description": "makes the bot say whatever you specify",
-    "hidden": false,
-    "nsfw": true,
-    "params": [{ "type": "string", "required": true }]
-}

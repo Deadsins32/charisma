@@ -1,4 +1,3 @@
-var fs = require('fs');
 var Discord = require('discord.js');
 
 module.exports = function(imports) {
@@ -6,10 +5,10 @@ module.exports = function(imports) {
         try {
             if (imports.data.guilds[newMember.guild.id]) {
                 if (imports.data.guilds[newMember.guild.id].config.logchannel != '') {
-                    if (imports.data.guilds[newMember.guild.id].features.logs.nicknamechanges) {
+                    if (imports.data.guilds[newMember.guild.id].options.logs.nicknamechanges) {
                         var id = imports.data.guilds[newMember.guild.id].config.logchannel;
-                        if (newMember.guild.channels.find('id', id)) {
-                            var channel = newMember.guild.channels.find('id', id);
+                        if (newMember.guild.channels.get(id)) {
+                            var channel = newMember.guild.channels.get(id);
                             if (channel.permissionsFor(newMember.guild.me).serialize(true).SEND_MESSAGES) {
                                 if (newMember.nickname != oldMember.nickname) {
                                     var embed = new Discord.RichEmbed();
@@ -17,16 +16,14 @@ module.exports = function(imports) {
                                     embed.setFooter('nickname change', newMember.user.avatarURL);
                                 
                                     if (oldMember.nickname == null && newMember.nickname != null) {
-                                        embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been set to **' + newMember.nickname + '**');
+                                        embed.setDescription(`**${newMember.user.username}#${newMember.user.discriminator}'s** nickname has been set to **${newMember.nickname}**`);
                                     }
         
                                     else if (oldMember.nickname != null && newMember.nickname == null) {
-                                        embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been removed');
+                                        embed.setDescription(`**${newMember.user.username}#${newMember.user.discriminator}'s** nickname has been removed`);
                                     }
         
-                                    else {
-                                        embed.setDescription('**' + newMember.user.username + '#' + newMember.user.discriminator + '\'s** nickname has been changed to **' + newMember.nickname + '**');
-                                    }
+                                    else { embed.setDescription(`**${newMember.user.username}#${newMember.user.discriminator}'s** nickname has been changed to **${newMember.nickname}**`) }
         
                                     channel.send(embed);
                                 }
@@ -41,6 +38,6 @@ module.exports = function(imports) {
             }
         }
 
-        catch(error) { imports.error(error) }
+        catch(error) { console.error(error) }
     });
 }
