@@ -157,7 +157,10 @@ function expChart() {
         options: options
     });*/
 
-    var chat = new Chart(canvas, {
+
+    Chart.defaults.global.legend.display = false;
+
+    var chart = new Chart(canvas, {
         type: 'line',
         data: {
             labels: data.levels,
@@ -172,11 +175,33 @@ function expChart() {
         options: {
             scales: {
                 yAxes: [{
-                    ticks: { beginAtZero: true }
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'experience'
+                    }
+                }],
+
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'level'
+                    }
                 }]
             }
         }
     });
+
+    /*
+    options = {
+  scales: {
+    yAxes: [{
+      scaleLabel: {
+        display: true,
+        labelString: 'probability'
+      }
+    }]
+  }     
+} */
 
     /*var myChart = new Chart(canvas, {
         type: 'line',
