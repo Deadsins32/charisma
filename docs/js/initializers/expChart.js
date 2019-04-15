@@ -58,121 +58,38 @@ function getRelative(exp, factor) {
     return [relativeExp, relativeMax];
 }
 
-/*
-var layout = {
-  showlegend: false,
-  height: 600,
-  width: 600,
-  xaxis: {
-    showline: true,
-    showgrid: false,
-    showticklabels: true,
-    linecolor: 'rgb(204,204,204)',
-    linewidth: 2,
-    autotick: false,
-    ticks: 'outside',
-    tickcolor: 'rgb(204,204,204)',
-    tickwidth: 2,
-    ticklen: 5,
-    tickfont: {
-      family: 'Arial',
-      size: 12,
-      color: 'rgb(82, 82, 82)'
-    }
-  },
-  yaxis: {
-    showgrid: false,
-    zeroline: false,
-    showline: false,
-    showticklabels: false
-  },
-  autosize: false,
-  margin: {
-    autoexpand: false,
-    l: 100,
-    r: 20,
-    t: 100
-  },
-  annotations: [
-    {
-      xref: 'paper',
-      yref: 'paper',
-      x: 0.0,
-      y: 1.05,
-      xanchor: 'left',
-      yanchor: 'bottom',
-      text: 'Main Source for News',
-      font:{
-        family: 'Arial',
-        size: 30,
-        color: 'rgb(37,37,37)'
-      },
-      showarrow: false
-    },
-    {
-      xref: 'paper',
-      yref: 'paper',
-      x: 0.5,
-      y: -0.1,
-      xanchor: 'center',
-      yanchor: 'top',
-      text: 'Source: Pew Research Center & Storytelling with data',
-      showarrow: false,
-      font: {
-        family: 'Arial',
-        size: 12,
-        color: 'rgb(150,150,150)'
-      }
-    }
-  ]
-};
-*/
+var chartData = new Object();
+var chartObject;
 
-/*
-data: [{
-        x: 10,
-        y: 20
-    }, {
-        x: 15,
-        y: 10
-    }]*/
+function generateData(curve) {
+    chartData.levels = new Array();
+    chartData.values = new Array();
+    for (var l = 0; l <= 50; l++) {
+        chartData.levels.push(l);
+        chartData.values.push(getRelative(levelToExp(l, curve), curve)[0]);
+    }
+}
 
 function expChart() {
     var canvas = document.getElementById('expChart');
-
-    var data = {
-        levels: new Array(),
-        values: new Array()
-    }
-
-    for (var l = 0; l <= 50; l++) { data.levels.push(l); data.values.push(getRelative(levelToExp(l, 2.2), 2.2)[0]) }
-
-    var options = {};
-
-    /*var chart = new Chart(canvas, {
-        type: 'line',
-        data: {
-            datasets: [data]
-        },
-        options: options
-    });*/
-
-
+    generateData(2.2);
     Chart.defaults.global.legend.display = false;
 
-    var chart = new Chart(canvas, {
+    chartObject = new Chart(canvas, {
         type: 'line',
         data: {
-            labels: data.levels,
+            labels: chartData.levels,
             datasets: [{
                 label: 'exp',
-                data: data.values,
+                data: chartData.values,
                 backgroundColor: 'rgba(60,63,98, 0.4)',
                 borderWidth: 1
             }]
         },
 
         options: {
+            responsive: true,
+            maintainAspectRatio: true,
             scales: {
                 yAxes: [{
                     scaleLabel: {
@@ -190,92 +107,14 @@ function expChart() {
             }
         }
     });
-
-    /*
-    options = {
-  scales: {
-    yAxes: [{
-      scaleLabel: {
-        display: true,
-        labelString: 'probability'
-      }
-    }]
-  }     
-} */
-
-    /*var myChart = new Chart(canvas, {
-        type: 'line',
-        data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });*/
 }
 
-/*
-function expChart() {
-    var trace = {
-        x: new Array(),
-        y: new Array(),
-        mode: 'lines',
-        line: {
-            color: '#6A6D98',
-            width: 2
-        }
-    }
-    
-    var max = 100;
-    for (var i = 0; i <= 100; i++) {
-        trace.x.push(i);
-        trace.y.push(levelToExp(i, 1.5));
-    }
-      
-    var data = [trace];
-
-    var layout = {
-        title: 'exp curve',
-        xaxis: { title: 'level' },
-        yaxis: { title: 'exp' },
-        showlegend: false,
-        tickcolor: '#CCC',
-        tickwidth: 2,
-        ticklen: 5,
-        tickfont: {
-            family: 'Arial',
-            size: 12,
-            color: '#CCC'
-        },
-        autosize: true
-    };
-      
-    Plotly.newPlot('expChart', data, layout);
-}*/
+function regenerateExpChart() {
+    var curveElementValue = document.getElementById('customExpCurve').value;
+    var curve = 2.2;
+    if (curveElementValue != "") { curve = parseFloat(curveElementValue) }
+    generateData(curve);
+    chartObject.data.labels = chartData.levels;
+    chartObject.data.datasets[0].data = chartData.values;
+    chartObject.update();
+}
