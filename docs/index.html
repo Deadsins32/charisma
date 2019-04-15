@@ -19,13 +19,14 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" href="#">invite</a></li>
-                <li class="nav-item dropdown" id="usageNav">
+                <li class="nav-item dropdown navButton commands experience faq getStarted">
                     <a class="nav-link dropdown-toggle" href="#" id="usageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">usage</a>
                     <div class="dropdown-menu" aria-labelledby="usageDropdown">
-                        <a class="dropdown-item" onclick="navigate('commands', 'usageNav')">commands</a>
-                        <a class="dropdown-item" onclick="navigate('faq', 'usageNav')">frequently asked questions</a>
+                        <a class="dropdown-item" href="?page=commands">commands</a>
+                        <a class="dropdown-item" href="?page=experience">experience</a>
+                        <a class="dropdown-item" href="?page=faq">frequently asked questions</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" onclick="navigate('getStarted', 'usageNav')">get started</a>
+                        <a class="dropdown-item" href="?page=getStarted">get started</a>
                     </div>
                 </li> 
             </ul>
@@ -38,7 +39,7 @@
                         <a class="dropdown-item" href="https://www.patreon.com/_red" target="_blank">Patreon</a>
                     </div>
                 </li>
-                <li class="nav-item active" id="aboutNav"><a class="nav-link" onclick="navigate('about', 'aboutNav')">about</a></li>
+                <li class="nav-item navButton about active"><a class="nav-link" href="?page=about">about</a></li>
             </ul>
         </div>
     </nav>
@@ -49,6 +50,18 @@
             <div id="queryTags" class="d-flex justify-content-start"></div>
             <div id="commandQuery"></div>
         </div>
+
+        <div id="experience">
+            <div id="controlsBar">
+                <label>exp curve: </label>
+                <input type="number" autocomplete="off" step="0.1" min="1" max="5" placeholder="2.2" id="customExpCurve">
+                <button onclick="regenerateExpChart()">regenerate</button>
+            </div>
+            <div id="chartContainer">
+                <canvas id="expChart"></canvas>
+            </div>
+        </div>
+
         <div id="faq">
             <h1>frequently asked questions</h1>
         </div>
@@ -58,26 +71,16 @@
         <div id="about" class="selected">
             <h1>about</h1>
         </div>
-        <!--<div class="row">
-            <div class="col-sm-4">
-                <h2 class="header">who am I?</h2>
-                <p class="description">I'm just a casual developer that enjoys making things. Most of my works are just passion projects that I've developed in my freetime. I started out with basic python programming but I've moved towards web programming and hardcore Node.js development</p>
-            </div>
-            <div class="col-sm-4">
-                <h2>hit me up</h2>
-                <p class="description">If you ever need something or just wanna chat, you can email me at <a href="mailto:red.shadium@gmail.com">red.shadium@gmail.com</a> or you can even join my <a href="https://discord.gg/rg6ERqd">discord server</a></p>
-            </div>
-
-            <div class="col-sm-4">
-                <h2>what have I done?</h2>
-                <p class="description">Some of my bigger projects will have their own section on this site and this is where you'd access them</p>
-            </div>
-        </div>-->
     </div>
 </body>
 
 <script src="js/jquery.js"></script>
 <script src="js/popper.js"></script>
 <script src="js/bootstrap.js"></script>
+<script src="js/chart.js"></script>
+
+<script src="js/initializers/commandQuery.js"></script>
+<script src="js/initializers/expChart.js"></script>
+
 <script src="js/main.js"></script>
 </html>
