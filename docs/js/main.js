@@ -11,14 +11,9 @@ $('.dropdown').on('hide.bs.dropdown', function() {
  });
 
 function navigate(destination) {
-    var container = document.getElementsByClassName('container')[0];
     var navButton = document.getElementsByClassName(destination);
     if (navButton[0]) {
         navButton = navButton[0];
-        var allButtons = document.getElementsByClassName('navButtons');
-        for (var a = 0; a < allButtons.length; a++) { allButtons[a].classList.remove('active') }
-        var containerChildren = container.children;
-        for (var c = 0; c < containerChildren.length; c++) { containerChildren[c].setAttribute('class', '') }
         navButton.classList.add('active');
         var section = document.getElementById(destination);
         section.setAttribute('class', 'selected');
