@@ -65,6 +65,7 @@ async function init() {
     navigate(page);
     await commandQuery();
     expChart();
+    await getStarted();
 }
 
 init();

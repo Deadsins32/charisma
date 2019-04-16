@@ -1,3 +1,8 @@
+p {
+    padding: 0px;
+    margin: 0px;
+}
+
 :root {
     --accent: #6A6D98;
     --accent-dark: #3C3F62;
@@ -50,16 +55,17 @@ span.navbar-brand img {
     border-top: solid 1px rgba(255, 255, 255, 0.1);
 }
 
+#commands, #experience, #faq, #getStarted, #about {
+    display: none;
+    margin-bottom: 20px;
+}
+
+#commands.selected, #experience.selected, #faq.selected, #getStarted.selected, #about.selected {
+    display: block;
+}
+
 .container {
     margin-top: 70px;
-}
-
-div.container div {
-    display: none;
-}
-
-div.container div.selected {
-    display: block;
 }
 
 #queryTags {
