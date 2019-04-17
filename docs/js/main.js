@@ -63,9 +63,10 @@ function getUrlParam(parameter, defaultvalue){
 async function init() {
     var page = getUrlParam('page', 'about');
     navigate(page);
+    await about();
+    await getStarted();
     await commandQuery();
     expChart();
-    await getStarted();
 }
 
 init();
