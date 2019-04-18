@@ -11,12 +11,13 @@ $('.dropdown').on('hide.bs.dropdown', function() {
  });
 
 function navigate(destination) {
-    var navButton = document.getElementsByClassName(destination);
-    if (navButton[0]) {
-        navButton = navButton[0];
-        navButton.classList.add('active');
-        var section = document.getElementById(destination);
-        section.setAttribute('class', 'selected');
+    var navButtons = document.getElementsByClassName(destination);
+    if (navButtons.length > 0) {
+        for (var n = 0; n < navButtons.length; n++) {
+            navButtons[n].classList.add('active');
+            var section = document.getElementById(destination);
+            section.setAttribute('class', 'selected');
+        }
     }
 }
 
