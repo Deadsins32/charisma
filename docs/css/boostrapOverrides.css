@@ -1,0 +1,46 @@
+span.navbar-brand img {
+    border-radius: 100px;
+}
+
+.navbar-dark {
+    background-color: var(--accent);
+    opacity: 0.97;
+}
+
+.nav-link {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dropdown-menu {
+    background-color: var(--accent-dark);
+    border-radius: 5px;
+    opacity: 0.97;
+}
+
+.dropdown-menu a.dropdown-item {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s;
+}
+
+.dropdown-menu a.dropdown-item:hover {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.dropdown-menu a.dropdown-item:not([href]):not([tabindex]) {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-menu a.dropdown-item:not([href]):not([tabIndex]):hover {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-menu .dropdown-divider {
+    border-top: solid 1px rgba(255, 255, 255, 0.1);
+}
