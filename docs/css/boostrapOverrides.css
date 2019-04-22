@@ -32,10 +32,14 @@ span.navbar-brand img {
 
 .dropdown-menu a.dropdown-item:hover {
     color: rgba(255, 255, 255, 0.6);
+    background-color: var(--accent-dark);
+    filter: brightness(80%);
 }
 
 .dropdown-menu a.dropdown-item.active:hover {
     cursor: default;
+    color: rgba(255, 255, 255, 0.9);
+    filter: brightness(90%);
 }
 
 .dropdown-menu a.dropdown-item:not([href]):not([tabindex]) {

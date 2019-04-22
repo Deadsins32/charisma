@@ -6,7 +6,12 @@ $('.dropdown').on('hide.bs.dropdown', function() {
     $(this).find('.dropdown-menu').first().stop(true, true).slideUp();
 });
 
+/*
  $('.navbar-collapse').on('click', 'a', null, function() {
+    $('.navbar-collapse').collapse('hide');
+ });*/
+
+ $('.container').on('click', function() {
     $('.navbar-collapse').collapse('hide');
  });
 
