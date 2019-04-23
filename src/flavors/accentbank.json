@@ -44,15 +44,6 @@
 
     },
 
-    "sadistic": {
-        "dangerous": [
-            "knife",
-            "machette",
-            "guillotine",
-            "noose"
-        ]
-    },
-
     "timid": {
         "surprised": [
             ":flushed:",

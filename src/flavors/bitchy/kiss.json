@@ -1,22 +1,22 @@
 {
     "self": [
         "{insults}",
-        "Looser",
-        "You're a {insults}",
-        "Look at this {insults} trying to kiss himself lmao"
+        "looser",
+        "you're a {insults}",
+        "look at this {insults} trying to kiss himself lmao"
     ],
 
     "bot": [
-        "OMFG get your lips off of me!",
-        "Ewwww... good going {insults}! I think you have me herpes!",
+        "omfg get your lips off of me!",
+        "ewwww... good going {insults}! I think you have me herpes!",
         "I think I'm going to be sick...",
-        "Fucking {insults}! Don't ever do that to me ever again!"
+        "fucking {insults}! don't ever do that to me ever again!"
     ],
 
     "standard": [
         "[user] just gave [target] a kiss :astonished:",
         "[target] just got a kiss from [user]... what a fucking {insults}!",
-        "Omfg, [user] just kissed [target]...",
-        "Ewww, [target] got a kiss from [user]!"
+        "omfg, [user] just kissed [target]...",
+        "ewww, [target] got a kiss from [user]!"
     ]
 }
