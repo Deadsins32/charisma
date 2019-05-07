@@ -112,12 +112,13 @@ module.exports = async function(imports, message) {
             content = message.content;
         }
 
-        var name = content.slice(local.guild.data.config.prefix.length).split(' ')[0];
+        var name = content.slice(local.guild.data.config.prefix.length).split(' ')[0].toLowerCase();
+        var full = name + content.slice(local.guild.data.config.prefix.length + name.length)
         if (imports.aliases[name]) { name = imports.aliases[name] }
 
         var command = {
             object: imports.Command.get(name),
-            full: content.slice(local.guild.data.config.prefix.length),
+            full: full,
             name: name,
             arguments: new Array()
         }
@@ -209,7 +210,6 @@ module.exports = async function(imports, message) {
     }
 
     else {
-        //Math.floor(Math.random() * (max - min + 1)) + min;
         var experience = randBetween(90, 120);
         var length = message.content.length;
         var letterExp = Math.floor(percentageOf(length, 50));

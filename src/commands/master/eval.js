@@ -13,7 +13,27 @@ module.exports = {
     },
 
     command: function(imports, parameters) {
-        if (parameters[0].startsWith('object')) {
+        try {
+            var result = eval(parameters[0]);
+            if (result != undefined) {
+                if (typeof result == 'object') {
+                    var object = JSON.stringify(result, null, 4);
+                    if (object.length > 1990) {
+                        object = new Buffer(object);
+                        var attachment = new Discord.Attachment(object, 'eval.json');
+                        imports.channel.send(attachment);
+                    }
+
+                    else { imports.channel.send('```json\n' + object + '\n```') }
+                }
+
+                else { imports.channel.send('`' + result + '`') }
+            }
+        }
+
+        catch(error) { imports.channel.send('```' + error.stack + '```') }
+
+        /*if (parameters[0].startsWith('object')) {
             var object = JSON.stringify(eval(parameters[0].replace('object', '')), null, 4);
             
             if (object.length > 2000) {
@@ -33,6 +53,6 @@ module.exports = {
     
         else {
             eval(parameters[0]);
-        }
+        }*/
     }
 }

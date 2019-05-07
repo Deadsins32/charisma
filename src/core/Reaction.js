@@ -15,7 +15,7 @@ async function get(url) {
 
                 catch(error) { reject(error) }
             });
-        })
+        });
     });
 }
 
