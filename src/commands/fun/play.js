@@ -5,8 +5,10 @@ function play(imports, song) {
         imports.music[imports.guild.id].playing = true;
         var dispatcher = imports.music[imports.guild.id].connection.playStream(imports.ytdl(imports.music[imports.guild.id].queue[0].url));
         dispatcher.on('end', function(reason) {
-            imports.music[imports.guild.id].queue.shift();
-            play(imports, imports.music[imports.guild.id].queue[0]);
+            if (reason != 'shuffle') {
+                imports.music[imports.guild.id].queue.shift();
+                play(imports, imports.music[imports.guild.id].queue[0]);
+            }
         });
     }
 
@@ -19,7 +21,6 @@ function add(imports, video, embed) {
     imports.music[imports.guild.id].queue.push({
         title: video.title,
         id: video.id,
-        duration: video.duration,
         url: video.url
     });
 
@@ -64,7 +65,9 @@ module.exports = {
                             try {
                                 var playlist = await imports.youtube.getPlaylist(parameters[0]);
                                 var videos = await playlist.getVideos();
-                                for (v in videos) { imports.channel.send(add(imports, videos[v], embed)) }
+                                for (v in videos) { add(imports, videos[v], embed) }
+                                embed.setDescription(`${videos.length} tracks have been added to the queue`);
+                                imports.channel.send(embed);
                             }
     
                             catch(error) {

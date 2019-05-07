@@ -7,31 +7,51 @@ module.exports = {
         hidden: false,
         nsfw: false,
         tags: ['fun'],
-        params: []
+        params: [
+            { type: 'number', required: false, name: 'page' }
+        ]
     },
 
-    command: function(imports) {
+    command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
         embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
         if (imports.member.voiceChannel) {
             if (imports.guild.me.voiceChannel) {
                 if (imports.member.voiceChannel.id == imports.guild.me.voiceChannel.id) {
                     var queue = imports.music[imports.guild.id].queue;
-                    if (queue.length == 0) {
-                        embed.setDescription(`there's no music in the queue`);
+
+                    if (queue.length == 0) { embed.setDescription(`there's no music in the queue`) }
+                    else if (queue.length > 10) {
+                        var maxPage = Math.ceil(queue.length / 10) - 1;
+                        var page = 0;
+                        if (parameters[0]) { page = parameters[0] - 1 }
+                        if (page <= 0) { page = 0 }
+
+                        var queueText = new Array();
+
+                        if (page > maxPage) { embed.setDescription('please specify a smaller page number') }
+                        else {
+                            for (var i = 0; i < 10; i++) {
+                                if (queue[(page * 10) + i]) {
+                                    var title = Discord.escapeMarkdown(queue[(page * 10) + i].title);
+                                    if (page == 0 && i == 0) { queueText.push(`**${(page * 10) + i + 1}: ${title}**`) }
+                                    else { queueText.push(`${(page * 10) + i + 1}: ${title}`) }
+                                }
+                            }
+
+                            embed.setDescription(queueText.join(`\n`));
+                            embed.setFooter(`page ${page + 1}/${maxPage + 1}`);
+                        }
                     }
-    
+
                     else {
                         var queueText = new Array();
                         for (q in queue) {
-                            var duration = `${queue[q].duration.minutes}:${queue[q].duration.seconds}`;
-                            if (queue[q].duration.hours != 0) { duration = `${queue[q].duration.hours}:${duration}` }
                             var title = Discord.Util.escapeMarkdown(queue[q].title);
-    
-                            if (q == 0) { queueText.push(`**${parseInt(q) + 1}: ${title} - ${duration}**`) }
-                            else { queueText.push(`${parseInt(q) + 1}: ${title} - **${duration}**`) }
+                            if (q == 0) { queueText.push(`**${parseInt(q) + 1}: ${title}**`) }
+                            else { queueText.push(`${parseInt(q) + 1}: ${title}`) }
                         }
-    
+                        
                         embed.setDescription(queueText.join('\n'));
                     }
                 }
