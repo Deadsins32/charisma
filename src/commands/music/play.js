@@ -100,10 +100,10 @@ module.exports = {
                                     }
     
                                     catch(error) {
-                                        console.log(error);
+                                        console.error(error);
                                         var errorEmbed = new Discord.RichEmbed();
                                         errorEmbed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
-                                        errorEmbed.setDescription(`none or invalid value entered, cancelling video selection`);
+                                        errorEmbed.setDescription(`none or invalid value entered, canceling video selection`);
                                         selection.edit(errorEmbed);
                                     }
     

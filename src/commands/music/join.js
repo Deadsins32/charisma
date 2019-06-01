@@ -6,7 +6,7 @@ module.exports = {
         description: 'make me join the voice channel you\'re in',
         hidden: false,
         nsfw: false,
-        tags: ['fun'],
+        tags: ['fun', 'music'],
         params: []
     },
 
@@ -22,7 +22,7 @@ module.exports = {
                 }
     
                 imports.music[imports.guild.id].connection.on('error', function(error) {
-                    imports.error(error);
+                    console.error(error);
                     imports.music[imports.guild.id].connection.disconnect();
                     delete imports.music[imports.guild.id];
                 });
