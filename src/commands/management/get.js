@@ -141,6 +141,7 @@ module.exports = {
                 config: imports.data.guilds[imports.guild.id].config,
                 colors: imports.data.guilds[imports.guild.id].colors,
                 selfroles: [],
+                options: imports.data.guilds[imports.guild.id].options,
                 avatar: imports.guild.iconURL
             },
     
