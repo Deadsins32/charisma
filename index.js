@@ -1,5 +1,5 @@
 var child_process = require('child_process');
-var child = child_process.spawn('node', ['initialize.js']);
+var child = child_process.spawn('node', ['./src/bot.js']);
 child.stdout.pipe(process.stdout);
 
 var io = require('socket.io').listen(531);
@@ -35,7 +35,7 @@ io.on('connection', function(socket) {
         if (list.length != 0) { socket.emit('request', list[0]) }
         else {
             socket.emit('done');
-            child = child_process.spawn('node', ['initialize.js']);
+            child = child_process.spawn('node', ['src/bot.js']);
             child.stdout.pipe(process.stdout);
         }
     });
@@ -44,4 +44,3 @@ io.on('connection', function(socket) {
 process.on('SIGINT', function() {
     io.close();
 }.bind());
-

@@ -1,11 +1,10 @@
 var Discord = require('discord.js');
 
-var config = require('./src/config/config.json');
-var syncFs = require('./src/core/syncFs.js');
+var config = require('./config/config.json');
+var syncFs = require('./core/syncFs.js');
 var readDir = syncFs.readDir;
 var isFolder = syncFs.isFolder;
 var writeFile = syncFs.writeFile;
-
 
 async function start() {
     var commandData = new Object();
@@ -26,7 +25,7 @@ async function start() {
     //await writeFile('./docs/commands.json', JSON.stringify(commandData, null, 4));
 
     if (config.sharded) {
-        var manager = new Discord.ShardingManager('./bot.js', {
+        var manager = new Discord.ShardingManager('./shard.js', {
             totalShards: 'auto',
             token: config.token
         });
@@ -39,8 +38,10 @@ async function start() {
     }
 
     else {
-        var bot = require('./bot.js');
-        bot();
+        var child_process = require('child_process');
+        var child = child_process.spawn('node', ['src/shard.js']);
+        child.stdout.pipe(process.stdout);
+        process.on('SIGINT', function() {}.bind());
     }
 }
 

@@ -3,7 +3,9 @@
   "version": "2.1.0",
   "description": "The Discord Bot with Personality!",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "booru": "^1.3.4",
     "chalk": "2.4.1",
