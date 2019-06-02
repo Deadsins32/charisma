@@ -7,7 +7,8 @@ module.exports = {
 
     methods: {
         any: function(input) {
-            var output = { pass: true, value: input }
+            var output = { pass: true, value: input };
+            return output;
         },
 
         mention: function(input) {
