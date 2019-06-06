@@ -6,13 +6,6 @@ function clone(obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
 
-    // Handle Date
-    if (obj instanceof Date) {
-        copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
-    }
-
     // Handle Array
     if (obj instanceof Array) {
         copy = [];
@@ -44,53 +37,22 @@ function percentageOf(num, percentage) {
 
 module.exports = async function(imports, message) {
     if (message.author.bot) { return }
+    var guild = await imports.Data.getGuild(message.guild.id);
+    var guildChanged = false;
     if (imports.client.user.id != message.author.id) {
-        if (!imports.data.guilds[message.guild.id]) { imports.data.guilds[message.guild.id] = clone(imports.data.defaults.guild) }
-        else {
-            for (g in imports.data.defaults.guilds) {
-                if (!imports.data.guilds[message.guild.id][g]) { imports.data.guilds[message.guild.id][g] = clone(imports.data.defaults.guilds[g]) }
-            }
-        }
-
-        if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
-            imports.data.guilds[message.guild.id].members[message.author.id] = clone(imports.data.defaults.member);
-        }
-
-        else {
-            for (m in imports.data.defaults.member) {
-                if (!imports.data.guilds[message.guild.id].members[message.author.id][m]) {
-                    imports.data.guilds[message.guild.id].members[message.author.id][m] = clone(imports.data.defaults.member[m]);
-                }
-            }
-        }
-
-        if (!imports.data.users[message.author.id]) { imports.data.users[message.author.id] = clone(imports.data.defaults.user) }
-
-        else {
-            for (u in imports.data.defaults.user) {
-                if (!imports.data.users[message.author.id][u]) { imports.data.users[message.author.id][u] = clone(imports.data.defaults.user[u]) }
-            }
-        }
+        for (g in imports.defaults.guilds) { if (!guild[g]) { guild[g] = clone(imports.defaults.guilds[g]); guildChanged = true; } }
+        if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member); guildChanged = true; }
+        else { for (m in imports.defaults.member) { if (!guild.members[message.author.id][m]) { guild.members[message.author.id][m] = clone(imports.defaults.member[m]); guildChanged = true; } } }
+        
+        var user = await imports.Data.getUser(message.author.id);
+        var userChanged = false;
+        for (u in imports.defaults.user) { if (!user[u]) { user[u] = clone(imports.defaults.user[u]); userChanged = true; } }
     }
 
     var local = {
-        guild: {
-            id: message.guild.id,
-            data: imports.data.guilds[message.guild.id]
-        },
-
-        member: {
-            id: message.author.id,
-            data: imports.data.guilds[message.guild.id].members[message.author.id]
-        },
-
-        user: {
-            id: message.author.id,
-            data: imports.data.users[message.author.id]
-        },
-
-        blacklist: imports.data.guilds[message.guild.id].blacklist,
-        whitelist: imports.data.guilds[message.guild.id].whitelist
+        guild: guild,
+        user: user,
+        member: guild.members[message.author.id]
     }
 
     imports.guild = message.guild;
@@ -98,22 +60,22 @@ module.exports = async function(imports, message) {
     imports.user = message.author;
     imports.member = message.member;
     imports.message = message;
-    imports.blacklist = imports.data.guilds[message.guild.id].blacklist;
+    imports.blacklist = guild.blacklist;
     imports.local = local;
 
-    if (message.content.startsWith(local.guild.data.config.prefix)) {
+    if (message.content.startsWith(local.guild.config.prefix)) {
         var content;
 
-        if (imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]) {
-            content = message.content.replace(message.content.slice(local.guild.data.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]);
+        if (imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
         }
 
         else {
             content = message.content;
         }
 
-        var name = content.slice(local.guild.data.config.prefix.length).split(' ')[0].toLowerCase();
-        var full = name + content.slice(local.guild.data.config.prefix.length + name.length)
+        var name = content.slice(local.guild.config.prefix.length).split(' ')[0].toLowerCase();
+        var full = name + content.slice(local.guild.config.prefix.length + name.length)
         if (imports.aliases[name]) { name = imports.aliases[name] }
 
         var command = {
@@ -127,7 +89,7 @@ module.exports = async function(imports, message) {
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.local.guild.data.colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
 
         if (command.object) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
@@ -143,7 +105,7 @@ module.exports = async function(imports, message) {
             var longArguments2 = command.full.match(/("([^"]|"")*")/g);
             command.full = command.full.replace(/("([^"]|"")*")/g, '[ss]');
 
-            command.arguments = command.full.slice(local.guild.data.config.prefix.length + command.name + 1).split(' ');
+            command.arguments = command.full.slice(local.guild.config.prefix.length + command.name + 1).split(' ');
 
             var s = 0;
             var ss = 0;
@@ -161,52 +123,53 @@ module.exports = async function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            if (imports.Command.check(command.name, command.arguments)) {
-                var status = imports.Command.status(command, local, message.member, message.channel, message.guild);
-                if (status) {
-                    for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
-                    if (status.master) {
-                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) {
+            var status = imports.Command.status(command, local, imports.member, imports.channel, imports.guild);
+            if (status.visible) {
+                if (status.userUsable) {
+                    if (status.botUsable) {
+                        if (imports.Command.check(command.name, command.arguments)) {
+                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = imports.Command.methods[command.object.params[a].type](command.arguments[a]).value }
                             if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
                             else { imports.Command.commands[command.name](imports, command.arguments) }
                         }
-                        else { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
-                    }
-
-                    else {
-                        if (status.userUsable && status.botUsable) { imports.Command.commands[command.name](imports, command.arguments) }
 
                         else {
-                            if (status.visible) {
-                                if (!status.userUsable) {
-                                    if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
-                                    else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
-                                    else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
-                                    else if (status.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
-                                }
-
-                                else { if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) } }
-                            }
-
-                            else { embed.setDescription(`command not found`) }
+                            embed.setTitle(`invalid syntax`);
+                            embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.config.prefix, command.name)}\``);
                         }
                     }
+                }
 
-                    if (embed.description) { message.channel.send(embed) }
+                else {
+                    if (status.nsfw && !imports.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
+                    else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
+                    else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
+                    else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
+                    else if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) }
                 }
             }
 
             else {
-                embed.setTitle(`invalid syntax`);
-                embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.data.config.prefix, command.name)}\``);
-                message.channel.send(embed);
+                if (status.userUsable && status.botUsable) {
+                    if (imports.Command.check(command.name, command.arguments)) {
+                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = imports.Command.methods[command.object.params[a].type](command.arguments[a]).value }
+                        if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
+                        else { imports.Command.commands[command.name](imports, command.arguments) }
+                    }
+
+                    else {
+                        embed.setTitle(`invalid syntax`);
+                        embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.config.prefix, command.name)}\``);
+                    }
+                }
+
+                else { embed.setDescription(`command not found`) }
             }
         }
 
-        else {
-            embed.setDescription(`command not found`);
-            message.channel.send(embed);
-        }
+        else { embed.setDescription(`command not found`) }
+
+        if (embed.description) { message.channel.send(embed) }
     }
 
     else {
@@ -216,5 +179,9 @@ module.exports = async function(imports, message) {
         experience += letterExp;
 
         imports.Experience.add(imports, message.member, experience);
+        guildChanged = true;
     }
+
+    imports.Data.replaceGuild(message.guild.id, local.guild);
+    imports.Data.replaceUser(message.author.id, local.user);
 }

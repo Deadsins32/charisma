@@ -13,7 +13,7 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         function parse(name) {
             var status = imports.Command.status({name: name}, imports.local, imports.member, imports.channel, imports.guild);
@@ -46,7 +46,7 @@ module.exports = {
         if (name) {
             var config = configs[parameters[0]];
             embed.addField(`description`, config.description, true);
-            embed.addField(`usage`, `\`${imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, parameters[0])}\``, true);
+            embed.addField(`usage`, `\`${imports.Command.syntax(imports.local.guild.config.prefix, parameters[0])}\``, true);
             if (config.tags) { embed.addField(`tags`, config.tags.join(', '), true) }
             embed.addField(`nsfw`, config.nsfw, true);
             return imports.channel.send(embed);
@@ -67,7 +67,7 @@ module.exports = {
     
             for (var i = 0; i < 10; i++) {
                 if (array[(page * 10) + i]) {
-                    var syntax = imports.Command.syntax(imports.data.guilds[imports.guild.id].config.prefix, array[(page * 10) + i][0]);
+                    var syntax = imports.Command.syntax(imports.local.guild.config.prefix, array[(page * 10) + i][0]);
                     embed.addField(array[(page * 10) + i][0], `\`${syntax}\``);
                 }
             }

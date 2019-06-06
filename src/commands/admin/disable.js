@@ -35,7 +35,7 @@ var Discord = require('discord.js');
 
 module.exports = {
     config: {
-        permissions: ['DISCORD.ADMINISTRATOR'],
+        permissions: ['GUILD.MANAGE'],
         description: 'disables a specific feature on the server',
         hidden: false,
         nsfw: false,
@@ -47,11 +47,11 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
-        if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) != undefined) {
-            if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) == true) {
-                set(imports.data.guilds[imports.guild.id].options, parameters[0], false);
+        if (Object.byString(imports.local.guild.options, parameters[0]) != undefined) {
+            if (Object.byString(imports.local.guild.options, parameters[0]) == true) {
+                set(imports.local.guild.options, parameters[0], false);
                 embed.setDescription(`\`${parameters[0]}\` has been disabled`);
             }
     

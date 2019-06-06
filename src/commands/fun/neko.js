@@ -13,7 +13,7 @@ module.exports = {
 
     command: function(imports) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         if (imports.channel.nsfw) {
             https.get('https://nekos.life/api/v2/img/lewd', function(response) {

@@ -15,7 +15,7 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         var id = parameters[0];
         var reason = 'NO REASON';

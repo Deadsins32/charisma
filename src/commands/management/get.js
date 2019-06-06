@@ -94,8 +94,10 @@ module.exports = {
 
     command: async function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
+        var guild = await imports.Data.getGuild(imports.guild.id);
+
         function Member(member) {
             this.username = member.user.username;
             this.nickname = member.nickname;
@@ -138,10 +140,10 @@ module.exports = {
                 id: imports.guild.id,
                 owner: new Member(imports.guild.owner),
                 defaultRole: new Role(imports.guild.defaultRole),
-                config: imports.data.guilds[imports.guild.id].config,
-                colors: imports.data.guilds[imports.guild.id].colors,
+                config: guild.config,
+                colors: guild.colors,
                 selfroles: [],
-                options: imports.data.guilds[imports.guild.id].options,
+                options: guild.options,
                 avatar: imports.guild.iconURL
             },
     
@@ -149,7 +151,7 @@ module.exports = {
             channel: new Channel(imports.channel),
         }
     
-        var selfroles = imports.data.guilds[imports.guild.id].selfroles;
+        var selfroles = guild.selfroles;
     
         for (s in selfroles) {
             var role = imports.guild.roles.get(selfroles[s]);

@@ -26,7 +26,7 @@ module.exports = {
         for (f in fetched.array()) { await fetched.array()[f].delete() }
     
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         embed.setDescription(`${number} messages have been deleted`);
         imports.channel.send(embed);
     }

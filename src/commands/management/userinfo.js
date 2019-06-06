@@ -67,7 +67,7 @@ module.exports = {
 
     command: function(imports, arguments) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         var id = imports.user.id;
         if (arguments[0]) { id = arguments[0] }

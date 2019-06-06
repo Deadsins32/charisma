@@ -2,16 +2,16 @@ var Discord = require('discord.js');
 
 module.exports = {
     add: function(imports, member, exp, logExp) {
-        if (imports.data.guilds[imports.guild.id].options.leveling) {
-            var factor = imports.data.guilds[imports.guild.id].config.expcurve;
-            var beforeLevel = this.expToLevel(imports.data.guilds[imports.guild.id].members[member.id].exp, factor);
-            var afterLevel = this.expToLevel(imports.data.guilds[imports.guild.id].members[member.id].exp + exp, factor);
+        if (imports.local.guild.options.leveling) {
+            var factor = imports.local.guild.config.expcurve;
+            var beforeLevel = this.expToLevel(imports.local.guild.members[member.id].exp, factor);
+            var afterLevel = this.expToLevel(imports.local.guild.members[member.id].exp + exp, factor);
 
-            imports.data.guilds[imports.guild.id].members[member.id].exp += exp;
+            imports.local.guild.members[member.id].exp += exp;
 
             if (beforeLevel != afterLevel) {
                 var embed = new Discord.RichEmbed();
-                embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+                embed.setColor(imports.local.guild.colors.accent);
                 if ((afterLevel - beforeLevel) == 1) { embed.setDescription(`${member.displayName} has advanced to **level ${afterLevel}**`) }
                 else { embed.setDescription(`${member.displayName} has skipped **${afterLevel - beforeLevel} levels** and advanced to **level ${afterLevel}**`) }
                 imports.channel.send(embed);
@@ -19,7 +19,7 @@ module.exports = {
 
             else if (logExp) {
                 var embed = new Discord.RichEmbed();
-                embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+                embed.setColor(imports.local.guild.colors.accent);
                 embed.setDescription(`${member.displayName} has received **${exp} EXP**`);
                 imports.channel.send(embed);
             }

@@ -50,7 +50,7 @@ module.exports = {
 
     command: async function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         if (imports.member.voiceChannel) {
             if (imports.guild.me.voiceChannel) {
                 if (imports.member.voiceChannel.id == imports.guild.me.voiceChannel.id) {
@@ -94,7 +94,7 @@ module.exports = {
                                         var video2 = await imports.youtube.getVideoByID(video1.id);
     
                                         var successEmbed = new Discord.RichEmbed();
-                                        successEmbed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+                                        successEmbed.setColor(imports.local.guild.colors.accent);
                                         successEmbed = add(imports, video2, successEmbed);
                                         selection.edit(successEmbed);
                                     }
@@ -102,7 +102,7 @@ module.exports = {
                                     catch(error) {
                                         console.error(error);
                                         var errorEmbed = new Discord.RichEmbed();
-                                        errorEmbed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+                                        errorEmbed.setColor(imports.local.guild.colors.accent);
                                         errorEmbed.setDescription(`none or invalid value entered, canceling video selection`);
                                         selection.edit(errorEmbed);
                                     }

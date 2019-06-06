@@ -14,6 +14,7 @@
     "image-average-color": "^1.0.0",
     "node-kitsu": "1.1.1",
     "opusscript": "0.0.6",
+    "rethinkdb": "^2.3.3",
     "seedrandom": "2.4.4",
     "simple-youtube-api": "^5.1.1",
     "socket.io": "^2.2.0",

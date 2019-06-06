@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 
 module.exports = {
     config: {
-        permissions: ['DISCORD.ADMINISTRATOR'],
+        permissions: ['GUILD.MANAGE'],
         description: 'used for managing command blacklisting',
         hidden: false,
         nsfw: false,
@@ -16,13 +16,13 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         if (parameters[0] == 'get') {
             var id = parameters[1];
             var member = imports.guild.members.get(id);
             if (member) {
-                if (imports.data.guilds[imports.guild.id].blacklist[id].length == 0) { embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted') }
-                else { embed.setDescription(imports.data.guilds[imports.guild.id].blacklist[id].join(',\n')) }
+                if (imports.local.guild.blacklist[id].length == 0) { embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted') }
+                else { embed.setDescription(imports.local.guild.blacklist[id].join(',\n')) }
             }
     
             else { embed.setDescription('invalid user') }
@@ -34,13 +34,13 @@ module.exports = {
             if (member) {
                 if (parameters[2] != undefined) {
                     if (imports.Command.get(parameters[2])) {
-                        if (!imports.data.guilds[imports.guild.id].blacklist[id]) { imports.data.guilds[imports.guild.id].blacklist[id] = new Array() }
-                        var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
+                        if (!imports.local.guild.blacklist[id]) { imports.local.guild.blacklist[id] = new Array() }
+                        var blacklist = imports.local.guild.blacklist[id];
                         var exists = false;
                         for (b = 0; b < blacklist.length; b++) { if (blacklist[b] == parameters[2]) { exists = true } }
                         if (exists) { embed.setDescription(`${member.displayName} is already blacklisted from using ${parameters[2]}`) }
                         else {
-                            imports.data.guilds[imports.guild.id].blacklist[id].push(parameters[2]);
+                            imports.local.guild.blacklist[id].push(parameters[2]);
                             embed.setDescription(member.displayName + ' has been blacklisted from using the ' + parameters[2] + ' command');
                         }
                     }
@@ -60,13 +60,14 @@ module.exports = {
             if (member) {
                 if (parameters[2] != undefined) {
                     if (imports.Command.get(parameters[2])) {
-                        var blacklist = imports.data.guilds[imports.guild.id].blacklist[id];
+                        var blacklist = imports.local.guild.blacklist[id];
                         var exists = false;
                         for (b = 0; b < blacklist.length; b++) { if (blacklist[b] == parameters[2]) { exists = true } }
                         if (exists) {
                             var newBlacklist = new Array();
                             for (b = 0; b < blacklist.length; b++) { if (blacklist[b] != parameters[2]) { newBlacklist.push(blacklist[b]) } }
-                            imports.data.guilds[imports.guild.id].blacklist[id] = newBlacklist;
+                            if (newBlacklist.length == 0) { delete imports.local.guild.blacklist[id] }
+                            else { imports.local.guild.blacklist[id] = newBlacklist }
                             embed.setDescription(`${member.displayName} has been unblacklisted from using ${parameters[2]}`)
                         }
     
@@ -86,14 +87,18 @@ module.exports = {
             var id = parameters[1];
             var member = imports.guild.members.get(id);
             if (member) {
-                imports.data.guilds[imports.guild.id].blacklist[id] = [];
+                delete imports.local.guild.blacklist[id];
                 embed.setDescription(`${member.displayName}'s blacklist has been cleared`);
             }
     
             else { embed.setDescription('invalid user') }
         }
     
-        else { embed.setDescription('invalid option\n( get | add | remove | clear )') }
+        else {
+            embed.setTitle(`invalid option`);
+            embed.setDescription(`( get | add | remove | clear )`)
+        }
+
         imports.channel.send(embed);
     }
 }

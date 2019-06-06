@@ -24,13 +24,13 @@ module.exports = async function(imports, name, parameters) {
     var displayName = imports.guild.members.get(id).displayName;
 
     var embed = new Discord.RichEmbed();
-    embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+    embed.setColor(imports.local.guild.colors.accent);
     
-    if (imports.user.id == id) { embed.setDescription(Flavors.variables(Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, name, 'self'), [{ name: 'user', value: imports.member.displayName }])) }
-    else if (imports.client.user.id == id) { embed.setDescription(Flavors.variables(Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, name, 'bot'), [{ name: 'user', value: imports.member.displayName }])) }
+    if (imports.user.id == id) { embed.setDescription(Flavors.variables(Flavors.pick(imports.local.guild.config.flavor, name, 'self'), [{ name: 'user', value: imports.member.displayName }])) }
+    else if (imports.client.user.id == id) { embed.setDescription(Flavors.variables(Flavors.pick(imports.local.guild.config.flavor, name, 'bot'), [{ name: 'user', value: imports.member.displayName }])) }
     
     else {
-        embed.setDescription(Flavors.variables(Flavors.pick(imports.data.guilds[imports.guild.id].config.flavor, name, 'standard'), [{ name: 'user', value: imports.member.displayName }, { name: 'target', value: displayName }]));
+        embed.setDescription(Flavors.variables(Flavors.pick(imports.local.guild.config.flavor, name, 'standard'), [{ name: 'user', value: imports.member.displayName }, { name: 'target', value: displayName }]));
         var json = await get(`https://nekos.life/api/v2/img/${name}`);
         embed.setImage(json.url);
     }

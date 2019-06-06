@@ -150,7 +150,7 @@ module.exports = {
 
     get: function(command) { if (module.exports.configs[command]) { return module.exports.configs[command] } },
 
-    hasPermission: function(permission, data, guild, member) {
+    hasPermission: function(permission, local, guild, member) {
         var toReturn = {
             userPerms: true,
             botPerms: true
@@ -167,6 +167,7 @@ module.exports = {
         else if (permission.startsWith('BOT.')) {
             permission = permission.split('BOT.')[1];
             if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false } }
+            else if (permission == 'MANAGE') { if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { toReturn.userPerms = false } }
         }
 
         else if (permission.startsWith('GUILD.')) {
@@ -190,15 +191,12 @@ module.exports = {
             var whitelisted = true;
             var parameters = new Array();
 
-            var master = false;
-            var master = (member.user.id == masterID);
-
-            var blacklist = local.blacklist[local.member.id];
+            var blacklist = local.guild.blacklist[member.id];
             var whitelist = [];
-            if (local.whitelist[command.name]) { whitelist = local.whitelist[command.name] }
+            if (local.guild.whitelist[command.name]) { whitelist = local.guild.whitelist[command.name] }
 
             for (b in blacklist) { if (blacklist[b] == command.name) { blacklisted = true } }
-            if (whitelist.length != 0) { if (!whitelist.includes(local.member.id)) { whitelisted = false } }
+            if (whitelist.length != 0) { if (!whitelist.includes(member.id)) { whitelisted = false } }
 
             for (r in required) {
                 var permission = this.hasPermission(required[r], local, guild, member);
@@ -231,8 +229,7 @@ module.exports = {
                 blacklisted: blacklisted,
                 whitelisted: whitelisted,
 
-                parameters: parameters,
-                master: master
+                parameters: parameters
             }
         }
     },

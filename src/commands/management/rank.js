@@ -14,7 +14,7 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         if (parameters[0] && parameters[0] != imports.user.id) { embed.setFooter(`requested by ${imports.user.username}#${imports.user.discriminator}`) }
     
         var id = imports.user.id;
@@ -22,8 +22,8 @@ module.exports = {
         var member = imports.guild.members.get(id);
         embed.setAuthor(`${member.user.username}#${member.user.discriminator}`, member.user.avatarURL);
     
-        var factor = imports.data.guilds[imports.guild.id].config.expcurve;
-        var experience = imports.data.guilds[imports.guild.id].members[member.id].exp;
+        var factor = imports.local.guild.config.expcurve;
+        var experience = imports.local.guild.members[member.id].exp;
         var level = imports.Experience.expToLevel(experience, factor);
         var relative = imports.Experience.getRelative(experience, factor);
     

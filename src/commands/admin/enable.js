@@ -36,7 +36,7 @@ var fs = require('fs');
 
 module.exports = {
     config: {
-        permissions: ['DISCORD.ADMINISTRATOR'],
+        permissions: ['GUILD.MANAGE'],
         description: 'enables a specific feature on the server',
         hidden: false,
         nsfw: false,
@@ -48,11 +48,11 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
 
-        if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) != undefined) {
-            if (Object.byString(imports.data.guilds[imports.guild.id].options, parameters[0]) == false) {
-                set(imports.data.guilds[imports.guild.id].options, parameters[0], true);
+        if (Object.byString(imports.local.guild.options, parameters[0]) != undefined) {
+            if (Object.byString(imports.local.guild.options, parameters[0]) == false) {
+                set(imports.local.guild.options, parameters[0], true);
                 embed.setDescription(`\`${parameters[0]}\` has been enabled`);
             }
 

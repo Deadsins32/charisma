@@ -25,15 +25,16 @@ async function start() {
     //await writeFile('./docs/commands.json', JSON.stringify(commandData, null, 4));
 
     if (config.sharded) {
-        var manager = new Discord.ShardingManager('./shard.js', {
-            totalShards: 'auto',
+        var manager = new Discord.ShardingManager('./src/shard.js', {
+            //totalShards: 'auto',
+            totalShards: 3,
             token: config.token
         });
-    
+
         manager.spawn(manager.totalShards, 2000);
         
         manager.on('launch', function(shard) {
-            //console.ready(`shard ${shard.id+1}/${manager.totalShards} launched`);
+            console.log(`shard ${shard.id+1}/${manager.totalShards} launched`);
         });
     }
 

@@ -39,7 +39,7 @@ var keys = {
 
 module.exports = {
     config: {
-        permissions: ['DISCORD.ADMINISTRATOR'],
+        permissions: ['BOT.MANAGE'],
         description: 'sets a local value to whatever you specify',
         hidden: false,
         nsfw: false,
@@ -52,7 +52,7 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         var methods = {
             string: function(input) { return input },
@@ -64,7 +64,7 @@ module.exports = {
         }
     
         var maps = {
-            guild: imports.data.guilds[imports.guild.id]
+            guild: imports.local.guild
         }
     
         var overwrites = {

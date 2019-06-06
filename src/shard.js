@@ -1,6 +1,7 @@
 var Discord = require('discord.js');
 var config = require('./config/config.json');
 var YouTube = require('simple-youtube-api');
+var rethink = require('rethinkdb');
 
 var syncFs = require('./core/syncFs.js');
 var exists = syncFs.exists;
@@ -76,8 +77,8 @@ var imports = {
     Flavors: require(`./core/Flavors.js`),
     Seed: require('./core/Seed.js'),
     Experience: require('./core/Experience'),
-
-    data: data,
+    Data: require('./core/Data.js'),
+    defaults: require('./../data/defaults.json'),
 
     config: config,
     shorthands: require('./config/shorthands.json'),
@@ -110,7 +111,7 @@ var load = {
         return total;
     },
 
-    users: async function(users) {
+    /*users: async function(users) {
         var total = 0;
         for (u in users) {
             if (!data.users[users[u]] && await exists(`./data/users/${users[u].id}.json`)) {
@@ -143,7 +144,7 @@ var load = {
         }
 
         return total;
-    },
+    },*/
 
     daemons: async function() {
         var total = 0;
@@ -159,12 +160,22 @@ var load = {
 }
 
 async function start() {
-    if (!config.sharded) {
+    await imports.Data.start();
+    console.ready(`successfully connected to the database`);
+    console.ready(`${await load.daemons()} daemons have been loaded`);
+    console.ready(`${await load.commands()} commands have been loaded`);
+    client.on('ready', async function() {
+        console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+    });
+
+    
+    /*if (!config.sharded) {
         if (await exists('./data/defaults.json')) { data.defaults = require('./../data/defaults.json') }
         else { data.defaults = require('./../data/defaults.example.json') }
         console.ready(`${await load.daemons()} daemons have been loaded`);
         console.ready(`${await load.commands()} commands have been loaded`);
         client.on('ready', async function() {
+            console.log(`shard: ${client.shard}`);
             console.ready(`${await load.guilds(client.guilds.array())} guilds have been loaded`);
             console.ready(`${await load.users(client.users.array())} users have been loaded`);
             console.ready(`logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
@@ -177,15 +188,15 @@ async function start() {
         await load.daemons();
         await load.commands();
         client.on('ready', async function() {
+            console.log(process);
             await load.guilds(client.guilds.array());
             await load.users(client.users.array());
             console.ready(`initiated shard [${client.guilds.array().length} guilds / ${client.users.array().length} users]`);
         });
-    }
+    }*/
 }
 
 client.on('error', function(error) { console.error(error) });
-process.on('SIGINT', async function() {}.bind());
-
-if (!config.sharded) { client.login(config.token) }
+//process.on('SIGINT', async function() {}.bind());
+client.login(config.token);
 start();

@@ -12,7 +12,7 @@ module.exports = {
 
     command: function(imports) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         if (imports.guild.me.voiceChannel) {
             if (imports.member.voiceChannel) {
