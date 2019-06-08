@@ -1,6 +1,21 @@
 var Discord = require('discord.js');
 var https = require('https');
 
+async function get(url) {
+    return new Promise(function(resolve, reject) {
+        https.get(url, function(response) {
+            var data = '';
+            response.on('data', function(chunk) { data += chunk });
+            response.on('end', function() {
+                var json = JSON.parse(data);
+                resolve(json);
+            });
+
+            response.on('error', function(error) { reject(error) });
+        });
+    });
+}
+
 module.exports = {
     config: {
         permissions: [],
@@ -13,38 +28,14 @@ module.exports = {
         ]
     },
 
-    command: function(imports, parameters) {
+    command: async function(imports, parameters) {
         var embed = new Discord.RichEmbed();
         embed.setColor(imports.local.guild.colors.accent);
+        var json;
     
-        if (parameters[0] == 'gif') {
-            https.get('https://nekos.life/api/v2/img/Random_hentai_gif', function(response) {
-                var data = '';
-                response.on('data', function(chunk) {
-                    data += chunk;
-                });
-    
-                response.on('end', function() {
-                    var json = JSON.parse(data);
-                    embed.setImage(json.url);
-                    imports.channel.send(embed);
-                });
-            });
-        }
-    
-        else {
-            https.get('https://nekos.life/api/v2/img/hentai', function(response) {
-                var data = '';
-                response.on('data', function(chunk) {
-                    data += chunk;
-                });
-    
-                response.on('end', function() {
-                    var json = JSON.parse(data);
-                    embed.setImage(json.url);
-                    imports.channel.send(embed);
-                });
-            });
-        }
+        if (parameters[0] == 'gif') { json = await get('https://nekos.life/api/v2/img/Random_hentai_gif') }
+        else { json = await get('https://nekos.life/api/v2/img/hentai') }
+        embed.setImage(json.url);
+        imports.channel.send(embed);
     }
 }
