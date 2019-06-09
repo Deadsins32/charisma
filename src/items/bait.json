@@ -1,0 +1,7 @@
+{
+    "name": "bait",
+    "emoji": ":meat_on_bone:",
+    "value": 40,
+    "shoppable": true,
+    "tags": ["fishing"]
+}

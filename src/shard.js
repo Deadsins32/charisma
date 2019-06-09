@@ -78,6 +78,7 @@ var imports = {
     Seed: require('./core/Seed.js'),
     Experience: require('./core/Experience'),
     Data: require('./core/Data.js'),
+    Shop: require('./core/Shop.js'),
     defaults: require('./../data/defaults.json'),
 
     config: config,

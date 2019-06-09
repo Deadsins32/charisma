@@ -1,0 +1,7 @@
+{
+    "name": "tulip",
+    "emoji": ":tulip:",
+    "value": 60,
+    "shoppable": true,
+    "tags": ["flower"]
+}

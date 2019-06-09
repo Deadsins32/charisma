@@ -55,6 +55,7 @@ module.exports = {
         if (!tables.includes('guilds')) { await rethink.db('charisma').tableCreate('guilds').run(connection) }
         if (!tables.includes('users')) { await rethink.db('charisma').tableCreate('users').run(connection) }
         if (!tables.includes('inventories')) { await rethink.db('charisma').tableCreate('inventories').run(connection) }
+        if (!tables.includes('market')) { await rethink.db('charisma').tableCreate('market').run(connection) }
         items = await require('./Items.js')();
     },
 
@@ -107,6 +108,9 @@ module.exports = {
         await rethink.db('charisma').table('users').get(id).replace(obj).run(connection);
     },
 
+    getItem: function(item) { if (items[item]) { return items[item] } },
+    getItems: function() { return items },
+
     inventory: {
         get: async function(id) {
             var inventory = await rethink.db('charisma').table('inventories').get(id).run(connection);
@@ -128,18 +132,44 @@ module.exports = {
 
         hasItem: async function(id, item) { return this.getItem(id, item) != null },
 
-        addItem: async function(id, item, quantity) {
+        addItem: async function(id, item, quantity, meta) {
             var inventory = await this.get(id);
             var count = 1;
             if (quantity) { count = quantity }
+            var metaArr = [];
+            for (var c = 0; c < count; c++) { metaArr.push({}) }
 
-            if (!inventory.items[item]) { inventory.items[item] = clone(items[item]) }
-            if (inventory.items[item].count) { inventory.items[item].count += count }
-            else { inventory.items[item].count = count }
+            if (meta) {
+                if (!Array.isArray(meta)) { metaArr[0] = meta }
+                else { metaArr = meta }
+            }
+
+            if (!inventory.items[item]) { inventory.items[item] = { count: quantity, meta: metaArr } }
+            else {
+                for (var c = 0; c < count; c++) {
+                    inventory.items[item].count += 1;
+                    inventory.items[item].meta.push(metaArr[c]);
+                }
+            }
+            
             await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
         },
 
-        removeItem: async function(id, item, quantity) {
+        removeItem: async function(id, item, slot) {
+            var inventory = await this.get(id);
+            var index = 0;
+            if (slot) { index = slot }
+            if (inventory.items[item]) {
+                if (inventory.items[item].meta[index]) {
+                    inventory.items[item].count -= 1;
+                    inventory.items[item].meta.splice(index, 1);
+                }
+
+                if (inventory.items[item].count <= 0) { delete inventory.items[item] }
+            }
+        },
+
+        removeItems: async function(id, item, quantity) {
             var inventory = await this.get(id);
             var count = 1;
             if (quantity) { count = quantity }
@@ -148,6 +178,19 @@ module.exports = {
                 if (inventory.items[item].count <= 0) { delete inventory.items[item] }
                 await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
             }
+        },
+
+        getItemMeta: async function(id, item, slot) {
+            var inventory = await this.get(id);
+            var toReturn = null;
+            if (inventory.items[item]) { if (inventory.items[item].meta[slot]) { toReturn = inventory.items[item].meta[slot] } }
+            return toReturn;
+        },
+
+        setItemMeta: async function(id, item, slot, meta) {
+            var inventory = await this.get(id);
+            if (inventory.items[item]) { if (inventory.items[item].meta[slot]) { inventory.items[item].meta[slot] = meta } }
+            await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
         },
 
         getMoney: async function(id) {
@@ -167,5 +210,37 @@ module.exports = {
             if (inventory.currency < 0) { inventory.currency = 0 }
             await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
         }
+    },
+
+    market: {
+        get: async function(id) {
+            var market = await rethink.db('charisma').table('market').get(id).run(connection);
+            if (market == null) {
+                market = {id: id};
+                await rethink.db('charisma').table('market').get(id).replace(market).run(connection);
+            }
+
+            return market;
+        },
+
+        getAll: async function() {
+            return await rethink.db('charisma').table('market').getAll().run(connection);
+        }
     }
 }
+
+/*getGuild: async function(id) {
+    var guild = await rethink.db('charisma').table('guilds').get(id).run(connection);
+    if (guild == null) {
+        defaults.guild.id = id;
+        await rethink.db('charisma').table('guilds').get(id).replace(defaults.guild).run(connection);
+        guild = await rethink.db('charisma').table('guilds').get(id).run(connection);
+    }
+
+    return guild;
+},
+
+getGuildList: async function() {
+    var arr = [];
+    var list = await rethink.db('charisma').table('guilds').getAll().run(connection);
+},*/

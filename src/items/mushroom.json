@@ -1,0 +1,7 @@
+{
+    "name": "mushroom",
+    "emoji": ":mushroom:",
+    "value": 56,
+    "shoppable": true,
+    "tags": ["food"]
+}

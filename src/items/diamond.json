@@ -1,0 +1,7 @@
+{
+    "name": "diamond",
+    "emoji": ":gem:",
+    "value": 2000,
+    "shoppable": false,
+    "tags": ["gem", "valuable"]
+}

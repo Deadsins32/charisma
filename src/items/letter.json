@@ -1,0 +1,7 @@
+{
+    "name": "letter",
+    "emoji": ":envelope:",
+    "value": 77,
+    "shoppable": true,
+    "tags": ["memo"]
+}

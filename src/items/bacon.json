@@ -1,0 +1,7 @@
+{
+    "name": "bacon",
+    "emoji": ":bacon:",
+    "value": 90,
+    "shoppable": true,
+    "tags": ["food", "meat"]
+}

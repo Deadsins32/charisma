@@ -1,0 +1,7 @@
+{
+    "name": "ballpoint pen",
+    "emoji": ":pen_ballpoint:",
+    "value": 200,
+    "shoppable": true,
+    "tags": ["tool", "writing", "rare"]
+}
