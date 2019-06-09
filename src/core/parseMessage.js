@@ -55,19 +55,22 @@ module.exports = async function(imports, message) {
         member: guild.members[message.author.id]
     }
 
-    imports.guild = message.guild;
-    imports.channel = message.channel;
-    imports.user = message.author;
-    imports.member = message.member;
-    imports.message = message;
-    imports.blacklist = guild.blacklist;
-    imports.local = local;
+    var passthrough = new Object();
+    for (var i in imports) { passthrough[i] = imports[i] }
+
+    passthrough.guild = message.guild;
+    passthrough.channel = message.channel;
+    passthrough.user = message.author;
+    passthrough.member = message.member;
+    passthrough.message = message;
+    passthrough.blacklist = guild.blacklist;
+    passthrough.local = local;
 
     if (message.content.startsWith(local.guild.config.prefix)) {
         var content;
 
-        if (imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
-            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
+        if (passthrough.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], passthrough.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
         }
 
         else {
@@ -76,10 +79,10 @@ module.exports = async function(imports, message) {
 
         var name = content.slice(local.guild.config.prefix.length).split(' ')[0].toLowerCase();
         var full = name + content.slice(local.guild.config.prefix.length + name.length)
-        if (imports.aliases[name]) { name = imports.aliases[name] }
+        if (passthrough.aliases[name]) { name = passthrough.aliases[name] }
 
         var command = {
-            object: imports.Command.get(name),
+            object: passthrough.Command.get(name),
             full: full,
             name: name,
             arguments: new Array()
@@ -89,7 +92,7 @@ module.exports = async function(imports, message) {
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.local.guild.colors.accent);
+        embed.setColor(passthrough.local.guild.colors.accent);
 
         if (command.object) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
@@ -123,25 +126,25 @@ module.exports = async function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = imports.Command.status(command, local, imports.member, imports.channel, imports.guild);
+            var status = passthrough.Command.status(command, local, passthrough.member, passthrough.channel, passthrough.guild);
             if (status.visible) {
                 if (status.userUsable) {
                     if (status.botUsable) {
-                        if (imports.Command.check(command.name, command.arguments)) {
-                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = imports.Command.methods[command.object.params[a].type](command.arguments[a]).value }
-                            if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
-                            else { imports.Command.commands[command.name](imports, command.arguments) }
+                        if (passthrough.Command.check(command.name, command.arguments)) {
+                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a]).value }
+                            if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                         }
 
                         else {
                             embed.setTitle(`invalid syntax`);
-                            embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.config.prefix, command.name)}\``);
+                            embed.setDescription(`usage:\n\`${passthrough.Command.syntax(local.guild.config.prefix, command.name)}\``);
                         }
                     }
                 }
 
                 else {
-                    if (status.nsfw && !imports.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
+                    if (status.nsfw && !passthrough.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
                     else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
                     else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
                     else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
@@ -151,15 +154,15 @@ module.exports = async function(imports, message) {
 
             else {
                 if (status.userUsable && status.botUsable) {
-                    if (imports.Command.check(command.name, command.arguments)) {
-                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = imports.Command.methods[command.object.params[a].type](command.arguments[a]).value }
-                        if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
-                        else { imports.Command.commands[command.name](imports, command.arguments) }
+                    if (passthrough.Command.check(command.name, command.arguments)) {
+                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a]).value }
+                        if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                        else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                     }
 
                     else {
                         embed.setTitle(`invalid syntax`);
-                        embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.config.prefix, command.name)}\``);
+                        embed.setDescription(`usage:\n\`${passthrough.Command.syntax(local.guild.config.prefix, command.name)}\``);
                     }
                 }
 
@@ -178,10 +181,10 @@ module.exports = async function(imports, message) {
         var letterExp = Math.floor(percentageOf(length, 50));
         experience += letterExp;
 
-        imports.Experience.add(imports, message.member, experience);
+        passthrough.Experience.add(passthrough, message.member, experience);
         guildChanged = true;
     }
 
-    imports.Data.replaceGuild(message.guild.id, local.guild);
-    imports.Data.replaceUser(message.author.id, local.user);
+    passthrough.Data.replaceGuild(message.guild.id, local.guild);
+    passthrough.Data.replaceUser(message.author.id, local.user);
 }
