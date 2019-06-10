@@ -45,6 +45,7 @@ module.exports = {
     
         if (name) {
             var config = configs[parameters[0]];
+            if (config.permissions.includes('BOT.MASTER') && imports.config.master != imports.user.id) { embed.setDescription(`no commands were found`); return imports.channel.send(embed); }
             embed.addField(`description`, config.description, true);
             embed.addField(`usage`, `\`${imports.Command.syntax(imports.local.guild.config.prefix, parameters[0])}\``, true);
             if (config.tags) { embed.addField(`tags`, config.tags.join(', '), true) }

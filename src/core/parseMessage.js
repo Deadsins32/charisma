@@ -144,11 +144,15 @@ module.exports = async function(imports, message) {
                 }
 
                 else {
-                    if (status.nsfw && !passthrough.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
-                    else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
-                    else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
-                    else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
-                    else if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) }
+                    if (!status.master) {
+                        if (status.nsfw && !passthrough.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
+                        else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
+                        else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
+                        else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
+                        else if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) }
+                    }
+
+                    else { embed.setDescription(`command not found`) }
                 }
             }
 

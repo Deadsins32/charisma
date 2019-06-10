@@ -153,7 +153,8 @@ module.exports = {
     hasPermission: function(permission, local, guild, member) {
         var toReturn = {
             userPerms: true,
-            botPerms: true
+            botPerms: true,
+            master: false,
         }
 
         if (permission.startsWith('DISCORD.')) {
@@ -166,7 +167,7 @@ module.exports = {
 
         else if (permission.startsWith('BOT.')) {
             permission = permission.split('BOT.')[1];
-            if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false } }
+            if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false; toReturn.master = true; } }
             else if (permission == 'MANAGE') { if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { toReturn.userPerms = false } }
         }
 
@@ -189,6 +190,7 @@ module.exports = {
             var nsfw = false;
             var blacklisted = false;
             var whitelisted = true;
+            var master = false;
             var parameters = new Array();
 
             var blacklist = local.guild.blacklist[member.id];
@@ -202,6 +204,7 @@ module.exports = {
                 var permission = this.hasPermission(required[r], local, guild, member);
                 if (!permission.userPerms) { missingPerm = true }
                 if (!permission.botPerms) { botUsable = false }
+                if (permission.master) { master = true }
 
                 if (Discord.Permissions.FLAGS[required[r]]) {
                     if (!member.hasPermission(Discord.Permissions.FLAGS[required[r]])) { missingPerm = true }
@@ -228,6 +231,7 @@ module.exports = {
 
                 blacklisted: blacklisted,
                 whitelisted: whitelisted,
+                master: master,
 
                 parameters: parameters
             }
