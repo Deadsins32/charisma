@@ -29,6 +29,7 @@ module.exports = {
                     var itemName = item.name.split(' seed')[0];
                     if (!imports.local.user.trees[itemName]) { imports.local.user.trees[itemName] = [] }
                     imports.local.user.trees[itemName].push({ planted: now, harvestedLast: -1 });
+                    imports.Data.inventory.removeItem(imports.user.id, `${itemName} seed`);
                     embed.setDescription(`you just planted an ${items[itemName].emoji} **${itemName} tree**`);
                 }
             }
