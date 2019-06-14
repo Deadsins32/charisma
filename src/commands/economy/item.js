@@ -18,8 +18,8 @@ module.exports = {
         embed.setColor(imports.local.guild.colors.accent);
         var items = imports.Data.getItems();
         var item = items[parameters[0]];
-        if (!item) { if (emoji.hasEmoji(parameters[0])) { for (var i in items) { if (items[i].emoji == emoji.unemojify(parameters[0])) { item = items[i] } } } }
-        if(item) {
+        if (!item) { for (var i in items) { if (items[i].emoji == emoji.unemojify(parameters[0]).split(' ').join('')) { item = items[i] } } }
+        if (item) {
             embed.addField('name', item.name, true);
             embed.addField('emoji', item.emoji, true);
             if (item.shoppable && imports.Shop.isAvailable(item)) { embed.addField('buy price', `**$${imports.Shop.getPrice(item)}**`, true) }
