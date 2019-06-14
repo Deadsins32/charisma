@@ -191,6 +191,7 @@ module.exports = {
             var blacklisted = false;
             var whitelisted = true;
             var master = false;
+            var cooldown = false;
             var parameters = new Array();
 
             var blacklist = local.guild.blacklist[member.id];
@@ -215,6 +216,20 @@ module.exports = {
             for (a in command.arguments) { parameters.push(this.methods[config.params[a].type](command.arguments[a]).value) }
             if (blacklisted || !whitelisted || missingPerm ) { userUsable = false }
 
+            if (config.cooldown) {
+                if (!local.user.cooldowns[command.name]) { local.user.cooldowns[command.name] = -1 }
+                var usedWhen = local.user.cooldowns[command.name];
+                var date = new Date();
+                var now = date.getTime();
+                if (usedWhen != -1) {
+                    var difference = now - usedWhen;
+                    if (difference < config.cooldown) { cooldown = true; userUsable = false; }
+                    
+                }
+
+                else { local.user.cooldowns[command.name] = now; }
+            }
+
             if (config.hidden) { visible = false }
             if (config.nsfw) { nsfw = true }
 
@@ -231,6 +246,7 @@ module.exports = {
 
                 blacklisted: blacklisted,
                 whitelisted: whitelisted,
+                cooldown: cooldown,
                 master: master,
 
                 parameters: parameters

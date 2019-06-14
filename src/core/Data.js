@@ -144,7 +144,7 @@ module.exports = {
                 else { metaArr = meta }
             }
 
-            if (!inventory.items[item]) { inventory.items[item] = { count: quantity, meta: metaArr } }
+            if (!inventory.items[item]) { inventory.items[item] = { count: count, meta: metaArr } }
             else {
                 for (var c = 0; c < count; c++) {
                     inventory.items[item].count += 1;
@@ -166,6 +166,7 @@ module.exports = {
                 }
 
                 if (inventory.items[item].count <= 0) { delete inventory.items[item] }
+                await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
             }
         },
 

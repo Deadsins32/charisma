@@ -35,18 +35,82 @@ function percentageOf(num, percentage) {
     return (percentage / 100) * num;
 }
 
+function parseDate(milliseconds) {
+    var seconds = Math.floor(milliseconds / 1000);
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    var hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+    var days = Math.floor(hours / 24);
+    hours = hours % 24;
+    var weeks = Math.floor(days / 7);
+    days = days % 7;
+    var months = Math.floor(weeks / 4);
+    weeks = weeks % 4;
+    var years = Math.floor(months / 12);
+    months = months % 12;
+
+    var suffixes = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+    var values = [years, months, weeks, days, hours, minutes, seconds];
+    var suffs = new Array();
+    var vals = new Array();
+
+    for (v in values) {
+        if (values[v] != 0) {
+            suffs.push(suffixes[v]);
+            vals.push(values[v]);
+        }
+    }
+
+    var arr = new Array();
+    for (var v = 0; v < values.length; v++) {
+        if (values[v] != 0) {
+            //console.log(values[v]);
+            var suffix = suffixes[v];
+            if (values[v] == 1) { suffix = suffix.slice(0, -1) }
+            arr.push(`${values[v]} ${suffix}`);
+        }
+    }
+
+    var toReturn = arr.join(', ');
+    return toReturn;
+}
+
 module.exports = async function(imports, message) {
     if (message.author.bot) { return }
     var guild = await imports.Data.getGuild(message.guild.id);
     var guildChanged = false;
     if (imports.client.user.id != message.author.id) {
-        for (g in imports.defaults.guilds) { if (!guild[g]) { guild[g] = clone(imports.defaults.guilds[g]); guildChanged = true; } }
-        if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member); guildChanged = true; }
-        else { for (m in imports.defaults.member) { if (!guild.members[message.author.id][m]) { guild.members[message.author.id][m] = clone(imports.defaults.member[m]); guildChanged = true; } } }
-        
+        function iterate(base, obj) {
+            for (b in base) {
+                if (!obj[b]) {
+                    if (Array.isArray(base[b])) {
+                        obj[b] = new Array();
+                        for (var i = 0; i < base[b].length; i++) {  obj[b].push(base[b][i]) }
+                    }
+
+                    else if (typeof base[b] === 'object' && base[b] !== null) {
+                        obj[b] = new Object();
+                        iterate(base[b], obj[b]);
+                    }
+
+                    else { obj[b] = base[b] }
+                }
+            }
+        }
+
+        iterate(imports.defaults.guilds, guild);
+        if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member) }
+        else { iterate(imports.defaults.member, guild.members[message.author.id]) }
+
+
+        //for (g in imports.defaults.guilds) { if (!guild[g]) { guild[g] = clone(imports.defaults.guilds[g]); guildChanged = true; } }
+        //if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member); guildChanged = true; }
+        //else { for (m in imports.defaults.member) { if (!guild.members[message.author.id][m]) { guild.members[message.author.id][m] = clone(imports.defaults.member[m]); guildChanged = true; } } }
+
         var user = await imports.Data.getUser(message.author.id);
-        var userChanged = false;
-        for (u in imports.defaults.user) { if (!user[u]) { user[u] = clone(imports.defaults.user[u]); userChanged = true; } }
+        iterate(imports.defaults.user, user);
+        //for (u in imports.defaults.user) { if (!user[u]) { user[u] = clone(imports.defaults.user[u]); userChanged = true; } }
     }
 
     var local = {
@@ -132,8 +196,17 @@ module.exports = async function(imports, message) {
                     if (status.botUsable) {
                         if (passthrough.Command.check(command.name, command.arguments)) {
                             for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a]).value }
-                            if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
-                            else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            //var now = date.getTime();
+                            //else { local.user.cooldowns[command.name] = now }
+                            if (local.user.cooldowns[command.name]) {
+                                var date = new Date();
+                                var now = date.getTime();
+                                local.user.cooldowns[command.name] = now;
+                            }
+
+                            passthrough.Command.commands[command.name](passthrough, command.arguments);
+                            //if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            //else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                         }
 
                         else {
@@ -150,6 +223,16 @@ module.exports = async function(imports, message) {
                         else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
                         else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
                         else if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) }
+                        else if (status.cooldown) {
+                            var date = new Date();
+                            var now = date.getTime();
+                            var usedWhen = user.cooldowns[command.name];
+                            var difference = command.object.cooldown - (now - usedWhen);
+                            //if (difference < config.cooldown) { local.user.cooldowns[command.name] = now; cooldown = true; userUsable = false; }
+                            var parsed = parseDate(difference);
+                            if (parsed == '') { parsed = '1 second' }
+                            embed.setDescription(`you can use that command again in **${parsed}**`);
+                        }
                     }
 
                     else { embed.setDescription(`command not found`) }
