@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/boostrapOverrides.css">
     <link rel="stylesheet" href="css/commands.css">
+    <link rel="stylesheet" href="css/blog.css">
     <link rel="stylesheet" href="css/experience.css">
     <title>Charisma</title>
 </head>
@@ -38,6 +39,7 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item navButton blog"><a class="nav-link" href="?page=blog">blog</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="supportDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">contribute</a>
                     <div class="dropdown-menu" aria-labelledby="supportDropdown">
@@ -72,6 +74,12 @@
             <h1>frequently asked questions</h1>
         </div>
         <div id="getStarted"></div>
+        <div id="blog">
+            <div id="postBack"><a href="?page=blog"><i class="fas fa-chevron-left"></i></a></div>
+            <div id="postList"></div>
+            <div id="postTitle"></div>
+            <div id="postArea"></div>
+        </div>
         <div id="about"></div>
     </div>
 </body>
@@ -85,6 +93,7 @@
 <script src="js/initializers/commandQuery.js"></script>
 <script src="js/initializers/expChart.js"></script>
 <script src="js/initializers/about.js"></script>
+<script src="js/initializers/blog.js"></script>
 <script src="js/initializers/getStarted.js"></script>
 
 <script src="js/main.js"></script>

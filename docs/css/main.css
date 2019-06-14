@@ -25,3 +25,7 @@ code {
     color: var(--accent);
     filter: brightness(110%);
 }
+
+.hidden {
+    display: none;
+}

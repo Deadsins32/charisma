@@ -24,6 +24,10 @@ function navigate(destination) {
             section.setAttribute('class', 'selected');
         }
     }
+
+    var container = document.getElementsByClassName('container')[0];
+    for (var c = 0; c < container.children.length; c++) { container.children[c].classList.add('hidden') }
+    document.getElementById(destination).classList.remove('hidden');
 }
 
 function getUrlVars() {
@@ -71,6 +75,7 @@ async function init() {
     navigate(page);
     await about();
     await getStarted();
+    await blog();
     await commandQuery();
     expChart();
 }

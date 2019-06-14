@@ -1,0 +1,45 @@
+#postBack {
+    float: left;
+}
+
+#postBack a {
+    text-decoration: none;
+    background-color: var(--accent-dark);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 40px;
+    padding: 15px 20px 15px 20px;
+    font-size: 18px;
+}
+
+#postBack a:hover {
+    filter: brightness(90%);
+}
+
+#postList li {
+    display: block;
+}
+
+#postList li a {
+    text-decoration: none;
+    color: var(--accent);
+    font-size: 30px;
+    font-family: monospace;
+    font-weight: 800;
+    letter-spacing: 8px;
+}
+
+#postList li a:hover {
+    filter: brightness(90%);
+}
+
+#postTitle {
+    color: var(--accent);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    padding-left: 100px;
+}
+
+#postArea {
+    padding-top: 20px;
+}
