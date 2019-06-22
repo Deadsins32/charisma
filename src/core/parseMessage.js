@@ -204,7 +204,8 @@ module.exports = async function(imports, message) {
                                 local.user.cooldowns[command.name] = now;
                             }
 
-                            passthrough.Command.commands[command.name](passthrough, command.arguments);
+                            if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                             //if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
                             //else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                         }
@@ -269,9 +270,8 @@ module.exports = async function(imports, message) {
         experience += letterExp;
 
         passthrough.Experience.add(passthrough, message.member, experience);
-        guildChanged = true;
     }
 
-    passthrough.Data.replaceGuild(message.guild.id, local.guild);
-    passthrough.Data.replaceUser(message.author.id, local.user);
+    await passthrough.Data.replaceGuild(message.guild.id, passthrough.local.guild);
+    await passthrough.Data.replaceUser(message.author.id, passthrough.local.user);
 }
