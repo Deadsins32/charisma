@@ -50,10 +50,10 @@ module.exports = {
                 else { imports.local.user.cooldowns.eat = -1; embed.setDescription(`you can't eat that item`) }
             }
 
-            else { embed.setDescription(`you don't have that item`) }
+            else { imports.local.user.cooldowns.eat = -1; embed.setDescription(`you don't have that item`) }
         }
 
-        else { embed.setDescription(`that item doesn't exist`) }
+        else { imports.local.user.cooldowns.eat = -1; embed.setDescription(`that item doesn't exist`) }
 
         imports.channel.send(embed);
     }
