@@ -129,7 +129,8 @@ module.exports = {
                     var isGrown = now >= trees[t][i].planted + item.growthTime;
                     if (isGrown) {
                         grown += 1;
-                        if (trees[t][i].lastHarvested == -1 || now >= trees[t][i].lastHarvested + item.harvestTime) { harvestable += 1 }
+                        console.log(trees[t][i]);
+                        if (trees[t][i].harvestedLast == -1 || now >= trees[t][i].harvestedLast + item.harvestTime) { harvestable += 1 }
                     }
                 }
 
