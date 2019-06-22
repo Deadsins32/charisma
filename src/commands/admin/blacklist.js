@@ -21,7 +21,7 @@ module.exports = {
             var id = parameters[1];
             var member = imports.guild.members.get(id);
             if (member) {
-                if (imports.local.guild.blacklist[id].length == 0) { embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted') }
+                if (!imports.local.guild.blacklist[id] || imports.local.guild.blacklist[id].length == 0) { embed.setDescription(member.displayName + ' doesn\'t have any commands blacklisted') }
                 else { embed.setDescription(imports.local.guild.blacklist[id].join(',\n')) }
             }
     
@@ -32,7 +32,7 @@ module.exports = {
             var id = parameters[1];
             var member = imports.guild.members.get(id);
             if (member) {
-                if (parameters[2] != undefined) {
+                if (parameters[2]) {
                     if (imports.Command.get(parameters[2])) {
                         if (!imports.local.guild.blacklist[id]) { imports.local.guild.blacklist[id] = new Array() }
                         var blacklist = imports.local.guild.blacklist[id];
