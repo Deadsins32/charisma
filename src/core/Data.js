@@ -1,6 +1,7 @@
 var rethink = require('rethinkdb');
 var connection;
 var defaults = require('./../../data/defaults.json');
+var config = require('./../config/config.json');
 var items = {};
 
 function setToValue(obj, value, path) {
@@ -48,7 +49,7 @@ function clone(obj) {
 
 module.exports = {
     start: async function() {
-        connection = await rethink.connect();
+        connection = await rethink.connect({ host: config.databaseIp, port: config.databasePort });
         var databases = await rethink.dbList().run(connection);
         if (!databases.includes('charisma')) { await rethink.dbCreate('charisma').run(connection) }
         var tables = await rethink.db('charisma').tableList().run(connection);

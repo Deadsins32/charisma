@@ -1,15 +1,16 @@
 {
     "guild": {
         "config": {
-            "prefix": "//",
+            "prefix": "s/",
             "flavor": "upbeat",
+            "description": "not much to say about this guild...",
             "expcurve": 2.2,
             "logchannel": "",
             "autorole": ""
         },
 
         "colors": {
-            "accent": "#9DA0CB",
+            "accent": "#ADCAFF",
             "logs": {
                 "joins": "#42F49B",
                 "leaves": "#F44141",
@@ -19,12 +20,9 @@
         },
 
         "options": {
-            "leveling": true,
-            "achievements": true,
+            "leveling": false,
+            "achievements": false,
             "currency": true,
-            "silentErrors": false,
-            "staticFlavor": false,
-            "trackNameChanges": true,
             "logs": {
                 "joins": false,
                 "leaves": false,
@@ -43,14 +41,22 @@
     "user": {
         "achievements": [],
         "badges": [],
-        "color": "#9DA0CB",
-        "description": "I'm not very creative...",
+        "inventory": {},
+        "color": "#ADCAFF",
+        "daily": -1,
         "exp": 0,
-        "karma": 0
+        "karma": 0,
+        "cooldowns": {},
+        "trees": {}
     },
 
     "member": {
         "exp": 0,
         "karma": 0
+    },
+
+    "inventory": {
+        "currency": 0,
+        "items": {}
     }
 }
