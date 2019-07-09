@@ -158,12 +158,18 @@ module.exports = {
             if (role) { keys.guild.selfroles.push(role.name) }
         }
     
+        if (!keys.charisma.avatar) { delete keys.charisma.avatar }
+        if (!keys.guild.avatar) { delete keys.guild.avatar }
+        if (!keys.user.avatar) { delete keys.user.avatar }
+
         if (imports.client.user.presence.game) { keys.charisma.status = imports.client.user.presence.game.name }
     
-        var guildIconBuff = await getBuffer(keys.guild.avatar);
-        var average = await getAverage(guildIconBuff);
-        var averageHex = toHex(average[0], average[1], average[2]);
-        keys.guild.hideColor = averageHex;
+        if (keys.guild.avatar) {
+            var guildIconBuff = await getBuffer(keys.guild.avatar);
+            var average = await getAverage(guildIconBuff);
+            var averageHex = toHex(average[0], average[1], average[2]);
+            keys.guild.hideColor = averageHex;
+        }
     
     
         if (parameters[1]) {
@@ -231,7 +237,7 @@ module.exports = {
         else {
             embed.setThumbnail('');
             embed.setImage('');
-            embed.setDescription(`${parameters[0]} does not exist`);
+            embed.setDescription(`\`${parameters[0]}\` does not exist`);
         }
     
         imports.channel.send(embed);
