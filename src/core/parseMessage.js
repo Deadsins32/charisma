@@ -65,7 +65,6 @@ function parseDate(milliseconds) {
     var arr = new Array();
     for (var v = 0; v < values.length; v++) {
         if (values[v] != 0) {
-            //console.log(values[v]);
             var suffix = suffixes[v];
             if (values[v] == 1) { suffix = suffix.slice(0, -1) }
             arr.push(`${values[v]} ${suffix}`);
@@ -103,14 +102,8 @@ module.exports = async function(imports, message) {
         if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member) }
         else { iterate(imports.defaults.member, guild.members[message.author.id]) }
 
-
-        //for (g in imports.defaults.guilds) { if (!guild[g]) { guild[g] = clone(imports.defaults.guilds[g]); guildChanged = true; } }
-        //if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member); guildChanged = true; }
-        //else { for (m in imports.defaults.member) { if (!guild.members[message.author.id][m]) { guild.members[message.author.id][m] = clone(imports.defaults.member[m]); guildChanged = true; } } }
-
         var user = await imports.Data.getUser(message.author.id);
         iterate(imports.defaults.user, user);
-        //for (u in imports.defaults.user) { if (!user[u]) { user[u] = clone(imports.defaults.user[u]); userChanged = true; } }
     }
 
     var local = {
@@ -190,7 +183,7 @@ module.exports = async function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            var status = passthrough.Command.status(command, local, passthrough.member, passthrough.channel, passthrough.guild);
+            var status = await passthrough.Command.status(command, local, passthrough.member, passthrough.channel, passthrough.guild);
             if (status.visible) {
                 if (status.userUsable) {
                     if (status.botUsable) {
@@ -259,7 +252,6 @@ module.exports = async function(imports, message) {
         }
 
         else { embed.setDescription(`command not found`) }
-
         if (embed.description) { message.channel.send(embed) }
     }
 

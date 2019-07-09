@@ -1,5 +1,94 @@
 var Discord = require('discord.js');
-var masterID = require('./../config/config.json').master;
+var config = require('./../config/config.json');
+var masterID = config.master;
+
+var permissions = {
+    DISCORD: async function(permission, local, guild, member) {
+        var toReturn = { userPerms: true, botPerms: true, master: false }
+        if (Discord.Permissions.FLAGS[permission]) {
+            if (!member.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.userPerms = false }
+            if (!guild.me.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.botPerms = false }
+        }
+
+        return toReturn;
+    },
+
+    BOT: {
+        MASTER: async function(permission, local, guild, member) {
+            var toReturn = { userPerms: true, botPerms: true, master: false }
+            if (member.user.id != masterID) { toReturn.userPerms = false; toReturn.master = true; }
+            return toReturn;
+        }
+    },
+
+    GUILD: {
+        OWNER: async function(permission, local, guild, member) {
+            var toReturn = { userPerms: true, botPerms: true, master: false }
+            if (member.user.id != guild.ownerID) { toReturn.userPerms = false }
+            return toReturn;
+        },
+
+        MANAGE: async function(permission, local, guild, member) {
+            var toReturn = { userPerms: true, botPerms: true, master: false }
+            if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { toReturn.userPerms = false }
+            return toReturn;
+        }
+    },
+
+    PATREON: async function(permission, local, guild, member) {
+        var toReturn = { userPerms: true, botPerms: true, master: false }
+        var specialGuild;
+        var specialRole;
+        
+        var looped = config.sharded && !guild.client.guilds.get(config.specialGuild.id);
+
+        if (looped) {
+            var results = await guild.client.shard.broadcastEval(`this.guilds.get('${config.specialGuild.id}')`);
+            for (var r = 0; r < results.length; r++) { if (results[r]) { specialGuild = results[r] } }
+        }
+
+        else { specialGuild = guild.client.guilds.get(config.specialGuild.id) }
+
+        if (specialGuild) {
+            if (config.specialGuild.roles[permission]) {
+                var specialRole;
+                if (looped) {
+                    var results = await guild.client.shard.broadcastEval(`var guild = this.guilds.get('${config.specialGuild.id}'); if (guild) { guild.roles.get('${config.specialGuild.roles[permission]}') }`);
+                    for (var r = 0; r < results.length; r++) { if (results[r]) { specialRole = results[r] } }
+                }
+
+                else { specialRole = specialGuild.roles.get(config.specialGuild.roles[permission]) }
+                if (specialRole) {
+                    var roleMember;
+                    if (looped) {
+                        var results = await guild.client.shard.broadcastEval(`var guild = this.guilds.get('${config.specialGuild.id}'); if (guild) { var role = guild.roles.get('${config.specialGuild.roles[permission]}'); if (role) { role.members.get('${member.id}') } }`);
+                        for (var r = 0; r < results.length; r++) { if (results[r]) { roleMember = results[r] } }
+                    }
+
+                    else { roleMember = specialRole.members.get(member.id) }
+                    if (!roleMember) { toReturn.userPerms = false }
+                }
+
+                else {
+                    toReturn.userPerms = false;
+                    console.error(`"${permission}" role (${config.specialGuild.roles[permission]}) was not found`);
+                }
+            }
+
+            else {
+                toReturn.userPerms = false;
+                console.error(`"${permission}" role was not defined in config`);
+            }
+        }
+
+        else {
+            toReturn.userPerms = false;
+            console.error(`special guild (${config.specialGuild.id}) was not found`);
+        }
+
+        return toReturn;
+    }
+}
 
 module.exports = {
     commands: {},
@@ -150,36 +239,29 @@ module.exports = {
 
     get: function(command) { if (module.exports.configs[command]) { return module.exports.configs[command] } },
 
-    hasPermission: function(permission, local, guild, member) {
-        var toReturn = {
-            userPerms: true,
-            botPerms: true,
-            master: false,
-        }
+    hasPermission: async function(permission, local, guild, member) {
+        var toReturn;
 
-        if (permission.startsWith('DISCORD.')) {
-            permission = permission.split('DISCORD.')[1];
-            if (Discord.Permissions.FLAGS[permission]) {
-                if (!member.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.userPerms = false }
-                if (!guild.me.hasPermission(Discord.Permissions.FLAGS[permission])) { toReturn.botPerms = false }
+        async function recur(obj, perm) {
+            var path = perm.split('.');
+            path = path.filter(Boolean);
+
+            if (obj[path[0]]) {
+                if (obj[path[0]] instanceof Function) {
+                    if (path[1]) { toReturn = await obj[path[0]](path[1], local, guild, member) }
+                    else { toReturn = await obj[path[0]](path[0], local, guild, member) }
+                }
+
+                else { var shifted = path.shift(); await recur(obj[shifted], path.join('.')) }
             }
         }
 
-        else if (permission.startsWith('BOT.')) {
-            permission = permission.split('BOT.')[1];
-            if (permission == 'MASTER') { if (member.user.id != masterID) { toReturn.userPerms = false; toReturn.master = true; } }
-            else if (permission == 'MANAGE') { if (!member.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR)) { toReturn.userPerms = false } }
-        }
-
-        else if (permission.startsWith('GUILD.')) {
-            permission = permission.split('GUILD.')[1];
-            if (member.user.id != guild.ownerID) { toReturn.userPerms = false }
-        }
+        await recur(permissions, permission);
 
         return toReturn;
     },
 
-    status: function(command, local, member, channel, guild) {
+    status: async function(command, local, member, channel, guild) {
         var config = module.exports.get(command.name);
         if (config) {
             var required = config.permissions;
@@ -200,9 +282,8 @@ module.exports = {
 
             for (b in blacklist) { if (blacklist[b] == command.name) { blacklisted = true } }
             if (whitelist.length != 0) { if (!whitelist.includes(member.id)) { whitelisted = false } }
-
             for (r in required) {
-                var permission = this.hasPermission(required[r], local, guild, member);
+                var permission = await this.hasPermission(required[r], local, guild, member);
                 if (!permission.userPerms) { missingPerm = true }
                 if (!permission.botPerms) { botUsable = false }
                 if (permission.master) { master = true }
