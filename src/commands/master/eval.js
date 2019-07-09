@@ -12,9 +12,9 @@ module.exports = {
         ]
     },
 
-    command: function(imports, parameters) {
+    command: async function(imports, parameters) {
         try {
-            var result = eval(parameters[0]);
+            var result = await eval(parameters[0]);
             if (result != undefined) {
                 if (typeof result == 'object') {
                     var object = JSON.stringify(result, null, 4);
