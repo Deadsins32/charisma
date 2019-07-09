@@ -39,7 +39,7 @@ var keys = {
 
 module.exports = {
     config: {
-        permissions: ['BOT.MANAGE'],
+        permissions: ['GUILD.MANAGE'],
         description: 'sets a local value to whatever you specify',
         hidden: false,
         nsfw: false,
