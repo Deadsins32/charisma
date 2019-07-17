@@ -1,0 +1,7 @@
+{
+    "name": "disk",
+    "emoji": ":cd:",
+    "value": 1000,
+    "shoppable": false,
+    "tags": ["media", "storage"]
+}

@@ -1,7 +1,7 @@
 {
     "name": "apple",
     "emoji": ":apple:",
-    "value": 10,
+    "value": 40,
     "shoppable": true,
     "tags": ["food", "fruit"]
 }

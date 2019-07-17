@@ -1,7 +1,7 @@
 {
     "name": "lemon",
     "emoji": ":lemon:",
-    "value": 50,
+    "value": 120,
     "shoppable": true,
-    "tags": ["food", "fruit"]
+    "tags": ["food", "fruit", "rare"]
 }

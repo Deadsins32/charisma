@@ -1,0 +1,10 @@
+{
+    "default": {
+        "fish": 500,
+        "tropical fish": 250,
+        "nothing": 100,
+        "loot bag": 50,
+        "comet goldfish": 25,
+        "disk": 1
+    }
+}

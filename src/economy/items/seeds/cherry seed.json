@@ -1,0 +1,12 @@
+{
+    "name": "cherry seed",
+    "emoji": ":cherries::seedling:",
+    "value": 135,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 129600000,
+    "harvestTime": 10800000,
+    "minYield": 6,
+    "maxYield": 9,
+    "tags": ["seed"]
+}
