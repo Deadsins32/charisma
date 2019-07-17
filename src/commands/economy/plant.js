@@ -23,15 +23,19 @@ module.exports = {
 
         if (item) {
             if (item.tags.includes('seed')) {
-                if (item.plantType == 'tree') {
-                    var date = new Date();
-                    var now = date.getTime();
-                    var itemName = item.name.split(' seed')[0];
-                    if (!imports.local.user.trees[itemName]) { imports.local.user.trees[itemName] = [] }
-                    imports.local.user.trees[itemName].push({ planted: now, harvestedLast: -1 });
-                    imports.Data.inventory.removeItem(imports.user.id, `${itemName} seed`);
-                    embed.setDescription(`you just planted an ${items[itemName].emoji} **${itemName} tree**`);
+                if (await imports.Data.inventory.hasItem(imports.user.id, item.name)) {
+                    if (item.plantType == 'tree') {
+                        var date = new Date();
+                        var now = date.getTime();
+                        var itemName = item.name.split(' seed')[0];
+                        if (!imports.local.user.trees[itemName]) { imports.local.user.trees[itemName] = [] }
+                        imports.local.user.trees[itemName].push({ planted: now, harvestedLast: -1 });
+                        await imports.Data.inventory.removeItem(imports.user.id, `${itemName} seed`);
+                        embed.setDescription(`you just planted a ${item.emoji}`);
+                    }
                 }
+
+                else { imports.local.user.cooldowns.plant = -1; embed.setDescription(`you don't have that item`) }
             }
 
             else { imports.local.user.cooldowns.plant = -1; embed.setDescription(`that item can't be planted`) }
