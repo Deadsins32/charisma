@@ -11,12 +11,12 @@ module.exports = {
         ]
     },
 
-    command: function(imports, parameters) {
+    command: async function(imports, parameters) {
         var embed = new Discord.RichEmbed();
         embed.setColor(imports.local.guild.colors.accent);
     
-        function parse(name) {
-            var status = imports.Command.status({name: name}, imports.local, imports.member, imports.channel, imports.guild);
+        async function parse(name) {
+            var status = await imports.Command.status({name: name}, imports.local, imports.member, imports.channel, imports.guild);
             if (status) {
                 if (status.userUsable && status.visible && !status.blacklisted && status.whitelisted) {
                     if (status.nsfw && !imports.channel.nsfw) { return false }
@@ -49,14 +49,19 @@ module.exports = {
             embed.addField(`description`, config.description, true);
             embed.addField(`usage`, `\`${imports.Command.syntax(imports.local.guild.config.prefix, parameters[0])}\``, true);
             if (config.tags) { embed.addField(`tags`, config.tags.join(', '), true) }
+            if (config.permissions.length > 0) {
+                var finalPermArr = new Array();
+                for (var p = 0; p < config.permissions.length; p++) { finalPermArr.push(`\`${config.permissions[p]}\``) }
+                embed.addField(`permissions`, finalPermArr.join(', '));
+            }
             embed.addField(`nsfw`, config.nsfw, true);
             return imports.channel.send(embed);
         }
     
         else {
             if (!tag && parameters[0] && isNaN(parameters[0])) { embed.setDescription(`no commands were found`); return imports.channel.send(embed) }
-            if (tag) { for (c in configs) { if (parse(c) && configs[c].tags && configs[c].tags.includes(parameters[0])) { list[c] = configs[c] } } }
-            else { for (c in configs) { if (parse(c)) { list[c] = configs[c] } } }
+            if (tag) { for (c in configs) { if (await parse(c) && configs[c].tags && configs[c].tags.includes(parameters[0])) { list[c] = configs[c] } } }
+            else { for (c in configs) { if (await parse(c)) { list[c] = configs[c] } } }
             var array = new Array();
             for (l in list) { array.push([l, list[l]]) }
             var maxPage = Math.ceil(array.length / 10) - 1;
