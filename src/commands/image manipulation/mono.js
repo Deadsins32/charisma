@@ -33,8 +33,7 @@ module.exports = {
         if (image) {
             imports.channel.startTyping();
             var data = gm(image.buffer, image.attachment.filename);
-
-            data.colors(2).monochrome().dither(true);
+            data.treeDepth(5).monochrome();
             
             var magikBuffer = await gmToBuffer(data);
 
