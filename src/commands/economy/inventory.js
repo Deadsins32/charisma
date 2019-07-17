@@ -23,13 +23,19 @@ module.exports = {
         }
 
         else {
-            var items = new Array();
             var inventory = await imports.Data.inventory.get(imports.user.id);
-            for (var i in inventory.items) { items.push(`${imports.Data.getItems()[i].emoji}x${inventory.items[i].count}`) }
-            embed.setDescription(items.join(' '));
+            
+            var keyItems = new Array();
+            for (var k in inventory.key) { keyItems.push(imports.Data.getItems()[k].emoji) }
+            if (keyItems.length == 0) { keyItems.push('no key items') }
+            embed.addField('key items', keyItems.join(' '));
+
+            var items = new Array();
+            for (var i in inventory.items) { items.push(`${imports.Data.getItems()[i].emoji}x${inventory.items[i]}`) }
+            if (items.length == 0) { items.push('nothing ;-;') }
+            embed.addField('inventory', items.join(' '));
         }
 
-        if (!embed.description) { embed.setDescription(`you don't have anything in your inventory`) }
         imports.channel.send(embed);
     }
 }
