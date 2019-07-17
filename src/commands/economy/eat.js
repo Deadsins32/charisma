@@ -1,6 +1,15 @@
 var Discord = require('discord.js');
 var emoji = require('node-emoji');
 
+var seedTable = {
+    "apple": 15,
+    "orange": 13,
+    "banana": 12,
+    "peach": 12,
+    "lemon": 10,
+    "cherry": 8
+}
+
 module.exports = {
     config: {
         permissions: [],
@@ -36,10 +45,14 @@ module.exports = {
     
                     else {
                         if (items[`${item.name} seed`]) {
-                            var randSeed = Math.floor(Math.random() * 15);
-                            if (randSeed == 0) {
-                                await imports.Data.inventory.addItem(imports.user.id, `${item.name} seed`);
-                                description = `${description} and found an ${items[`${item.name} seed`].emoji} **${item.name} seed**`;
+                            var patreonPerm = await imports.Command.hasPermission('PATREON.SPECTRE', imports.local, imports.guild, imports.member);
+                            if ((items[`${item.name} seed`].tags.includes('patreon') && patreonPerm.userPerms) || !items[`${item.name} seed`].tags.includes('patreon')) {
+                                var random = Math.floor(Math.random() * 100);
+                                var odds = seedTable[item.name];
+                                if (random < odds) {
+                                    await imports.Data.inventory.addItem(imports.user.id, `${item.name} seed`);
+                                    description = `${description} and found a ${items[`${item.name} seed`].emoji}`;
+                                }
                             }
                         }
                     }
