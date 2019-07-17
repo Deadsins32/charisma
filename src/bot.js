@@ -41,8 +41,10 @@ async function start() {
     else {
         var child_process = require('child_process');
         var child = child_process.spawn('node', ['src/shard.js']);
+        child.on('exit', function(code, signal) { console.log(`code: ${code}, signal: ${signal}`) })
+        child.on('error', function(error) { console.log(error) })
         child.stdout.pipe(process.stdout);
-        process.on('SIGINT', function() {}.bind());
+        process.on('SIGINT', function() { child.kill('SIGINT'); process.exit(); }.bind());
     }
 }
 
