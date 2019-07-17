@@ -24,7 +24,7 @@ module.exports = {
 
     getValue: function(item) {
         var toReturn;
-        if (item.shoppable) { toReturn = this.getPrice(item) * 0.75 }
+        if (item.shoppable) { toReturn = Math.floor(this.getPrice(item) * 0.75) }
         else { toReturn = item.value }
         toReturn = Math.floor(toReturn);
         return toReturn;
