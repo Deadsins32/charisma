@@ -155,7 +155,7 @@ module.exports = {
 
         number: function(input) {
             var output = { pass: true, value: null }
-            if (isNaN(input)) { output.pass = false }
+            if (isNaN(input) || parseInt(input) <= 0) { output.pass = false }
             else { output.value = parseInt(input) }
             return output;
         },
