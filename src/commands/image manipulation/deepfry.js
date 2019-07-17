@@ -35,8 +35,7 @@ module.exports = {
             
             try {
                 var data = gm(image.buffer, image.attachment.filename);
-
-                data.modulate(120, 10000).contrast(4).colors(8);
+                data.modulate(120, 400).contrast(10).quality(0.001).sharpen(10, 1);
             
                 var magikBuffer = await gmToBuffer(data);
 
