@@ -15,13 +15,14 @@ module.exports = {
         embed.setColor(imports.local.guild.colors.accent);
         if (imports.member.voiceChannel) {
             if (imports.member.voiceChannel.joinable) {
-                imports.music[imports.guild.id] = {
+                music.instances[imports.guild.id] = {
                     connection: await imports.member.voiceChannel.join(),
                     queue: new Array(),
-                    playing: false
+                    playing: false,
+                    volume: 100
                 }
     
-                imports.music[imports.guild.id].connection.on('error', function(error) {
+                music.instances[imports.guild.id].connection.on('error', function(error) {
                     console.error(error);
                     imports.music[imports.guild.id].connection.disconnect();
                     delete imports.music[imports.guild.id];

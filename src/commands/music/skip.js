@@ -16,9 +16,9 @@ module.exports = {
         if (imports.member.voiceChannel) {
             if (imports.guild.me.voiceChannel) {
                 if (imports.member.voiceChannel.id == imports.guild.me.voiceChannel.id) {
-                    if (imports.music[imports.guild.id].playing) {
-                        var title = imports.music[imports.guild.id].queue[0].title;
-                        imports.music[imports.guild.id].connection.dispatcher.end();
+                    if (music.instances[imports.guild.id].playing) {
+                        var title = music.instances[imports.guild.id].queue[0].title;
+                        music.instances[imports.guild.id].connection.dispatcher.end();
                         embed.setDescription(`skipped **'${title}'**`);
                         imports.channel.send(embed);
                     }

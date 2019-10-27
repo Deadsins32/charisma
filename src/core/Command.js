@@ -95,13 +95,13 @@ module.exports = {
     configs: {},
 
     methods: {
-        any: function(input) {
+        any: function(input, local, member, channel, guild) {
             var output = { pass: true, value: input };
             return output;
         },
 
-        mention: function(input) {
-            var output = { pass: true };
+        mention: function(input, local, member, channel, guild) {
+            var output = { pass: true }
             if (input.startsWith('<@')) {
                 var input = input.split('<@')[1].substring(0, input.split('<@')[1].length - 1);
                 if (input.startsWith('!')) {
@@ -110,22 +110,24 @@ module.exports = {
             }
 
             else {
-                output.pass = false;
+                var members = guild.members.filter(function(member) { return (member.nickname && member.nickname.toLowerCase().includes(input)) || member.user.username.toLowerCase().includes(input) });
+                if (members.array().length > 0) {
+                    var startsWith = members.filter(function(member) { return (member.nickname && member.nickname.toLowerCase().startsWith(input)) || member.user.username.toLowerCase().startsWith(input) });
+                    if (startsWith.array().length > 0) { input = startsWith.first().id }
+                    else if (members.array().length > 0) { input = members.first().id }
+                }
+
+                else { output.pass = false }
             }
 
-            if (output.pass) {
-                output.value = input;
-            }
-
-            else {
-                output.value = null;
-            }
+            if (output.pass) { output.value = input }
+            else { output.value = null }
 
             return output;
         },
 
-        channel: function(input) {
-            var output = { pass: true };
+        channel: function(input, local, member, channel, guild) {
+            var output = { pass: true }
             if (input.startsWith('<#')) {
                 var input = input.split('<#')[1].substring(0, input.split('<#')[1].length - 1);
                 if (input.startsWith('!')) {
@@ -134,6 +136,10 @@ module.exports = {
             }
 
             else {
+                var channels = guild.channels.filter(function(channel) { return channel.type == 'text' && channel.name.includes(input) });
+                var startsWith = channels.filter(function(channel) { return channel.name.startsWith(input) });
+                if (startsWith.array().length > 0) { input = startsWith.first().id }
+                else if (channels.array().length > 0) { input = channels.first().id }
                 output.pass = false;
             }
 
@@ -148,19 +154,19 @@ module.exports = {
             return output;
         },
 
-        string: function(input) {
+        string: function(input, local, member, channel, guild) {
             var output = { pass: true, value: input };
             return output;
         },
 
-        number: function(input) {
+        number: function(input, local, member, channel, guild) {
             var output = { pass: true, value: null }
             if (isNaN(input) || parseInt(input) <= 0) { output.pass = false }
             else { output.value = parseInt(input) }
             return output;
         },
 
-        color: function(input) {
+        color: function(input, local, member, channel, guild) {
             var output = { pass: true, value: null };
             var input = input.toLowerCase();
 
@@ -294,7 +300,7 @@ module.exports = {
                 }
             }
 
-            for (a in command.arguments) { parameters.push(this.methods[config.params[a].type](command.arguments[a]).value) }
+            for (a in command.arguments) { parameters.push(this.methods[config.params[a].type](command.arguments[a], local, member, channel, guild).value) }
             if (blacklisted || !whitelisted || missingPerm ) { userUsable = false }
 
             if (config.cooldown) {
@@ -335,7 +341,7 @@ module.exports = {
         }
     },
 
-    check: function(name, parameters) {
+    check: function(name, parameters, local, member, channel, guild) {
         var config = module.exports.get(name);
         if (config) {
             var requirements = 0;
@@ -351,7 +357,7 @@ module.exports = {
                 if (parameters.length <= config.params.length) { for (p in parameters) { if (p == parameters.length - 1) { if (!(parameters.length >= requirements)) { error = true } } } }
             }
             
-            if (parameters.length <= config.params.length) { for (p in parameters) { if (!module.exports.methods[config.params[p].type](parameters[p]).pass) { error = true } } }
+            if (parameters.length <= config.params.length) { for (p in parameters) { if (!module.exports.methods[config.params[p].type](parameters[p], local, member, channel, guild).pass) { error = true } } }
 
             else { error = true }
 

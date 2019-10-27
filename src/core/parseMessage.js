@@ -187,8 +187,8 @@ module.exports = async function(imports, message) {
             if (status.visible) {
                 if (status.userUsable) {
                     if (status.botUsable) {
-                        if (passthrough.Command.check(command.name, command.arguments)) {
-                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a]).value }
+                        if (passthrough.Command.check(command.name, command.arguments, local, passthrough.member, passthrough.channel, passthrough.guild)) {
+                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a], local, passthrough.member, passthrough.channel, passthrough.guild).value }
                             //var now = date.getTime();
                             //else { local.user.cooldowns[command.name] = now }
                             if (local.user.cooldowns[command.name]) {
@@ -235,8 +235,8 @@ module.exports = async function(imports, message) {
 
             else {
                 if (status.userUsable && status.botUsable) {
-                    if (passthrough.Command.check(command.name, command.arguments)) {
-                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a]).value }
+                    if (passthrough.Command.check(command.name, command.arguments, local, passthrough.member, passthrough.channel, passthrough.guild)) {
+                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a], local, passthrough.member, passthrough.channel, passthrough.guild).value }
                         if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
                         else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
                     }

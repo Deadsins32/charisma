@@ -204,8 +204,6 @@ module.exports = {
 
             if (!inventory.obtained[item]) { inventory.obtained[item] = 1 }
             else { inventory.obtained[item] += 1 }
-
-            console.log(inventory.obtained);
             
             await rethink.db('charisma').table('inventories').get(id).replace(inventory).run(connection);
         },

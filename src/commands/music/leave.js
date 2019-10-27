@@ -17,8 +17,8 @@ module.exports = {
         if (imports.guild.me.voiceChannel) {
             if (imports.member.voiceChannel) {
                 if (imports.guild.me.voiceChannel.id == imports.member.voiceChannel.id) {
-                    imports.music[imports.guild.id].connection.disconnect();
-                    delete imports.music[imports.guild.id];
+                    music.instances[imports.guild.id].connection.disconnect();
+                    delete music.instances[imports.guild.id];
                     embed.setDescription(`left the channel`);
                 }
     

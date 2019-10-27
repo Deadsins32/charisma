@@ -38,7 +38,7 @@ module.exports = {
                     var description = `you ate a ${item.emoji}`;
                     var randMoney = Math.floor(Math.random() * 5);
                     if (randMoney == 0) {
-                        var money = Math.floor(Math.random() * 200) + 10;
+                        var money = Math.floor(Math.random() * (200 + item.value)) + (Math.floor(item.value / 4));
                         await imports.Data.inventory.addMoney(imports.user.id, money);
                         description = `${description} and found **$${money}**`;
                     }

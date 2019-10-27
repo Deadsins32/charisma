@@ -18,8 +18,8 @@ module.exports = {
         if (imports.member.voiceChannel) {
             if (imports.guild.me.voiceChannel) {
                 if (imports.member.voiceChannel.id == imports.guild.me.voiceChannel.id) {
-                    var queue = imports.music[imports.guild.id].queue;
-
+                    var queue = music.instances[imports.guild.id].queue;
+                    
                     if (queue.length == 0) { embed.setDescription(`there's no music in the queue`) }
                     else if (queue.length > 10) {
                         var maxPage = Math.ceil(queue.length / 10) - 1;
