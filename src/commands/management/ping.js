@@ -12,7 +12,7 @@ module.exports = {
 
     command: async function(imports) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         embed.setDescription('pinging...');
     
         var timestamp1 = Date.now();
@@ -20,7 +20,7 @@ module.exports = {
         var timestamp2 = Date.now();
     
         var newEmbed = new Discord.RichEmbed();
-        newEmbed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        newEmbed.setColor(imports.local.guild.colors.accent);
         newEmbed.setDescription(`${timestamp2 - timestamp1}ms`);
         message.edit(newEmbed);
     }

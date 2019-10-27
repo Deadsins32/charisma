@@ -1,0 +1,7 @@
+{
+    "name": "strawberry",
+    "emoji": ":strawberry:",
+    "value": 60,
+    "shoppable": true,
+    "tags": ["food", "fruit"]
+}

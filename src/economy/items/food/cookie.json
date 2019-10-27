@@ -1,0 +1,7 @@
+{
+    "name": "cookie",
+    "emoji": ":cookie:",
+    "value": 100,
+    "shoppable": true,
+    "tags": ["food", "uncommon"]
+}

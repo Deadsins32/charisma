@@ -15,7 +15,7 @@ async function save(imports) {
 }
 
 module.exports = async function(imports) {
-    process.on('SIGINT', async function() {
+    /*process.on('SIGINT', async function() {
         var connections = imports.client.voiceConnections.array();
         for (var c = 0; c < connections.length; c++) { connections[c].disconnect() }
         await save(imports);
@@ -27,5 +27,5 @@ module.exports = async function(imports) {
 
     setInterval(async function() {
         await save(imports);
-    }, 1800000);
+    }, 1800000);*/
 }

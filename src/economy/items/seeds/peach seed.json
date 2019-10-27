@@ -1,0 +1,12 @@
+{
+    "name": "peach seed",
+    "emoji": ":peach::seedling:",
+    "value": 200,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 172800000,
+    "harvestTime": 14400000,
+    "minYield": 5,
+    "maxYield": 7,
+    "tags": ["seed"]
+}

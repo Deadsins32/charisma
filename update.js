@@ -1,5 +1,7 @@
 var io = require('socket.io-client');
-var socket = io.connect('http://localhost:531');
+var config = require('./config.json');
+
+var socket = io.connect(`http://${config.hostIp}:${config.hostPort}`);
 
 var nodePath = require('path');
 var syncFs = require('./src/core/syncFs.js');
@@ -12,11 +14,8 @@ var excluded = [
     'node_modules/',
     'docs/',
     'patreon/',
-    'data/guilds/',
-    'data/users/',
-    'data/defaults.json',
+    'src/config/config.json',
     'avatar.png',
-    'update.js'
 ]
 
 async function scavenge(path) {
@@ -49,9 +48,13 @@ socket.on('connect', async function() {
         socket.emit('fulfill', path, await syncFs.readFile(path));
     });
 
-    socket.on('done', function() {
-        console.log('finished all file transfers');
-        socket.disconnect();
+    socket.on('doneFiles', function() {
+        console.log('finished all file transfers... starting install script');
+        socket.emit('npmInstall');
+    });
+
+    socket.on('botStart', function() {
+        console.log('finished install script... starting bot');
+        socket.close();
     });
 });
-

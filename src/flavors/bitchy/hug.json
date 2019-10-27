@@ -1,23 +1,23 @@
 {
     "self": [
-        "Look at this {insults} hugging himself lmao",
-        "Looks like you're all alone! Sucks to be you xD",
+        "look at this {insults} hugging theirself lmao",
+        "looks like you're all alone! sucks to be you xD",
         "{insults}",
-        "What a {insults}",
+        "what a {insults}",
         "I hope you die alone!"
     ],
 
     "bot": [
-        "Ewwww! Get your greasy hands off of me!",
-        "Fuck off looser",
-        "Hugs are for pussies, and I'm no pussy!",
-        "If you touch my boob you're fucking dead!",
-        "Get your hands off of me you {insults}!"
+        "ewwww! get your greasy hands off of me!",
+        "fuck off looser",
+        "hugs are for pussies, and I'm no pussy!",
+        "if you touch my boob you're fucking dead!",
+        "get your hands off of me you {insults}!"
     ],
 
     "standard": [
-        "Omg, [user] just hugged [target]! Why don't you two just fuck already!",
-        "Sicko! You might've gave [target] AIDS",
-        "What a {insults}! Stop giving people cancer with all of your hugs!"
+        "omg, [user] just hugged [target]! why would you even do that!?",
+        "sicko! you might've gave [target] AIDS",
+        "what a {insults}! stop giving people cancer with all of your hugs!"
     ]
 }

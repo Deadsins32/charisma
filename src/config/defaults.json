@@ -1,0 +1,72 @@
+{
+    "guild": {
+        "config": {
+            "flavor": "upbeat",
+            "expcurve": 2.2,
+            "logchannel": "",
+            "autorole": ""
+        },
+
+        "colors": {
+            "logs": {
+                "joins": "#42F49B",
+                "leaves": "#F44141",
+                "nicknamechanges": "#41EEF4",
+                "namechanges": "#418EF4"
+            }
+        },
+
+        "options": {
+            "leveling": false,
+            "logs": {
+                "joins": false,
+                "leaves": false,
+                "nicknamechanges": false,
+                "namechanges": false,
+                "bans": false
+            }
+        },
+
+        "selfroles": [],
+        "whitelist": {},
+        "blacklist": {},
+        "members": {}
+    },
+
+    "user": {
+        "achievements": [],
+        "badges": [],
+        "inventory": {},
+        "color": "#ADCAFF",
+        "daily": -1,
+        "exp": 0,
+        "karma": 0,
+        "cooldowns": {},
+        "trees": {}
+    },
+
+    "member": {
+        "exp": 0,
+        "karma": 0
+    },
+
+    "inventory": {
+        "currency": 0,
+        "items": {},
+        "key": {},
+        "obtained": {},
+        "containers": {}
+    },
+
+    "variations": {
+        "lavender": {
+            "prefix": "//",
+            "accent": "#9DA0CB"
+        },
+
+        "spectre": {
+            "prefix": "s/",
+            "accent": "#ADCAFF"
+        }
+    }
+}

@@ -47,7 +47,7 @@ module.exports = {
             var isDirectory = stats.isDirectory();
             if (isDirectory) {
                 var embed = new Discord.RichEmbed();
-                embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+                embed.setColor(imports.local.guild.colors.accent);
     
                 var items = await getDirectory(path);
     
@@ -72,7 +72,7 @@ module.exports = {
     
         else {
             var embed = new Discord.RichEmbed();
-            embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+            embed.setColor(imports.local.guild.colors.accent);
             embed.setDescription('the specified file or directory does not exist');
             imports.channel.send(embed);
         }

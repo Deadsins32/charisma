@@ -1,0 +1,7 @@
+{
+    "name": "tropical fish",
+    "emoji": ":tropical_fish:",
+    "value": 100,
+    "shoppable": false,
+    "tags": ["fishing"]
+}

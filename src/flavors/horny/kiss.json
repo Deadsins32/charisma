@@ -1,7 +1,7 @@
 {
     "self": [
         "owo, I love it when you kiss yourself",
-        "Can I join in...?",
+        "can I join in...?",
         "Tasty!",
         "Yum!",
         "I'd totally kiss you right up if you know what I mean :smirk:",
@@ -9,7 +9,7 @@
     ],
 
     "bot": [
-        "Let's do this all day every day!",
+        "let's do this all day every day!",
         "I love it when you kiss me!",
         "KISS ME MOOORE!",
         "I want kisses! GIVE ME MORE KISSES!"
@@ -17,8 +17,8 @@
 
     "standard": [
         "owo, [user] just gave [target] a nice big smooch~!",
-        "[target] was just kissed by [user]. That's kinda hot.",
-        "Tasty! [target] just got a kiss from [user]",
-        "Sexy. [user] just kissed [target], owo"
+        "[target] was just kissed by [user]. that's kinda hot.",
+        "tasty! [target] just got a kiss from [user]",
+        "sexy! [user] just kissed [target], owo"
     ]
 }

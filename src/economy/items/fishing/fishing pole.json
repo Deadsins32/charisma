@@ -1,0 +1,7 @@
+{
+    "name": "fishing pole",
+    "emoji": ":fishing_pole_and_fish:",
+    "value": 2000,
+    "shoppable": true,
+    "tags": ["tool", "rare", "key"]
+}

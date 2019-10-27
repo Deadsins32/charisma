@@ -39,7 +39,7 @@ module.exports = {
     command: function(imports, parameters) {
         Math.seedrandom(parameters[0]);
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
         embed.setDescription(responses[Math.floor(Math.random() * responses.length)]);
         imports.channel.send(embed);
     }

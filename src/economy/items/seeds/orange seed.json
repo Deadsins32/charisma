@@ -1,0 +1,12 @@
+{
+    "name": "orange seed",
+    "emoji": ":tangerine::seedling:",
+    "value": 135,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 93600000,
+    "harvestTime": 21600000,
+    "minYield": 2,
+    "maxYield": 5,
+    "tags": ["seed"]
+}

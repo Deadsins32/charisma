@@ -1,0 +1,12 @@
+{
+    "name": "banana seed",
+    "emoji": ":banana::seedling:",
+    "value": 120,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 108000000,
+    "harvestTime": 16200000,
+    "minYield": 3,
+    "maxYield": 6,
+    "tags": ["seed"]
+}

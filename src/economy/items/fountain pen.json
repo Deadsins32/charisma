@@ -1,0 +1,7 @@
+{
+    "name": "fountain pen",
+    "emoji": ":pen_fountain:",
+    "value": 500,
+    "shoppable": true,
+    "tags": ["tool", "writing", "elusive"]
+}

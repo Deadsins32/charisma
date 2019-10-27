@@ -1,14 +1,14 @@
 {
     "self": [
         "*sigh*",
-        "I wish I could help you...",
+        "i wish i could help you...",
         "sorry...",
-        "I'm sorry life is this way..."
+        "im sorry life is this way..."
     ],
 
     "bot": [
         "ummm... I don't know what to say...",
-        "I-I've never been kissed like that before...",
+        "i-ive never been kissed like that before...",
         "t-thanks...",
         "w-was that intentional...?"
     ],
@@ -16,7 +16,7 @@
     "standard": [
         "[user] just gave [target] a kiss... how nice...",
         "[target] just got a kiss from [user]...",
-        "that's nice... [user] just kissed [target]...",
+        "thats nice... [user] just kissed [target]...",
         "[target] was just kissed by [user]..."
     ]
 }

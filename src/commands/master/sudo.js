@@ -69,7 +69,7 @@ module.exports = {
             member: member,
             channel: imports.channel,
             guild: imports.guild,
-            content: imports.data.guilds[imports.guild.id].config.prefix + parameters[1]
+            content: imports.local.guild.config.prefix + parameters[1]
         }
     
         var stringFunction = messageParser.replaceAll("'", '@').replaceAll('"', "'").replaceAll('@', '"');

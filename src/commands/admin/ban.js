@@ -22,7 +22,7 @@ module.exports = {
         var days = 0;
     
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         if (arguments[1] != undefined) {
             reason = arguments[1];

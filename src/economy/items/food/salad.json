@@ -1,0 +1,7 @@
+{
+    "name": "salad",
+    "emoji": ":salad:",
+    "value": 100,
+    "shoppable": false,
+    "tags": ["food", "vegetable"]
+}

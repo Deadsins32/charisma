@@ -1,0 +1,7 @@
+{
+    "name": "fish",
+    "emoji": ":fish:",
+    "value": 20,
+    "shoppable": false,
+    "tags": ["fishing"]
+}

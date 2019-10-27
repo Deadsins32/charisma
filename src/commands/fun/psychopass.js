@@ -69,7 +69,7 @@ module.exports = {
         }
     
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         if (title) { description = `${title}\n${description}` }
         embed.setDescription(description);

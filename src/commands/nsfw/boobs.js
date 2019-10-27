@@ -15,7 +15,7 @@ module.exports = {
 
     command: function(imports, parameters) {
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.data.guilds[imports.guild.id].colors.accent);
+        embed.setColor(imports.local.guild.colors.accent);
     
         if (parameters[0] == 'gif') {
             https.get('https://nekos.life/api/v2/img/boobs', function(response) {

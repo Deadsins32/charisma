@@ -6,13 +6,6 @@ function clone(obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
 
-    // Handle Date
-    if (obj instanceof Date) {
-        copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
-    }
-
     // Handle Array
     if (obj instanceof Array) {
         copy = [];
@@ -42,82 +35,112 @@ function percentageOf(num, percentage) {
     return (percentage / 100) * num;
 }
 
+function parseDate(milliseconds) {
+    var seconds = Math.floor(milliseconds / 1000);
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    var hours = Math.floor(minutes / 60);
+    minutes = minutes % 60;
+    var days = Math.floor(hours / 24);
+    hours = hours % 24;
+    var weeks = Math.floor(days / 7);
+    days = days % 7;
+    var months = Math.floor(weeks / 4);
+    weeks = weeks % 4;
+    var years = Math.floor(months / 12);
+    months = months % 12;
+
+    var suffixes = ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds'];
+    var values = [years, months, weeks, days, hours, minutes, seconds];
+    var suffs = new Array();
+    var vals = new Array();
+
+    for (v in values) {
+        if (values[v] != 0) {
+            suffs.push(suffixes[v]);
+            vals.push(values[v]);
+        }
+    }
+
+    var arr = new Array();
+    for (var v = 0; v < values.length; v++) {
+        if (values[v] != 0) {
+            var suffix = suffixes[v];
+            if (values[v] == 1) { suffix = suffix.slice(0, -1) }
+            arr.push(`${values[v]} ${suffix}`);
+        }
+    }
+
+    var toReturn = arr.join(', ');
+    return toReturn;
+}
+
 module.exports = async function(imports, message) {
     if (message.author.bot) { return }
+    var guild = await imports.Data.getGuild(message.guild.id);
+    var guildChanged = false;
     if (imports.client.user.id != message.author.id) {
-        if (!imports.data.guilds[message.guild.id]) { imports.data.guilds[message.guild.id] = clone(imports.data.defaults.guild) }
-        else {
-            for (g in imports.data.defaults.guilds) {
-                if (!imports.data.guilds[message.guild.id][g]) { imports.data.guilds[message.guild.id][g] = clone(imports.data.defaults.guilds[g]) }
-            }
-        }
+        function iterate(base, obj) {
+            for (b in base) {
+                if (!obj[b]) {
+                    if (Array.isArray(base[b])) {
+                        obj[b] = new Array();
+                        for (var i = 0; i < base[b].length; i++) {  obj[b].push(base[b][i]) }
+                    }
 
-        if (!imports.data.guilds[message.guild.id].members[message.author.id]) {
-            imports.data.guilds[message.guild.id].members[message.author.id] = clone(imports.data.defaults.member);
-        }
+                    else if (typeof base[b] === 'object' && base[b] !== null) {
+                        obj[b] = new Object();
+                        iterate(base[b], obj[b]);
+                    }
 
-        else {
-            for (m in imports.data.defaults.member) {
-                if (!imports.data.guilds[message.guild.id].members[message.author.id][m]) {
-                    imports.data.guilds[message.guild.id].members[message.author.id][m] = clone(imports.data.defaults.member[m]);
+                    else { obj[b] = base[b] }
                 }
             }
         }
 
-        if (!imports.data.users[message.author.id]) { imports.data.users[message.author.id] = clone(imports.data.defaults.user) }
+        iterate(imports.defaults.guilds, guild);
+        if (!guild.members[message.author.id]) { guild.members[message.author.id] = clone(imports.defaults.member) }
+        else { iterate(imports.defaults.member, guild.members[message.author.id]) }
 
-        else {
-            for (u in imports.data.defaults.user) {
-                if (!imports.data.users[message.author.id][u]) { imports.data.users[message.author.id][u] = clone(imports.data.defaults.user[u]) }
-            }
-        }
+        var user = await imports.Data.getUser(message.author.id);
+        iterate(imports.defaults.user, user);
     }
 
     var local = {
-        guild: {
-            id: message.guild.id,
-            data: imports.data.guilds[message.guild.id]
-        },
-
-        member: {
-            id: message.author.id,
-            data: imports.data.guilds[message.guild.id].members[message.author.id]
-        },
-
-        user: {
-            id: message.author.id,
-            data: imports.data.users[message.author.id]
-        },
-
-        blacklist: imports.data.guilds[message.guild.id].blacklist,
-        whitelist: imports.data.guilds[message.guild.id].whitelist
+        guild: guild,
+        user: user,
+        member: guild.members[message.author.id]
     }
 
-    imports.guild = message.guild;
-    imports.channel = message.channel;
-    imports.user = message.author;
-    imports.member = message.member;
-    imports.message = message;
-    imports.blacklist = imports.data.guilds[message.guild.id].blacklist;
-    imports.local = local;
+    var passthrough = new Object();
+    for (var i in imports) { passthrough[i] = imports[i] }
 
-    if (message.content.startsWith(local.guild.data.config.prefix)) {
+    passthrough.guild = message.guild;
+    passthrough.channel = message.channel;
+    passthrough.user = message.author;
+    passthrough.member = message.member;
+    passthrough.message = message;
+    passthrough.blacklist = guild.blacklist;
+    passthrough.local = local;
+
+    if (message.content.startsWith(local.guild.config.prefix)) {
         var content;
 
-        if (imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]) {
-            content = message.content.replace(message.content.slice(local.guild.data.config.prefix.length).split(' ')[0], imports.shorthands[message.content.slice(local.guild.data.config.prefix.length).split(' ')[0]]);
+        if (passthrough.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]) {
+            content = message.content.replace(message.content.slice(local.guild.config.prefix.length).split(' ')[0], passthrough.shorthands[message.content.slice(local.guild.config.prefix.length).split(' ')[0]]);
         }
 
         else {
             content = message.content;
         }
 
-        var name = content.slice(local.guild.data.config.prefix.length).split(' ')[0];
-        if (imports.aliases[name]) { name = imports.aliases[name] }
+        var name = content.slice(local.guild.config.prefix.length).split(' ')[0].toLowerCase();
+        var full = name + content.slice(local.guild.config.prefix.length + name.length)
+        if (passthrough.aliases[name]) { name = passthrough.aliases[name] }
 
         var command = {
-            object: imports.Command.get(name),
-            full: content.slice(local.guild.data.config.prefix.length),
+            object: passthrough.Command.get(name),
+            full: full,
             name: name,
             arguments: new Array()
         }
@@ -126,7 +149,7 @@ module.exports = async function(imports, message) {
         command.full = command.full.replace(/("([^"]|"")*")/g, '[s]');
 
         var embed = new Discord.RichEmbed();
-        embed.setColor(imports.local.guild.data.colors.accent);
+        embed.setColor(passthrough.local.guild.colors.accent);
 
         if (command.object) {
             if (command.full.split(' ').length - 1 > command.object.params.length) {
@@ -142,7 +165,7 @@ module.exports = async function(imports, message) {
             var longArguments2 = command.full.match(/("([^"]|"")*")/g);
             command.full = command.full.replace(/("([^"]|"")*")/g, '[ss]');
 
-            command.arguments = command.full.slice(local.guild.data.config.prefix.length + command.name + 1).split(' ');
+            command.arguments = command.full.slice(local.guild.config.prefix.length + command.name + 1).split(' ');
 
             var s = 0;
             var ss = 0;
@@ -160,61 +183,87 @@ module.exports = async function(imports, message) {
 
             command.arguments.splice(0, 1);
             
-            if (imports.Command.check(command.name, command.arguments)) {
-                var status = imports.Command.status(command, local, message.member, message.channel, message.guild);
-                if (status) {
-                    for (p in status.parameters) { command.arguments[p] = status.parameters[p] }
-                    if (status.master) {
-                        if ((status.nsfw && message.channel.nsfw) || !status.nsfw) {
-                            if (imports.Command.commands[command.name].constructor.name === 'AsyncFunction') { await imports.Command.commands[command.name](imports, command.arguments) }
-                            else { imports.Command.commands[command.name](imports, command.arguments) }
-                        }
-                        else { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
-                    }
-
-                    else {
-                        if (status.userUsable && status.botUsable) { imports.Command.commands[command.name](imports, command.arguments) }
-
-                        else {
-                            if (status.visible) {
-                                if (!status.userUsable) {
-                                    if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
-                                    else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
-                                    else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
-                                    else if (status.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
-                                }
-
-                                else { if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) } }
+            var status = await passthrough.Command.status(command, local, passthrough.member, passthrough.channel, passthrough.guild);
+            if (status.visible) {
+                if (status.userUsable) {
+                    if (status.botUsable) {
+                        if (passthrough.Command.check(command.name, command.arguments, local, passthrough.member, passthrough.channel, passthrough.guild)) {
+                            for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a], local, passthrough.member, passthrough.channel, passthrough.guild).value }
+                            //var now = date.getTime();
+                            //else { local.user.cooldowns[command.name] = now }
+                            if (local.user.cooldowns[command.name]) {
+                                var date = new Date();
+                                var now = date.getTime();
+                                local.user.cooldowns[command.name] = now;
                             }
 
-                            else { embed.setDescription(`command not found`) }
+                            if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            //if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                            //else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                        }
+
+                        else {
+                            embed.setTitle(`invalid syntax`);
+                            embed.setDescription(`usage:\n\`${passthrough.Command.syntax(local.guild.config.prefix, command.name)}\``);
+                        }
+                    }
+                }
+
+                else {
+                    if (!status.master) {
+                        if (status.nsfw && !passthrough.channel.nsfw) { embed.setDescription(`you need to be in an nsfw channel to use that command`) }
+                        else if (!status.whitelisted) { embed.setDescription(`you need to be whitelisted to use that command`) }
+                        else if (status.blacklisted) { embed.setDescription(`you are blacklisted from using that command`) }
+                        else if (status.missingPerm) { embed.setDescription(`you don't have permission to use that command`) }
+                        else if (!status.botUsable) { embed.setDescription(`I don't have permission to do that`) }
+                        else if (status.cooldown) {
+                            var date = new Date();
+                            var now = date.getTime();
+                            var usedWhen = user.cooldowns[command.name];
+                            var difference = command.object.cooldown - (now - usedWhen);
+                            //if (difference < config.cooldown) { local.user.cooldowns[command.name] = now; cooldown = true; userUsable = false; }
+                            var parsed = parseDate(difference);
+                            if (parsed == '') { parsed = '1 second' }
+                            embed.setDescription(`you can use that command again in **${parsed}**`);
                         }
                     }
 
-                    if (embed.description) { message.channel.send(embed) }
+                    else { embed.setDescription(`command not found`) }
                 }
             }
 
             else {
-                embed.setTitle(`invalid syntax`);
-                embed.setDescription(`usage:\n\`${imports.Command.syntax(local.guild.data.config.prefix, command.name)}\``);
-                message.channel.send(embed);
+                if (status.userUsable && status.botUsable) {
+                    if (passthrough.Command.check(command.name, command.arguments, local, passthrough.member, passthrough.channel, passthrough.guild)) {
+                        for (var a = 0; a < command.arguments.length; a++) { command.arguments[a] = passthrough.Command.methods[command.object.params[a].type](command.arguments[a], local, passthrough.member, passthrough.channel, passthrough.guild).value }
+                        if (passthrough.Command.commands[command.name].constructor.name === 'AsyncFunction') { await passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                        else { passthrough.Command.commands[command.name](passthrough, command.arguments) }
+                    }
+
+                    else {
+                        embed.setTitle(`invalid syntax`);
+                        embed.setDescription(`usage:\n\`${passthrough.Command.syntax(local.guild.config.prefix, command.name)}\``);
+                    }
+                }
+
+                else { embed.setDescription(`command not found`) }
             }
         }
 
-        else {
-            embed.setDescription(`command not found`);
-            message.channel.send(embed);
-        }
+        else { embed.setDescription(`command not found`) }
+        if (embed.description) { message.channel.send(embed) }
     }
 
     else {
-        //Math.floor(Math.random() * (max - min + 1)) + min;
         var experience = randBetween(90, 120);
         var length = message.content.length;
         var letterExp = Math.floor(percentageOf(length, 50));
         experience += letterExp;
 
-        imports.Experience.add(imports, message.member, experience);
+        passthrough.Experience.add(passthrough, message.member, experience);
     }
+
+    await passthrough.Data.replaceGuild(message.guild.id, passthrough.local.guild);
+    await passthrough.Data.replaceUser(message.author.id, passthrough.local.user);
 }

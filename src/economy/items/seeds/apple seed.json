@@ -1,0 +1,12 @@
+{
+    "name": "apple seed",
+    "emoji": ":apple::seedling:",
+    "value": 100,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 86400000,
+    "harvestTime": 18000000,
+    "minYield": 2,
+    "maxYield": 5,
+    "tags": ["seed"]
+}

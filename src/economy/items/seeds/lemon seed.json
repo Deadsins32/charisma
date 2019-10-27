@@ -1,0 +1,12 @@
+{
+    "name": "lemon seed",
+    "emoji": ":lemon::seedling:",
+    "value": 300,
+    "shoppable": false,
+    "plantType": "tree",
+    "growthTime": 86400000,
+    "harvestTime": 10800000,
+    "minYield": 4,
+    "maxYield": 7,
+    "tags": ["seed", "patreon"]
+}
