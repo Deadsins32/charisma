@@ -1,46 +1,18 @@
-[
-    { "name": "intensepink", "value": "#FF0040" },
-    { "name": "flameorange", "value": "#FF4000" },
-    { "name": "pear", "value": "#40FF00" },
-    { "name": "softgreen", "value": "#00FF40" },
-    { "name": "electricblue", "value": "#0040FF" },
-    { "name": "blueglow", "value": "#4000FF" },
-
-    { "name": "magenta", "value": "#FF00FF" },
-    { "name": "red", "value": "#FF0000" },
-    { "name": "yellow", "value": "#FFFF00" },
-    { "name": "green", "value": "#00FF00" },
-    { "name": "cyan", "value": "#00FFFF" },
-    { "name": "blue", "value": "#0000FF" },
-
-    { "name": "hotpink", "value": "#FF0080" },
-    { "name": "orange", "value": "#FF8000" },
-    { "name": "turquoise", "value": "#00FF80" },
-    { "name": "lime", "value": "#80FF00" },
-    { "name": "aqua", "value": "#0080FF" },
-    { "name": "violet", "value": "#8000FF" },
-
-    { "name": "purple", "value": "#800080" },
-    { "name": "scarlet", "value": "#800000" },
-    { "name": "gold", "value": "#808000" },
-    { "name": "fern", "value": "#008000" },
-    { "name": "teal", "value": "#008080" },
-    { "name": "navy", "value": "#000080" },
-
-    { "name": "velvet", "value": "#800040" },
-    { "name": "brown", "value": "#804000" },
-    { "name": "olive", "value": "#408000" },
-    { "name": "evergreen", "value": "#008040" },
-    { "name": "deepsea", "value": "#004080" },
-    { "name": "royalpurple", "value": "#400080" },
-
-    { "name": "plump", "value": "#400040" },
-    { "name": "blood", "value": "#400000" },
-    { "name": "aurum", "value": "#404000" },
-    { "name": "cactus", "value": "#004000" },
-    { "name": "steelblue", "value": "#004040" },
-    { "name": "midnight", "value": "#000040" },
-
-    { "name": "white", "value": "#FFFFFF" },
-    { "name": "black", "value": "#000000" }
-]
+{
+    "ready": [1, 2, 5],
+    "success": [0, 5, 1],
+    "warning": [5, 5, 1],
+    "error": [5, 1, 1],
+    "log": [2, 5, 5],
+    "highlighting": {
+        "string": [5, 2, 1],
+        "number": [5, 2, 4],
+        "boolean": [4, 3, 1],
+        "special": [0, 2, 5],
+        "regexp": [4, 0, 0],
+        "date": [0, 5, 4],
+        "undefined": [2, 10],
+        "null": [2, 10],
+        "name": [2, 18]
+    }
+}

@@ -1,0 +1,1 @@
+module.exports = function(input) { if (!isNaN(input)) { return eval(input) } }

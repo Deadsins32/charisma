@@ -1,11 +1,4 @@
-src/config/config.json
-
-data/defaults.json
-data/guilds/*
-data/users/*
-
-!data/users/.gitkeep
-!data/guilds/.gitkeep
+berry.json
 
 logs
 *.log

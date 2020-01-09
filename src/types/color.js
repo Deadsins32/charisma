@@ -1,0 +1,1 @@
+module.exports = function(input) { if (imports.Command.methods.color(input).pass) { embed.setColor(input); return input } }

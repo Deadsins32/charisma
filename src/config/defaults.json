@@ -3,10 +3,17 @@
         "config": {
             "flavor": "upbeat",
             "expcurve": 2.2,
-            "logchannel": "",
-            "autorole": ""
+            "autorole": null,
+            "channels": {
+                "logs": null
+            }
         },
 
+        "selfroles": [],
+        "members": {},
+        "whitelist": {},
+        "blacklist": {},
+        
         "colors": {
             "logs": {
                 "joins": "#42F49B",
@@ -17,6 +24,10 @@
         },
 
         "options": {
+            "errors": {
+                "unknownCommands": true
+            },
+
             "leveling": false,
             "logs": {
                 "joins": false,
@@ -25,12 +36,7 @@
                 "namechanges": false,
                 "bans": false
             }
-        },
-
-        "selfroles": [],
-        "whitelist": {},
-        "blacklist": {},
-        "members": {}
+        }
     },
 
     "user": {
@@ -51,11 +57,10 @@
     },
 
     "inventory": {
-        "currency": 0,
+        "balance": 0,
         "items": {},
         "key": {},
-        "obtained": {},
-        "containers": {}
+        "obtained": {}
     },
 
     "variations": {

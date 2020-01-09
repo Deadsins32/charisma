@@ -1,0 +1,1 @@
+module.exports = function(input) { if (input.toLowerCase() == 'true') { return true } else if (input.toLowerCase() == 'false') { return false } }

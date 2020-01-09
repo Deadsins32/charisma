@@ -3,9 +3,6 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 }
 
-var Discord = require('discord.js');
-var messageParser = require('./../../core/parseMessage.js').toString();
-
 function clone(obj) {
     var copy;
 
@@ -56,14 +53,15 @@ module.exports = {
         hidden: false,
         nsfw: false,
         params: [
-            { type: 'mention', required: true, name: 'possession' },
+            { type: 'mention', required: true, name: 'possessionee' },
             { type: 'string', required: true, name: 'command' }
         ]
     },
 
     command: function(imports, parameters) {
+        let parseMessage = imports.parseMessage;
         var member = imports.guild.members.get(parameters[0]);
-    
+
         var message = {
             author: member.user,
             member: member,
@@ -71,10 +69,7 @@ module.exports = {
             guild: imports.guild,
             content: imports.local.guild.config.prefix + parameters[1]
         }
-    
-        var stringFunction = messageParser.replaceAll("'", '@').replaceAll('"', "'").replaceAll('@', '"');
-        eval('var messageFunction = ' + stringFunction);
-    
-        messageFunction(imports, message);
+
+        parseMessage(imports, message);
     }
 }

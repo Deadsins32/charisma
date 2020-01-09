@@ -1,0 +1,10 @@
+{
+    "sharding": false,
+    "modular": false,
+    "logs": {
+        "showOriginFile": true,
+        "errorWeight": 1,
+        "warnWeight": 1,
+        "infoWeight": 1
+    }
+}

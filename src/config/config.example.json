@@ -1,7 +1,0 @@
-{
-    "invite": "bot invite url",
-    "token": "bot token",
-    "googleApiKey": "google api key for youtube",
-    "master": "bot master id",
-    "sharded": true
-}
