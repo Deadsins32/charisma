@@ -8,6 +8,7 @@ http.createServer(function (request, response) {
     if (filePath == './') { filePath = './index.html' }
 
     let extname = path.extname(filePath);
+    let contentType = 'text/html';
     switch (extname) {
         case '.js':
             contentType = 'text/javascript';
