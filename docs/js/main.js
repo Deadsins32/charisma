@@ -38,9 +38,11 @@ function getUrlVars() {
     return vars;
 }
 
-function getUrlParam(parameter, defaultvalue){
-    var urlparameter = defaultvalue;
+function getUrlParam(parameter, defaultvalue) {
+    let urlparameter = defaultvalue;
     if(window.location.href.indexOf(parameter) > -1){ urlparameter = getUrlVars()[parameter] }
+    console.log(parameter);
+    console.log(defaultvalue);
     return urlparameter;
 }
 
@@ -71,6 +73,7 @@ function getUrlParam(parameter, defaultvalue){
 }
 
 async function init() {
+    console.log(true);
     var page = getUrlParam('page', 'about');
     navigate(page);
     await about();
