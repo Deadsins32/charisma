@@ -168,17 +168,26 @@ module.exports = async function(imports) {
                     await rethink.db(name).table('inventory').get(id).replace(inventory).run(connection);
                 },
 
-                addMany: async function(id, itemsObj) {
+                addMany: async function(id, item, metas) {
                     let inventory = await imports.Data.inventory.get(id);
-                    for (let i in itemsObj) {
-                        if (!inventory.items[i]) { inventory.items[i] = itemsObj[i] }
-                        else { for (let m = 0; m < itemsObj[i].length; m++) { inventory.items[i].push(itemsObj[i][m]) } }
+                    if (inventory.items[item] == undefined) { inventory.items[item] = metas }
+                    else {
+                        if (!(metas instanceof Array)) { metas = [metas] }
+                        for (let m = 0; m < metas.length; m++) { inventory.items[item].push(metas[m]) }
                     }
 
                     await rethink.db(name).table('inventory').get(id).replace(inventory).run(connection);
                 },
 
-                remove: async function(id, item, index) {
+                remove: async function(id, item, quantity) {
+                    let inventory = await imports.Data.inventory.get(id);
+                    let q = quantity != undefined ? quantity : 1;
+                    for (let qq = 0; qq < q; qq++) { inventory.items[item].shift(); }
+
+                    await rethink.db(name).table('inventory').get(id).replace(inventory).run(connection);
+                },
+
+                removeAt: async function(id, item, index) {
                     let inventory = await imports.Data.inventory.get(id);
                     let i = 0;
                     if (index) { i = index }

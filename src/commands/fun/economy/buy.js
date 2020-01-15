@@ -33,7 +33,7 @@ module.exports = {
                 let balance = await imports.Data.inventory.money.get(imports.user.id);
                 if (balance >= price * quantity) {
                     await imports.Data.inventory.money.remove(imports.user.id, price * quantity);
-                    await imports.Data.inventory.item.add(imports.user.id, item.name, {});
+                    await imports.Data.inventory.item.add(imports.user.id, item.name, quantity);
                     embed.setDescription(`you purchased ${item.emoji}x${quantity}`);
                 }
 
